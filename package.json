@@ -10,7 +10,7 @@
     "dev:full": "concurrently \"npm run dev\" \"npm run client\"",
     "build:client": "npm run build --prefix client",
     "build:ts": "tsc",
-    "build": "npm run build:ts && npm run build:client",
+    "build": "cd client && npm install && npm run build",
     "start:ts": "node dist/server.js",
     "dev:ts": "nodemon dist/server.js",
     "watch:ts": "tsc -w",
