@@ -1,0 +1,165 @@
+import express, { Request, Response } from 'express';
+import Product from '../../models/Product';
+import { authMiddleware } from './auth';
+
+export const router = express.Router();
+
+// Get all products with filtering
+router.get('/', async (req: Request, res: Response) => {
+  try {
+    const { 
+      category, 
+      featured, 
+      minPrice, 
+      maxPrice, 
+      sort = '-createdAt',
+      limit = '20',
+      page = '1'
+    } = req.query;
+    
+    // Build query
+    const query: any = {};
+    
+    if (category) query.category = category;
+    if (featured === 'true') query.featured = true;
+    if (minPrice) query.price = { $gte: parseFloat(minPrice as string) };
+    if (maxPrice) {
+      if (query.price) {
+        query.price.$lte = parseFloat(maxPrice as string);
+      } else {
+        query.price = { $lte: parseFloat(maxPrice as string) };
+      }
+    }
+    
+    // Execute query with pagination
+    const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
+    
+    const products = await Product.find(query)
+      .sort(sort as string)
+      .limit(parseInt(limit as string))
+      .skip(skip);
+      
+    const total = await Product.countDocuments(query);
+    
+    res.json({
+      products,
+      pagination: {
+        total,
+        page: parseInt(page as string),
+        pages: Math.ceil(total / parseInt(limit as string))
+      }
+    });
+  } catch (err) {
+    console.error('API Error:', err);
+    res.status(500).json({ message: (err as Error).message });
+  }
+});
+
+// Get single product
+router.get('/:id', async (req: Request, res: Response) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    
+    res.json(product);
+  } catch (err) {
+    console.error('API Error:', err);
+    res.status(500).json({ message: (err as Error).message });
+  }
+});
+
+// Create a new product
+router.post('/', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const {
+      nameEn,
+      nameFr,
+      descriptionEn,
+      descriptionFr,
+      price,
+      category,
+      images,
+      thumbnailImage,
+      videoUrl,
+      featured,
+      inStock,
+      stockQuantity,
+      sku,
+      weight,
+      dimensions,
+      isActive
+    } = req.body;
+    
+    // Validate required fields
+    if (!nameEn || !descriptionEn || !price || !category) {
+      return res.status(400).json({ message: 'Please provide all required fields' });
+    }
+    
+    const product = new Product({
+      nameEn,
+      nameFr,
+      descriptionEn,
+      descriptionFr,
+      price,
+      category,
+      images: images || [],
+      thumbnailImage,
+      videoUrl,
+      featured: featured || false,
+      inStock: inStock !== undefined ? inStock : true,
+      stockQuantity,
+      sku,
+      weight,
+      dimensions,
+      isActive: isActive !== undefined ? isActive : true
+    });
+    
+    const savedProduct = await product.save();
+    res.status(201).json(savedProduct);
+  } catch (err) {
+    console.error('API Error:', err);
+    res.status(500).json({ message: (err as Error).message });
+  }
+});
+
+// Update a product
+router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true, runValidators: true }
+    );
+    
+    res.json(updatedProduct);
+  } catch (err) {
+    console.error('API Error:', err);
+    res.status(500).json({ message: (err as Error).message });
+  }
+});
+
+// Delete a product
+router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    
+    await Product.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Product removed' });
+  } catch (err) {
+    console.error('API Error:', err);
+    res.status(500).json({ message: (err as Error).message });
+  }
+});
