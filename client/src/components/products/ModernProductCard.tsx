@@ -18,8 +18,7 @@ import {
   Visibility,
   Favorite,
   FavoriteBorder,
-  Star,
-  VideoLibrary,
+
   ShoppingCart,
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';

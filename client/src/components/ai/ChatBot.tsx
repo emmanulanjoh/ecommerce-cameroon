@@ -14,7 +14,7 @@ import {
   Send, 
   SmartToy, 
   Close, 
-  Person,
+
   ShoppingCart,
   Help,
   Phone
