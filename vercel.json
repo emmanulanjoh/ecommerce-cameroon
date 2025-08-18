@@ -1,12 +1,11 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
-  "outputDirectory": "client/build",
-  "functions": {
-    "api/index.ts": {
-      "runtime": "@vercel/node"
+  "builds": [
+    {
+      "src": "api/index.ts",
+      "use": "@vercel/node@3.0.7"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/api/(.*)",
@@ -14,7 +13,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/client/build/index.html"
     }
   ]
 }
