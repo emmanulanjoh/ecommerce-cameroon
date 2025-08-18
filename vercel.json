@@ -3,7 +3,7 @@
   "builds": [
     {
       "src": "api/index.ts",
-      "use": "@vercel/node@3.0.7"
+      "use": "@vercel/node@2.15.10"
     }
   ],
   "routes": [
@@ -15,5 +15,10 @@
       "src": "/(.*)",
       "dest": "/client/build/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/index.ts": {
+      "runtime": "nodejs18.x"
+    }
+  }
 }
