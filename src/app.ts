@@ -16,8 +16,7 @@ import i18n from 'i18n';
 // Load environment variables
 dotenv.config();
 
-// Suppress deprecation warnings
-process.noDeprecation = true;
+
 
 // Import configuration
 import connectDB from './config/database';
