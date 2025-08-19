@@ -57,11 +57,19 @@ After deployment, test these endpoints:
 
 ### 5. Files Added/Modified
 
-- `railway.json` - Railway configuration
+- `railway.json` - Railway configuration with explicit build commands
+- `nixpacks.toml` - Nixpacks configuration for Railway
 - `Procfile` - Process definition
-- `package.json` - Updated build and start scripts
+- `package.json` - Fixed build scripts and moved TypeScript to dependencies
 - `src/app.ts` - Added health check endpoint
 - `.env.production` - Production environment template
+
+### 6. Build Process Fixed
+
+The build failure was caused by:
+1. TypeScript being in devDependencies (moved to dependencies)
+2. Complex build chain failing (simplified to separate steps)
+3. Missing explicit build configuration for Railway
 
 ### 6. Next Steps After Successful Deployment
 
