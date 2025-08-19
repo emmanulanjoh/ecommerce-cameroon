@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, Typography } from 'antd';
+import { Nav } from 'react-bootstrap';
 import {
   DashboardOutlined,
   ShoppingOutlined,

@@ -6,7 +6,7 @@ import AdminHeader from './AdminHeader';
 import AdminDashboard from './AdminDashboard';
 import ProductList from '../../pages/ProductList';
 import ReviewManagement from '../../pages/admin/ReviewManagement';
-import 'antd/dist/reset.css';
+
 
 const queryClient = new QueryClient();
 

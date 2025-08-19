@@ -1,5 +1,5 @@
 import React from 'react';
-import { Space, Avatar, Dropdown, Typography, Button, Badge } from 'antd';
+import { Button, Dropdown } from 'react-bootstrap';
 import {
   UserOutlined,
   BellOutlined,

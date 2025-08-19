@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Card, Statistic, Progress, List, Avatar, Typography } from 'antd';
+import { Card, Row, Col } from 'react-bootstrap';
 import {
   ShoppingCartOutlined,
   AppstoreOutlined,
