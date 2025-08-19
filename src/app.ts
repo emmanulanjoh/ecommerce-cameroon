@@ -169,6 +169,16 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 import * as apiContactRoutes from './routes/api/contact';
 import * as apiChatRoutes from './routes/api/chat';
 
+// Health check endpoint
+app.get('/health', (req: Request, res: Response) => {
+  res.status(200).json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV,
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+  });
+});
+
 // API Routes for React frontend
 app.use('/api/auth', apiAuthRoutes.router);
 app.use('/api/products', apiProductRoutes.router);

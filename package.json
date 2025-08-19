@@ -4,13 +4,13 @@
   "description": "A modern e-commerce platform for Cameroon with React frontend and Express backend",
   "main": "app.js",
   "scripts": {
-    "start": "npm run build:ts && node dist/server.js",
+    "start": "node dist/server.js",
+    "build": "tsc && cd client && npm install && npm run build",
     "dev": "nodemon dist/server.js",
     "client": "npm start --prefix client",
     "dev:full": "concurrently \"npm run dev\" \"npm run client\"",
     "build:client": "cd client && npm install && npm run build",
     "build:ts": "tsc",
-    "build": "echo 'Build completed'",
     "start:ts": "node dist/server.js",
     "dev:ts": "nodemon dist/server.js",
     "watch:ts": "tsc -w",
@@ -18,8 +18,7 @@
     "db:check": "node scripts/check-database.js",
     "db:init": "node scripts/init-database.js",
     "db:create-collections": "node scripts/create-collections.js",
-    "db:create-admin": "npx ts-node scripts/create-admin.ts",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build:client && npm run build:ts"
+    "db:create-admin": "npx ts-node scripts/create-admin.ts"
   },
   "keywords": [
     "ecommerce",

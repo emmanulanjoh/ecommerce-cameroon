@@ -37,7 +37,7 @@ const ModernContact: React.FC = () => {
         body: JSON.stringify(formData),
       });
       
-      const result = await response.json();
+      await response.json();
       
       if (response.ok) {
         alert('Message sent successfully! We will get back to you soon.');

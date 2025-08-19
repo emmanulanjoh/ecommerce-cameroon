@@ -295,7 +295,6 @@ const ProductDetail: React.FC = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [mainImage, setMainImage] = useState<string>('');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [reviewRating, setReviewRating] = useState(5);
   const [activeTab, setActiveTab] = useState('write');
@@ -315,7 +314,6 @@ const ProductDetail: React.FC = () => {
         setLoading(true);
         const { data } = await axios.get(`/api/products/${id}`);
         setProduct(data);
-        setMainImage(data.images[0] || '/images/placeholder.jpg');
         setLoading(false);
         
         // Fetch related products
@@ -335,21 +333,8 @@ const ProductDetail: React.FC = () => {
     fetchProduct();
   }, [id]);
   
-  const handleImageClick = (image: string) => {
-    setMainImage(image);
-    setShowVideo(false);
-  };
-  
   const handleVideoClick = () => {
     setShowVideo(true);
-  };
-  
-  const handleReviewChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setReviewForm((prev: ReviewForm) => ({
-      ...prev,
-      [name]: value
-    }));
   };
   
   const handleReviewSubmit = async (e: React.FormEvent) => {
@@ -371,12 +356,7 @@ const ProductDetail: React.FC = () => {
     }
   };
   
-  const formatPrice = (price: number): string => {
-    return new Intl.NumberFormat('fr-CM', {
-      style: 'currency',
-      currency: 'XAF'
-    }).format(price);
-  };
+
   
   if (loading) {
     return (

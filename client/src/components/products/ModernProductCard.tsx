@@ -38,7 +38,6 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
   const [isFavorite, setIsFavorite] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const { addToCart } = useCart();
-  const { t } = useLanguage();
   
   const whatsappNumber = process.env.REACT_APP_BUSINESS_WHATSAPP_NUMBER || '237678830036';
   

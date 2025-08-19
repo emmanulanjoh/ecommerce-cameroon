@@ -11,7 +11,7 @@ import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 const AdminDashboard: React.FC = () => {
   const { data: stats, isLoading } = useQuery({

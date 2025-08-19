@@ -14,7 +14,6 @@ const Login: React.FC = () => {
   
   const { login, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   
   // Redirect if already authenticated
   useEffect(() => {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Button, Row, Col, Card, Alert, Tab, Nav } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSave, faImage, faVideo, faCog } from '@fortawesome/free-solid-svg-icons';
+import { faSave, faImage, faCog } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { Product } from '../../types';
 

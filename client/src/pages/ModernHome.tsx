@@ -6,9 +6,7 @@ import {
   Typography,
   Button,
   Card,
-  CardContent,
   Chip,
-  IconButton,
   useMediaQuery,
   useTheme,
   Accordion,
@@ -19,7 +17,6 @@ import ChatBot from '../components/ai/ChatBot';
 
 import {
   ArrowForward,
-  Star,
   LocalShipping,
   Security,
   Support,
@@ -28,22 +25,11 @@ import {
   WhatsApp,
   ExpandMore,
 } from '@mui/icons-material';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Product, Category } from '../types';
 import ModernProductCard from '../components/products/ModernProductCard';
-
-const theme = createTheme({
-  palette: {
-    primary: { main: '#667eea' },
-    secondary: { main: '#764ba2' },
-  },
-  typography: {
-    fontFamily: '"Inter", "Roboto", sans-serif',
-  },
-});
 
 const ModernHome: React.FC = () => {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
@@ -140,8 +126,7 @@ const ModernHome: React.FC = () => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Box sx={{ minHeight: '100vh' }}>
+    <Box sx={{ minHeight: '100vh' }}>
         {/* Hero Section */}
         <Box
           sx={{
@@ -693,7 +678,6 @@ const ModernHome: React.FC = () => {
         {/* AI Components */}
         <ChatBot />
       </Box>
-    </ThemeProvider>
   );
 };
 

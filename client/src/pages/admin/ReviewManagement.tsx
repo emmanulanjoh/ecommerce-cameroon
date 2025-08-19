@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Badge, Alert, Card } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faTimes, faEye, faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faTimes, faRefresh } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 
 interface Review {

@@ -2,7 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import { AnimatePresence } from 'framer-motion';
-import { ChakraProvider, defaultSystem } from '@chakra-ui/react';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { CssBaseline } from '@mui/material';
 import PageTransition from './components/animations/PageTransition';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
@@ -30,10 +31,19 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 // Custom CSS
 import './App.css';
 
+const theme = createTheme({
+  palette: {
+    primary: { main: '#667eea' },
+    secondary: { main: '#764ba2' },
+  },
+  typography: {
+    fontFamily: '"Inter", "Roboto", sans-serif',
+  },
+});
+
 // Animated routes component with AnimatePresence
 const AnimatedRoutes: React.FC = () => {
   const location = useLocation();
-  const isAdminRoute = location.pathname.startsWith('/admin');
   
   return (
     <AnimatePresence mode="wait">
@@ -106,7 +116,8 @@ const AnimatedRoutes: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <ChakraProvider value={defaultSystem}>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
       <AuthProvider>
         <CartProvider>
           <LanguageProvider>
@@ -116,7 +127,7 @@ const App: React.FC = () => {
           </LanguageProvider>
         </CartProvider>
       </AuthProvider>
-    </ChakraProvider>
+    </ThemeProvider>
   );
 };
 
