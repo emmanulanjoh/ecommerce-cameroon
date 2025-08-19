@@ -3,6 +3,8 @@ nixPkgs = ['nodejs-18_x', 'npm-9_x']
 
 [phases.install]
 cmds = [
+  'rm -f package-lock.json',
+  'rm -f client/package-lock.json', 
   'npm install',
   'cd client && npm install'
 ]
