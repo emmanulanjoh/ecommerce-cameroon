@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CssBaseline, Typography, Box } from '@mui/material';
 import { useSearchParams } from 'react-router-dom';
@@ -70,31 +70,7 @@ const PublicProductList: React.FC = () => {
     }
   }, [searchParams]);
 
-  useEffect(() => {
-    filterProducts();
-  }, [products, searchTerm, selectedCategory, priceRange, inStockOnly]);
-
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const response = await axios.get('/api/products');
-      const productsData = response.data.products || response.data || [];
-      
-      const uniqueCategories = Array.from(new Set(productsData.map((p: Product) => p.category).filter(Boolean))) as string[];
-      setCategories(uniqueCategories);
-      
-      setProducts(productsData);
-    } catch (err: any) {
-      console.error('Error fetching products:', err);
-      setError('Failed to load products. Please try again later.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterProducts = () => {
+  const filterProducts = useCallback(() => {
     let filtered = products;
 
     if (searchTerm) {
@@ -120,7 +96,33 @@ const PublicProductList: React.FC = () => {
     }
 
     setFilteredProducts(filtered);
+  }, [products, searchTerm, selectedCategory, priceRange, inStockOnly]);
+
+  useEffect(() => {
+    filterProducts();
+  }, [filterProducts]);
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await axios.get('/api/products');
+      const productsData = response.data.products || response.data || [];
+      
+      const uniqueCategories = Array.from(new Set(productsData.map((p: Product) => p.category).filter(Boolean))) as string[];
+      setCategories(uniqueCategories);
+      
+      setProducts(productsData);
+    } catch (err: any) {
+      console.error('Error fetching products:', err);
+      setError('Failed to load products. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
   };
+
+
 
   const handleClearFilters = () => {
     setSearchTerm('');

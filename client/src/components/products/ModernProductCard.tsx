@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useCart } from '../../context/CartContext';
-import { useLanguage } from '../../context/LanguageContext';
 import {
   Card,
   CardContent,

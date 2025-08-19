@@ -32,7 +32,7 @@ const ChatBot: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: 'Hello! I\'m your AI shopping assistant. How can I help you today?',
+      text: "Hello! I'm your AI shopping assistant. How can I help you today?",
       sender: 'bot',
       timestamp: new Date()
     }
@@ -79,15 +79,15 @@ const ChatBot: React.FC = () => {
     const message = userMessage.toLowerCase();
     
     if (message.includes('price') || message.includes('cost') || message.includes('budget')) {
-      return 'I can help you find products in your budget! What\'s your price range? We have items from 5,000 XAF to 2,000,000 XAF.';
+      return "I can help you find products in your budget! What's your price range? We have items from 5,000 XAF to 2,000,000 XAF.";
     }
     
     if (message.includes('phone') || message.includes('smartphone') || message.includes('mobile')) {
-      return 'We have great smartphones available! Popular brands include Samsung, iPhone, Tecno, and Infinix. What\'s your budget?';
+      return "We have great smartphones available! Popular brands include Samsung, iPhone, Tecno, and Infinix. What's your budget?";
     }
     
     if (message.includes('laptop') || message.includes('computer')) {
-      return 'We offer various laptops and computers! From budget-friendly options to high-performance machines. What will you use it for?';
+      return "We offer various laptops and computers! From budget-friendly options to high-performance machines. What will you use it for?";
     }
     
     if (message.includes('delivery') || message.includes('shipping') || message.includes('transport')) {
@@ -99,11 +99,11 @@ const ChatBot: React.FC = () => {
     }
     
     if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
-      return 'Hello! 👋 Welcome to FindAll Sourcing! I\'m here to help you find the perfect products. What are you looking for today?';
+      return "Hello! 👋 Welcome to FindAll Sourcing! I'm here to help you find the perfect products. What are you looking for today?";
     }
     
     if (message.includes('help') || message.includes('support') || message.includes('assist')) {
-      return 'I\'m here to help! 😊 Ask me about products, prices, delivery, or payments. For complex issues, contact us on WhatsApp: +237 678 830 036';
+      return "I'm here to help! 😊 Ask me about products, prices, delivery, or payments. For complex issues, contact us on WhatsApp: +237 678 830 036";
     }
     
     if (message.includes('category') || message.includes('type')) {
@@ -112,8 +112,8 @@ const ChatBot: React.FC = () => {
     
     // Dynamic response based on message content
     const responses = [
-      `I understand you\'re asking about "${userMessage}". Let me help you with that! What specific information do you need?`,
-      `Great question about "${userMessage}"! I\'d be happy to assist. Can you provide more details?`,
+      `I understand you're asking about "${userMessage}". Let me help you with that! What specific information do you need?`,
+      `Great question about "${userMessage}"! I'd be happy to assist. Can you provide more details?`,
       `Thanks for asking about "${userMessage}". For detailed information, I can connect you with our team via WhatsApp: +237 678 830 036`,
     ];
     
