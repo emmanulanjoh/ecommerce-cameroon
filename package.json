@@ -8,7 +8,7 @@
     "dev": "nodemon dist/server.js",
     "client": "npm start --prefix client",
     "dev:full": "concurrently \"npm run dev\" \"npm run client\"",
-    "build:client": "npm run build --prefix client",
+    "build:client": "cd client && npm install && npm run build",
     "build:ts": "tsc",
     "build": "npm run build:ts && npm run build:client",
     "start:ts": "node dist/server.js",
