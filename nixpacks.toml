@@ -1,13 +1,13 @@
 [phases.setup]
-nixPkgs = ['nodejs-18_x', 'npm-9_x']
+nixPkgs = ['nodejs-18_x']
 
 [phases.install]
-cmds = ['npm ci']
+cmds = ['npm install']
 
 [phases.build]
 cmds = [
   'npm run build:ts',
-  'cd client && npm ci',
+  'cd client && npm install',
   'cd client && npm run build'
 ]
 
