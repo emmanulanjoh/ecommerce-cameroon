@@ -248,3 +248,4 @@ report-exports/
 # Video uploads
 public/videos/*
 !public/videos/.gitkeep
+.vercel
