@@ -1,40 +1,24 @@
-# Multi-stage build
-FROM node:18-alpine AS builder
+FROM node:18-alpine
 
-# Build client
-WORKDIR /app/client
-COPY client/package*.json ./
-RUN npm ci --only=production
-COPY client/ ./
-RUN npm run build
-
-# Build server
 WORKDIR /app
+
+# Copy package files
 COPY package*.json ./
-RUN npm ci --only=production
-COPY src/ ./src/
-COPY tsconfig.json ./
-RUN npm run build:ts
+COPY client/package*.json ./client/
 
-# Production stage
-FROM node:18-alpine AS production
+# Install dependencies
+RUN npm install
+RUN cd client && npm install
 
-WORKDIR /app
+# Copy source code
+COPY . .
 
-# Copy built files
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/client/build ./client/build
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
+# Build application
+RUN npm run build
 
 # Copy public assets
 COPY public/ ./public/
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nextjs -u 1001
-USER nextjs
-
 EXPOSE 5000
 
-CMD ["node", "dist/server.js"]
+CMD ["npm", "start"]
