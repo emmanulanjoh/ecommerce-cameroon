@@ -1,28 +1,7 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Container,
-  Typography,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  TextField,
-  InputAdornment,
-  Chip,
-  Card,
-  CardContent,
-  Avatar,
-} from '@mui/material';
-import {
-  ExpandMore,
-  Search,
-  HelpOutline,
-  ShoppingCart,
-  LocalShipping,
-  Payment,
-  Security,
-  Support,
-} from '@mui/icons-material';
+import { Container, Row, Col, Card, Form, InputGroup, Button, Accordion } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch, faQuestionCircle, faShoppingCart, faShippingFast, faCreditCard, faShieldAlt, faHeadset } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
 
 const ModernFAQ: React.FC = () => {
@@ -30,12 +9,12 @@ const ModernFAQ: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   const categories = [
-    { id: 'all', label: 'All Questions', icon: <HelpOutline />, color: '#667eea' },
-    { id: 'orders', label: 'Orders', icon: <ShoppingCart />, color: '#4CAF50' },
-    { id: 'shipping', label: 'Shipping', icon: <LocalShipping />, color: '#FF9800' },
-    { id: 'payment', label: 'Payment', icon: <Payment />, color: '#2196F3' },
-    { id: 'security', label: 'Security', icon: <Security />, color: '#F44336' },
-    { id: 'support', label: 'Support', icon: <Support />, color: '#9C27B0' },
+    { id: 'all', label: 'All Questions', icon: faQuestionCircle, color: 'primary' },
+    { id: 'orders', label: 'Orders', icon: faShoppingCart, color: 'success' },
+    { id: 'shipping', label: 'Shipping', icon: faShippingFast, color: 'warning' },
+    { id: 'payment', label: 'Payment', icon: faCreditCard, color: 'info' },
+    { id: 'security', label: 'Security', icon: faShieldAlt, color: 'danger' },
+    { id: 'support', label: 'Support', icon: faHeadset, color: 'secondary' },
   ];
 
   const faqs = [
@@ -114,226 +93,131 @@ const ModernFAQ: React.FC = () => {
   });
 
   return (
-    <Box>
+    <div className="bg-light min-vh-100">
       {/* Hero Section */}
-      <Box
-        sx={{
-          background: 'url(/images/hero/faq.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          color: 'white',
-          py: 8,
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-      >
-        <Container maxWidth="lg">
+      <div className="bg-primary text-white py-5">
+        <Container>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
+            className="text-center"
           >
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h2" fontWeight="700" mb={2}>
-                FAQ
-              </Typography>
-              <Typography variant="h5" sx={{ opacity: 0.9 }}>
-                Find answers to common questions about our services, orders, and policies.
-              </Typography>
-            </Box>
+            <h1 className="display-4 fw-bold mb-3">Frequently Asked Questions</h1>
+            <p className="lead">Find answers to common questions about our services, orders, and policies.</p>
           </motion.div>
         </Container>
-      </Box>
+      </div>
 
-      <Container maxWidth="lg" sx={{ py: 8 }}>
+      <Container className="py-5">
         {/* Search and Categories */}
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '2fr 1fr' }, gap: 4, mb: 6 }}>
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <TextField
-              fullWidth
-              variant="outlined"
-              placeholder="Search for answers..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search color="action" />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: 3,
-                  bgcolor: 'white',
-                  '&:hover fieldset': {
-                    borderColor: 'primary.main',
-                  },
-                },
-              }}
-            />
-          </motion.div>
+        <Row className="g-4 mb-5">
+          <Col lg={8}>
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <InputGroup size="lg">
+                <InputGroup.Text>
+                  <FontAwesomeIcon icon={faSearch} />
+                </InputGroup.Text>
+                <Form.Control
+                  placeholder="Search for answers..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </InputGroup>
+            </motion.div>
+          </Col>
+          <Col lg={4}>
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <Typography variant="h6" fontWeight="600" mb={2}>
-                Categories
-              </Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              <h6 className="fw-bold mb-3">Categories</h6>
+              <div className="d-flex flex-wrap gap-2">
                 {categories.map((category) => (
-                  <Chip
+                  <Button
                     key={category.id}
-                    icon={category.icon}
-                    label={category.label}
+                    variant={selectedCategory === category.id ? category.color : `outline-${category.color}`}
+                    size="sm"
                     onClick={() => setSelectedCategory(category.id)}
-                    variant={selectedCategory === category.id ? 'filled' : 'outlined'}
-                    sx={{
-                      borderRadius: 2,
-                      ...(selectedCategory === category.id && {
-                        bgcolor: category.color,
-                        color: 'white',
-                        '& .MuiChip-icon': {
-                          color: 'white',
-                        },
-                      }),
-                      '&:hover': {
-                        transform: 'translateY(-2px)',
-                        boxShadow: 2,
-                      },
-                      transition: 'all 0.2s ease',
-                    }}
-                  />
+                    className="d-flex align-items-center gap-1"
+                  >
+                    <FontAwesomeIcon icon={category.icon} />
+                    <span className="d-none d-sm-inline">{category.label}</span>
+                  </Button>
                 ))}
-              </Box>
+              </div>
             </motion.div>
-        </Box>
+          </Col>
+        </Row>
 
         {/* FAQ List */}
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '2fr 1fr' }, gap: 4 }}>
+        <Row className="g-4">
+          <Col lg={8}>
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
               {filteredFAQs.length > 0 ? (
-                filteredFAQs.map((faq, index) => (
-                  <Accordion
-                    key={index}
-                    elevation={0}
-                    sx={{
-                      mb: 2,
-                      border: '1px solid',
-                      borderColor: 'grey.200',
-                      borderRadius: '12px !important',
-                      '&:before': {
-                        display: 'none',
-                      },
-                      '&.Mui-expanded': {
-                        boxShadow: 2,
-                      },
-                    }}
-                  >
-                    <AccordionSummary
-                      expandIcon={<ExpandMore />}
-                      sx={{
-                        borderRadius: '12px',
-                        '&.Mui-expanded': {
-                          borderBottomLeftRadius: 0,
-                          borderBottomRightRadius: 0,
-                        },
-                      }}
-                    >
-                      <Typography variant="h6" fontWeight="600">
-                        {faq.question}
-                      </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <Typography variant="body1" sx={{ lineHeight: 1.7 }}>
+                <Accordion>
+                  {filteredFAQs.map((faq, index) => (
+                    <Accordion.Item key={index} eventKey={index.toString()}>
+                      <Accordion.Header>
+                        <strong>{faq.question}</strong>
+                      </Accordion.Header>
+                      <Accordion.Body>
                         {faq.answer}
-                      </Typography>
-                    </AccordionDetails>
-                  </Accordion>
-                ))
+                      </Accordion.Body>
+                    </Accordion.Item>
+                  ))}
+                </Accordion>
               ) : (
-                <Card elevation={0} sx={{ p: 4, textAlign: 'center', border: '1px solid', borderColor: 'grey.200', borderRadius: 3 }}>
-                  <HelpOutline sx={{ fontSize: 64, color: 'grey.400', mb: 2 }} />
-                  <Typography variant="h6" color="text.secondary" mb={1}>
-                    No questions found
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Try adjusting your search terms or category filter.
-                  </Typography>
+                <Card className="text-center p-5">
+                  <Card.Body>
+                    <FontAwesomeIcon icon={faQuestionCircle} size="3x" className="text-muted mb-3" />
+                    <h5 className="text-muted">No questions found</h5>
+                    <p className="text-muted">Try adjusting your search terms or category filter.</p>
+                  </Card.Body>
                 </Card>
               )}
             </motion.div>
+          </Col>
 
           {/* Help Card */}
+          <Col lg={4}>
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <Card
-                elevation={0}
-                sx={{
-                  p: 3,
-                  border: '1px solid',
-                  borderColor: 'grey.200',
-                  borderRadius: 3,
-                  background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-                }}
-              >
-                <CardContent sx={{ p: 0 }}>
-                  <Box sx={{ textAlign: 'center', mb: 3 }}>
-                    <Avatar
-                      sx={{
-                        bgcolor: 'primary.main',
-                        width: 64,
-                        height: 64,
-                        mx: 'auto',
-                        mb: 2,
-                      }}
-                    >
-                      <Support sx={{ fontSize: 32 }} />
-                    </Avatar>
-                    <Typography variant="h6" fontWeight="600" mb={1}>
-                      Still Need Help?
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" mb={3}>
-                      Can't find what you're looking for? Our support team is here to help!
-                    </Typography>
-                  </Box>
+              <Card className="border-0 shadow-sm">
+                <Card.Body className="text-center p-4">
+                  <div className="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style={{ width: '60px', height: '60px' }}>
+                    <FontAwesomeIcon icon={faHeadset} size="lg" />
+                  </div>
+                  <h5 className="fw-bold mb-3">Still Need Help?</h5>
+                  <p className="text-muted mb-4">Can't find what you're looking for? Our support team is here to help!</p>
                   
-                  <Box sx={{ mb: 2 }}>
-                    <Typography variant="subtitle2" fontWeight="600" mb={1}>
-                      Contact Options:
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      📱 WhatsApp: +237 6XX XXX XXX
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      📧 Email: support@ecommerce-cameroon.com
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      📞 Phone: +237 6XX XXX XXX
-                    </Typography>
-                  </Box>
+                  <div className="text-start mb-3">
+                    <h6 className="fw-bold mb-2">Contact Options:</h6>
+                    <p className="small text-muted mb-1">📱 WhatsApp: +237 678 830 036</p>
+                    <p className="small text-muted mb-1">📧 Email: emmanuelanjoh2016@gmail.com</p>
+                    <p className="small text-muted mb-0">📞 Phone: +237 678 830 036</p>
+                  </div>
                   
-                  <Typography variant="caption" color="text.secondary">
-                    Our support team is available 24/7 to assist you.
-                  </Typography>
-                </CardContent>
+                  <small className="text-muted">Our support team is available 24/7 to assist you.</small>
+                </Card.Body>
               </Card>
             </motion.div>
-        </Box>
+          </Col>
+        </Row>
       </Container>
-    </Box>
+    </div>
   );
 };
 

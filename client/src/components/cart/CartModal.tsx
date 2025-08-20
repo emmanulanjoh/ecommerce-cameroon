@@ -1,5 +1,6 @@
 import React from 'react';
 import { Modal, Button, ListGroup, Row, Col, Form } from 'react-bootstrap';
+import './CartModal.css';
 import { useLanguage } from '../../context/LanguageContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -40,7 +41,7 @@ const CartModal: React.FC<CartModalProps> = ({ show, onHide }) => {
   };
 
   return (
-    <Modal show={show} onHide={onHide} size="lg" centered>
+    <Modal show={show} onHide={onHide} size="lg" centered className="cart-modal">
       <Modal.Header closeButton>
         <Modal.Title>{t('cart.title')}</Modal.Title>
       </Modal.Header>
@@ -55,21 +56,21 @@ const CartModal: React.FC<CartModalProps> = ({ show, onHide }) => {
             <ListGroup variant="flush">
               {cartItems.map(item => (
                 <ListGroup.Item key={item.product._id} className="px-0">
-                  <Row className="align-items-center">
-                    <Col xs={3}>
+                  <Row className="align-items-center g-2">
+                    <Col xs={12} sm={3}>
                       <img 
                         src={item.product.images[0] || '/images/placeholder.jpg'} 
                         alt={item.product.nameEn}
-                        className="img-fluid rounded"
-                        style={{ maxHeight: '60px', objectFit: 'cover' }}
+                        className="img-fluid rounded w-100"
+                        style={{ maxHeight: '80px', objectFit: 'cover' }}
                       />
                     </Col>
-                    <Col xs={4}>
-                      <h6 className="mb-1">{item.product.nameEn}</h6>
+                    <Col xs={12} sm={4}>
+                      <h6 className="mb-1 text-truncate">{item.product.nameEn}</h6>
                       <small className="text-muted">{formatPrice(item.product.price)} each</small>
                     </Col>
-                    <Col xs={3}>
-                      <div className="d-flex align-items-center">
+                    <Col xs={8} sm={3}>
+                      <div className="d-flex align-items-center justify-content-center">
                         <Button 
                           variant="outline-secondary" 
                           size="sm"
@@ -82,7 +83,7 @@ const CartModal: React.FC<CartModalProps> = ({ show, onHide }) => {
                           value={item.quantity}
                           onChange={(e) => updateQuantity(item.product._id, parseInt(e.target.value) || 1)}
                           className="mx-2 text-center"
-                          style={{ width: '60px' }}
+                          style={{ width: '50px', minWidth: '50px' }}
                           min="1"
                         />
                         <Button 
@@ -94,15 +95,15 @@ const CartModal: React.FC<CartModalProps> = ({ show, onHide }) => {
                         </Button>
                       </div>
                     </Col>
-                    <Col xs={2} className="text-end">
-                      <div>
-                        <strong>{formatPrice(item.product.price * item.quantity)}</strong>
+                    <Col xs={4} sm={2} className="text-end">
+                      <div className="mb-2">
+                        <strong className="d-block">{formatPrice(item.product.price * item.quantity)}</strong>
                       </div>
                       <Button 
                         variant="outline-danger" 
                         size="sm"
                         onClick={() => removeFromCart(item.product._id)}
-                        className="mt-1"
+                        className="w-100 w-sm-auto"
                       >
                         <FontAwesomeIcon icon={faTrash} />
                       </Button>
@@ -113,9 +114,9 @@ const CartModal: React.FC<CartModalProps> = ({ show, onHide }) => {
             </ListGroup>
             
             <div className="border-top pt-3 mt-3">
-              <Row>
-                <Col>
-                  <h5>{t('cart.total')}: {formatPrice(getTotalPrice())}</h5>
+              <Row className="justify-content-between align-items-center">
+                <Col xs={12} className="text-center text-sm-start">
+                  <h4 className="mb-0">{t('cart.total')}: <span className="text-success">{formatPrice(getTotalPrice())}</span></h4>
                 </Col>
               </Row>
             </div>
@@ -123,23 +124,32 @@ const CartModal: React.FC<CartModalProps> = ({ show, onHide }) => {
         )}
       </Modal.Body>
       
-      <Modal.Footer>
+      <Modal.Footer className="flex-column flex-sm-row gap-2">
         {cartItems.length > 0 && (
           <>
-            <Button variant="outline-secondary" onClick={clearCart}>
+            <Button 
+              variant="outline-secondary" 
+              onClick={clearCart}
+              className="w-100 w-sm-auto order-2 order-sm-1"
+            >
               {t('cart.clear')}
             </Button>
             <Button 
               variant="success" 
               onClick={handleWhatsAppOrder}
-              className="d-flex align-items-center"
+              className="d-flex align-items-center justify-content-center w-100 w-sm-auto order-1 order-sm-2"
+              size="lg"
             >
               <FontAwesomeIcon icon={faWhatsapp} className="me-2" />
               {t('cart.orderWhatsApp')}
             </Button>
           </>
         )}
-        <Button variant="secondary" onClick={onHide}>
+        <Button 
+          variant="secondary" 
+          onClick={onHide}
+          className="w-100 w-sm-auto order-3"
+        >
           {t('cart.close')}
         </Button>
       </Modal.Footer>

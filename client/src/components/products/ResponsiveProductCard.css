@@ -1,0 +1,188 @@
+/* Responsive Product Card Styles */
+.product-card-grid,
+.product-card-list {
+  border: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.product-card-grid:hover,
+.product-card-list:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.product-image-container {
+  position: relative;
+  overflow: hidden;
+  height: 160px;
+}
+
+.product-card-list .product-image-container {
+  height: 120px;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.product-card-grid:hover .product-image {
+  transform: scale(1.1);
+}
+
+.product-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.product-card-grid:hover .product-overlay {
+  opacity: 1;
+}
+
+.category-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+}
+
+.favorite-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 0.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.product-price {
+  margin-bottom: 0.5rem;
+}
+
+.product-actions {
+  margin-top: auto;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 576px) {
+  .product-card-grid {
+    margin-bottom: 1rem;
+  }
+  
+  .product-image-container {
+    height: 140px;
+  }
+  
+  .product-card-list .product-image-container {
+    height: 100px;
+  }
+  
+  .product-title {
+    font-size: 1rem;
+    -webkit-line-clamp: 1;
+  }
+  
+  .product-price {
+    font-size: 1.2rem !important;
+  }
+  
+  .category-badge {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .favorite-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+  
+  /* Always show overlay on mobile */
+  .product-overlay {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.2);
+  }
+  
+  .product-overlay .btn {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .product-card-list .product-image-container {
+    height: 140px;
+  }
+  
+  .product-card-list .product-title {
+    font-size: 1rem;
+  }
+  
+  .product-card-list .product-actions .btn {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 577px) and (max-width: 991px) {
+  .product-image-container {
+    height: 180px;
+  }
+  
+  .product-card-list .product-image-container {
+    height: 130px;
+  }
+}
+
+/* Large screens */
+@media (min-width: 1200px) {
+  .product-image-container {
+    height: 180px;
+  }
+  
+  .product-card-list .product-image-container {
+    height: 140px;
+  }
+}
+
+/* Add to Cart and WhatsApp button styling */
+.btn-add-to-cart,
+.btn-whatsapp {
+  padding-bottom: 0.75rem !important;
+}
+
+@media (max-width: 576px) {
+  .btn-add-to-cart,
+  .btn-whatsapp {
+    padding-bottom: 1rem !important;
+  }
+}

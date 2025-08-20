@@ -4,10 +4,26 @@
 body {
   font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   color: #333;
+  overflow-x: hidden;
 }
 
 main {
   min-height: 80vh;
+}
+
+/* Mobile-first responsive containers */
+.container,
+.container-fluid {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+@media (max-width: 576px) {
+  .container,
+  .container-fluid {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 }
 
 /* Product Card Styles */
@@ -25,6 +41,12 @@ main {
   position: relative;
   overflow: hidden;
   height: 200px;
+}
+
+@media (max-width: 576px) {
+  .card-img-wrapper {
+    height: 180px;
+  }
 }
 
 .card-img-wrapper img,
@@ -80,6 +102,44 @@ main {
   .hero-section {
     min-height: 30vh;
   }
+  
+  .navbar-brand {
+    font-size: 1.1rem;
+  }
+  
+  .navbar-nav .nav-link {
+    padding: 0.5rem 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-section {
+    min-height: 25vh;
+    padding: 1rem 0;
+  }
+  
+  .h1, h1 { font-size: 1.8rem; }
+  .h2, h2 { font-size: 1.5rem; }
+  .h3, h3 { font-size: 1.3rem; }
+  .h4, h4 { font-size: 1.1rem; }
+  .h5, h5 { font-size: 1rem; }
+  
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    min-height: 44px;
+  }
+  
+  .btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+  
+  .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    min-height: 36px;
+  }
 }
 
 /* Animation Classes */
@@ -131,6 +191,13 @@ main {
   flex-shrink: 0;
 }
 
+@media (max-width: 576px) {
+  .whatsapp-btn {
+    width: 44px;
+    height: 44px;
+  }
+}
+
 /* Product Detail Page */
 .thumbnail-container {
   cursor: pointer;
@@ -162,4 +229,50 @@ footer a {
 
 footer a:hover {
   color: #007bff !important;
+}
+
+@media (max-width: 576px) {
+  footer {
+    padding: 1.5rem 0;
+  }
+  
+  footer .col-md-3 {
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* Modal responsiveness */
+@media (max-width: 576px) {
+  .modal-dialog {
+    margin: 0.5rem;
+    max-width: calc(100% - 1rem);
+  }
+  
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: 0.75rem;
+  }
+}
+
+/* Form responsiveness */
+@media (max-width: 576px) {
+  .form-control {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+  
+  .input-group {
+    flex-wrap: wrap;
+  }
+}
+
+/* Table responsiveness */
+@media (max-width: 768px) {
+  .table-responsive {
+    border: none;
+  }
+  
+  .table-responsive table {
+    font-size: 0.9rem;
+  }
 }

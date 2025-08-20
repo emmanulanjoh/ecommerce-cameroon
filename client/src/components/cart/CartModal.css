@@ -1,0 +1,73 @@
+/* Cart Modal Responsive Styles */
+.cart-modal .modal-dialog {
+  margin: 0.5rem;
+}
+
+@media (max-width: 576px) {
+  .cart-modal .modal-dialog {
+    max-width: 100%;
+    margin: 0;
+    height: 100vh;
+  }
+  
+  .cart-modal .modal-content {
+    height: 100vh;
+    border-radius: 0;
+  }
+  
+  .cart-modal .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem 0.75rem;
+  }
+  
+  .cart-modal .modal-header {
+    padding: 0.75rem;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .cart-modal .modal-footer {
+    padding: 0.75rem;
+    border-top: 1px solid #dee2e6;
+  }
+  
+  .cart-modal .list-group-item {
+    padding: 0.75rem 0;
+    border-left: none;
+    border-right: none;
+  }
+  
+  .cart-modal .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+  .cart-modal .modal-dialog {
+    max-width: 90%;
+  }
+}
+
+/* Quantity input styling */
+.cart-modal .form-control[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.cart-modal .form-control[type="number"]::-webkit-outer-spin-button,
+.cart-modal .form-control[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Button improvements */
+.cart-modal .modal-footer .btn {
+  min-height: 38px;
+}
+
+@media (max-width: 576px) {
+  .cart-modal .modal-footer .btn {
+    min-height: 44px;
+    font-size: 1rem;
+  }
+}
