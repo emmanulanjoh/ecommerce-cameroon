@@ -8,7 +8,6 @@ import {
   Box,
   Chip,
   IconButton,
-  Rating,
   Fade,
   Zoom,
 } from '@mui/material';
@@ -180,7 +179,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
     >
       <Card
         sx={{
-          height: 480,
+          height: { xs: 320, sm: 380 },
           borderRadius: 3,
           overflow: 'hidden',
           position: 'relative',
@@ -198,7 +197,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
             to={`/products/${product._id}`}
             sx={{ 
               width: '100%', 
-              height: 240, 
+              height: { xs: 160, sm: 200 }, 
               overflow: 'hidden',
               display: 'block',
               cursor: 'pointer'
@@ -343,7 +342,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
         </Box>
         
         {/* Content */}
-        <CardContent sx={{ p: 3, pb: 5 }}>
+        <CardContent sx={{ p: { xs: 2, sm: 3 }, pb: { xs: 2, sm: 3 } }}>
           <Typography
             variant="h6"
             fontWeight="600"
@@ -359,12 +358,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
             {getProductName()}
           </Typography>
           
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <Rating value={4.5} precision={0.5} size="small" readOnly />
-            <Typography variant="caption" color="text.secondary" sx={{ ml: 1 }}>
-              (4.5)
-            </Typography>
-          </Box>
+
           
           <Typography
             variant="h5"
@@ -375,28 +369,21 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
             {formatPrice(product.price)}
           </Typography>
           
-          {product.warrantyMonths && product.warrantyMonths > 0 && (
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
-              🛡️ {product.warrantyMonths} month{product.warrantyMonths > 1 ? 's' : ''} warranty
-            </Typography>
-          )}
+
           
-          <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+          <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
             <Button
               variant="contained"
               onClick={() => addToCart(product)}
               sx={{ 
                 borderRadius: 2, 
-                flex: 1, 
+                flex: 1,
                 py: { xs: 1, sm: 1.5 }, 
-                px: { xs: 1, sm: 3 },
-                fontSize: { xs: '0.7rem', sm: '0.875rem' },
-                minWidth: 0
+                fontSize: { xs: '0.7rem', sm: '0.8rem' }
               }}
             >
-              <ShoppingCart sx={{ mr: { xs: 0.5, sm: 1 }, fontSize: { xs: 14, sm: 20 } }} /> 
-              <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Add to Cart</Box>
-              <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>Add</Box>
+              <ShoppingCart sx={{ mr: { xs: 0.5, sm: 1 }, fontSize: { xs: 14, sm: 16 } }} /> 
+              Add
             </Button>
             
             <IconButton
@@ -408,11 +395,11 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
                   backgroundColor: 'rgba(37, 211, 102, 0.1)'
                 },
                 borderRadius: 2,
-                p: { xs: 0.5, sm: 1.5 },
-                minWidth: { xs: 28, sm: 40 }
+                p: { xs: 1, sm: 1.5 },
+                minWidth: { xs: 40, sm: 48 }
               }}
             >
-              <WhatsApp sx={{ fontSize: { xs: 14, sm: 20 } }} />
+              <WhatsApp sx={{ fontSize: { xs: 22, sm: 26 } }} />
             </IconButton>
           </Box>
         </CardContent>

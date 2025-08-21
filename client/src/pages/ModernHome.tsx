@@ -17,10 +17,6 @@ import ChatBot from '../components/ai/ChatBot';
 
 import {
   ArrowForward,
-  LocalShipping,
-  Security,
-  Support,
-  Verified,
   TrendingUp,
   WhatsApp,
   ExpandMore,
