@@ -86,28 +86,7 @@ const ModernHome: React.FC = () => {
     fetchData();
   }, []);
 
-  const features = [
-    {
-      icon: Verified,
-      title: "100% Authentic",
-      description: "Original products with quality guarantee"
-    },
-    {
-      icon: LocalShipping,
-      title: "Fast Delivery",
-      description: "Quick delivery across Cameroon"
-    },
-    {
-      icon: Security,
-      title: "Secure Payment",
-      description: "Pay after verification"
-    },
-    {
-      icon: Support,
-      title: "24/7 Support",
-      description: "Round-the-clock assistance"
-    }
-  ];
+
 
   const getCategoryIcon = (categoryName: string, index: number): string => {
     const iconMap: { [key: string]: string } = {
