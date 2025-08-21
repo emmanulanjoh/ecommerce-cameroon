@@ -130,8 +130,98 @@ const ModernAbout: React.FC = () => {
         </Row>
       </Container>
 
-      {/* Our Values */}
+      {/* Why Choose Us Section */}
       <div className="bg-white py-5">
+        <Container>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-5"
+          >
+            <h2 className="fw-bold mb-3">Why Choose Us</h2>
+            <p className="text-muted">Your satisfaction is our priority</p>
+          </motion.div>
+
+          <Row className="g-4">
+            <Col md={6} lg={3}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0 * 0.1 }}
+                className="h-100"
+              >
+                <Card className="border-0 shadow-sm h-100">
+                  <Card.Body className="p-4 text-center">
+                    <div className="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style={{ width: '60px', height: '60px' }}>
+                      <FontAwesomeIcon icon={faShieldAlt} size="lg" />
+                    </div>
+                    <h5 className="fw-bold mb-3">100% Authentic</h5>
+                    <p className="text-muted small mb-0">Original products with quality guarantee</p>
+                  </Card.Body>
+                </Card>
+              </motion.div>
+            </Col>
+            <Col md={6} lg={3}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1 * 0.1 }}
+                className="h-100"
+              >
+                <Card className="border-0 shadow-sm h-100">
+                  <Card.Body className="p-4 text-center">
+                    <div className="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style={{ width: '60px', height: '60px' }}>
+                      <FontAwesomeIcon icon={faShippingFast} size="lg" />
+                    </div>
+                    <h5 className="fw-bold mb-3">Fast Delivery</h5>
+                    <p className="text-muted small mb-0">Quick delivery across Cameroon</p>
+                  </Card.Body>
+                </Card>
+              </motion.div>
+            </Col>
+            <Col md={6} lg={3}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 2 * 0.1 }}
+                className="h-100"
+              >
+                <Card className="border-0 shadow-sm h-100">
+                  <Card.Body className="p-4 text-center">
+                    <div className="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style={{ width: '60px', height: '60px' }}>
+                      <FontAwesomeIcon icon={faShieldAlt} size="lg" />
+                    </div>
+                    <h5 className="fw-bold mb-3">Secure Payment</h5>
+                    <p className="text-muted small mb-0">Pay after verification</p>
+                  </Card.Body>
+                </Card>
+              </motion.div>
+            </Col>
+            <Col md={6} lg={3}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 3 * 0.1 }}
+                className="h-100"
+              >
+                <Card className="border-0 shadow-sm h-100">
+                  <Card.Body className="p-4 text-center">
+                    <div className="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style={{ width: '60px', height: '60px' }}>
+                      <FontAwesomeIcon icon={faUsers} size="lg" />
+                    </div>
+                    <h5 className="fw-bold mb-3">24/7 Support</h5>
+                    <p className="text-muted small mb-0">Round-the-clock assistance</p>
+                  </Card.Body>
+                </Card>
+              </motion.div>
+            </Col>
+          </Row>
+        </Container>
+      </div>
+
+      {/* Our Values */}
+      <div className="bg-light py-5">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 30 }}

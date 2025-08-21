@@ -76,11 +76,17 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
             transition: 'all 0.3s ease',
           }}
         >
-          <Box sx={{ 
-            width: { xs: '100%', sm: 200 }, 
-            height: { xs: 200, sm: 200 }, 
-            overflow: 'hidden' 
-          }}>
+          <Box 
+            component={Link}
+            to={`/products/${product._id}`}
+            sx={{ 
+              width: { xs: '100%', sm: 200 }, 
+              height: { xs: 200, sm: 200 }, 
+              overflow: 'hidden',
+              display: 'block',
+              cursor: 'pointer'
+            }}
+          >
             <img
               src={product.thumbnailImage || (product.images && product.images[0]) || 'https://via.placeholder.com/200x200?text=No+Image'}
               alt={getProductName()}
@@ -187,7 +193,17 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
       >
         {/* Image Container */}
         <Box sx={{ position: 'relative', overflow: 'hidden' }}>
-          <Box sx={{ width: '100%', height: 240, overflow: 'hidden' }}>
+          <Box 
+            component={Link}
+            to={`/products/${product._id}`}
+            sx={{ 
+              width: '100%', 
+              height: 240, 
+              overflow: 'hidden',
+              display: 'block',
+              cursor: 'pointer'
+            }}
+          >
             <img
               src={product.thumbnailImage || (product.images && product.images[0]) || 'https://via.placeholder.com/280x240?text=No+Image'}
               alt={getProductName()}
@@ -369,25 +385,35 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
             <Button
               variant="contained"
               onClick={() => addToCart(product)}
-              sx={{ borderRadius: 2, flex: 1, py: 1.5, px: 3 }}
-            >
-              <ShoppingCart sx={{ mr: 1 }} /> Add to Cart
-            </Button>
-            
-            <Button
-              variant="contained"
-              onClick={handleWhatsAppClick}
-              sx={{
-                bgcolor: '#25D366',
-                '&:hover': { bgcolor: '#20B858' },
-                borderRadius: 2,
-                minWidth: 48,
-                py: 1.5,
-                px: 3
+              sx={{ 
+                borderRadius: 2, 
+                flex: 1, 
+                py: { xs: 1, sm: 1.5 }, 
+                px: { xs: 1, sm: 3 },
+                fontSize: { xs: '0.7rem', sm: '0.875rem' },
+                minWidth: 0
               }}
             >
-              <WhatsApp />
+              <ShoppingCart sx={{ mr: { xs: 0.5, sm: 1 }, fontSize: { xs: 14, sm: 20 } }} /> 
+              <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Add to Cart</Box>
+              <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>Add</Box>
             </Button>
+            
+            <IconButton
+              onClick={handleWhatsAppClick}
+              sx={{
+                color: '#25D366',
+                '&:hover': { 
+                  color: '#20B858',
+                  backgroundColor: 'rgba(37, 211, 102, 0.1)'
+                },
+                borderRadius: 2,
+                p: { xs: 0.5, sm: 1.5 },
+                minWidth: { xs: 28, sm: 40 }
+              }}
+            >
+              <WhatsApp sx={{ fontSize: { xs: 14, sm: 20 } }} />
+            </IconButton>
           </Box>
         </CardContent>
       </Card>

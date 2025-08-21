@@ -135,7 +135,7 @@ const ModernHome: React.FC = () => {
             backgroundPosition: 'center',
             backgroundAttachment: 'fixed',
             color: 'white',
-            py: { xs: 8, md: 12 },
+            py: { xs: 1, md: 10 },
             position: 'relative',
             overflow: 'hidden',
             transition: 'background-image 1s ease-in-out',
@@ -259,7 +259,7 @@ const ModernHome: React.FC = () => {
 
 
         {/* Categories Section */}
-        <Box sx={{ py: 8, background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+        <Box sx={{ py: { xs: 4, md: 8 }, background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
           <Container maxWidth="xl">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -495,7 +495,7 @@ const ModernHome: React.FC = () => {
         </Box>
 
         {/* {t('home.featured.title')} */}
-        <Container maxWidth="xl" sx={{ py: 8 }}>
+        <Container maxWidth="xl" sx={{ py: { xs: 4, md: 8 } }}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -529,7 +529,7 @@ const ModernHome: React.FC = () => {
             <Box
               sx={{
                 display: 'grid',
-                gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' },
+                gridTemplateColumns: { xs: '1fr 1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' },
                 gap: 3,
               }}
             >
@@ -547,95 +547,14 @@ const ModernHome: React.FC = () => {
           )}
         </Container>
 
-        {/* Why Choose Us Section */}
-        <Box sx={{ py: 8, backgroundColor: '#f8f9fa' }}>
-          <Container maxWidth="xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <Typography
-                variant="h3"
-                textAlign="center"
-                fontWeight="700"
-                sx={{ mb: 2 }}
-              >
-                Why Choose Us
-              </Typography>
-              <Typography
-                variant="h6"
-                textAlign="center"
-                color="text.secondary"
-                sx={{ mb: 6 }}
-              >
-                Your satisfaction is our priority
-              </Typography>
-            </motion.div>
 
-            <Box
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' },
-                gap: 4,
-              }}
-            >
-              {features.map((feature, index) => (
-                <motion.div
-                  key={feature.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                >
-                  <Card
-                    sx={{
-                      textAlign: 'center',
-                      p: 4,
-                      height: '100%',
-                      borderRadius: 3,
-                      border: '1px solid rgba(0, 0, 0, 0.05)',
-                      background: 'white',
-                      '&:hover': {
-                        transform: 'translateY(-8px)',
-                        boxShadow: '0 12px 30px rgba(0, 0, 0, 0.1)',
-                      },
-                      transition: 'all 0.3s ease',
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        width: 80,
-                        height: 80,
-                        borderRadius: '50%',
-                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        mx: 'auto',
-                        mb: 3,
-                      }}
-                    >
-                      <feature.icon sx={{ fontSize: 32, color: 'white' }} />
-                    </Box>
-                    <Typography variant="h6" fontWeight="600" sx={{ mb: 2 }}>
-                      {feature.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
-                      {feature.description}
-                    </Typography>
-                  </Card>
-                </motion.div>
-              ))}
-            </Box>
-          </Container>
-        </Box>
 
         {/* CTA Section */}
         <Box
           sx={{
             background: 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)',
             color: 'white',
-            py: 8,
+            py: { xs: 4, md: 8 },
           }}
         >
           <Container maxWidth="xl">
