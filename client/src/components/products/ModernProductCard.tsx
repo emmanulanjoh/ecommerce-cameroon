@@ -65,7 +65,8 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
         <Card
           sx={{
             display: 'flex',
-            height: 200,
+            flexDirection: { xs: 'column', sm: 'row' },
+            height: { xs: 'auto', sm: 200 },
             borderRadius: 3,
             overflow: 'hidden',
             boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
@@ -75,7 +76,11 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
             transition: 'all 0.3s ease',
           }}
         >
-          <Box sx={{ width: 200, height: 200, overflow: 'hidden' }}>
+          <Box sx={{ 
+            width: { xs: '100%', sm: 200 }, 
+            height: { xs: 200, sm: 200 }, 
+            overflow: 'hidden' 
+          }}>
             <img
               src={product.thumbnailImage || (product.images && product.images[0]) || 'https://via.placeholder.com/200x200?text=No+Image'}
               alt={getProductName()}
@@ -87,7 +92,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
             />
           </Box>
           <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-            <CardContent sx={{ flex: 1, p: 3, pb: 4 }}>
+            <CardContent sx={{ flex: 1, p: { xs: 2, sm: 3 }, pb: { xs: 3, sm: 4 } }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Chip
                   label={product.category}
@@ -98,7 +103,6 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
                     fontWeight: 600,
                   }}
                 />
-
               </Box>
               
               <Typography variant="h6" fontWeight="600" sx={{ mb: 1 }}>
@@ -115,12 +119,24 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
                 </Typography>
               )}
               
-              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mb: 2 }}>
+              <Box sx={{ 
+                display: 'flex', 
+                flexDirection: { xs: 'column', sm: 'row' },
+                gap: 1, 
+                alignItems: 'stretch',
+                mb: 2 
+              }}>
                 <Button
                   variant="contained"
                   startIcon={<ShoppingCart />}
                   onClick={() => addToCart(product)}
-                  sx={{ borderRadius: 2, flex: 1, py: 1.5, px: 3 }}
+                  sx={{ 
+                    borderRadius: 2, 
+                    flex: 1, 
+                    py: 1.5, 
+                    px: { xs: 2, sm: 3 },
+                    fontSize: { xs: '0.875rem', sm: '1rem' }
+                  }}
                 >
                   Add to Cart
                 </Button>
@@ -134,7 +150,9 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
                     '&:hover': { bgcolor: '#20B858' },
                     borderRadius: 2,
                     py: 1.5,
-                    px: 3
+                    px: { xs: 2, sm: 3 },
+                    fontSize: { xs: '0.875rem', sm: '1rem' },
+                    minWidth: { xs: 'auto', sm: 'auto' }
                   }}
                 >
                   WhatsApp
