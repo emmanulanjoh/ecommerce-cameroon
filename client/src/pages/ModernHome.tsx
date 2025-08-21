@@ -110,7 +110,7 @@ const ModernHome: React.FC = () => {
             backgroundPosition: 'center',
             backgroundAttachment: 'fixed',
             color: 'white',
-            py: { xs: 1, md: 10 },
+            py: { xs: 4, md: 12 },
             position: 'relative',
             overflow: 'hidden',
             transition: 'background-image 1s ease-in-out',
@@ -504,7 +504,7 @@ const ModernHome: React.FC = () => {
             <Box
               sx={{
                 display: 'grid',
-                gridTemplateColumns: { xs: '1fr 1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' },
+                gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' },
                 gap: 3,
               }}
             >
