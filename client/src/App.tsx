@@ -30,6 +30,7 @@ import AdminAccess from './pages/AdminAccess';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // Custom CSS
 import './App.css';
+import './styles/admin-responsive.css';
 
 const theme = createTheme({
   palette: {

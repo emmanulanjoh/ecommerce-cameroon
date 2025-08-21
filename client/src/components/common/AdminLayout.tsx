@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Layout } from 'antd';
 import { motion } from 'framer-motion';
 
@@ -31,9 +31,22 @@ const AdminLayout: React.FC<AdminLayoutProps> & {
   const [collapsed, setCollapsed] = useState(false);
   const [activeKey, setActiveKey] = useState('dashboard');
 
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768;
+      if (mobile) {
+        setCollapsed(true);
+      }
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, [setCollapsed]);
+
   return (
     <AdminLayoutContext.Provider value={{ collapsed, setCollapsed, activeKey, setActiveKey }}>
-      <Layout style={{ minHeight: '100vh' }}>
+      <Layout style={{ minHeight: '100vh', overflow: 'hidden' }}>
         {children}
       </Layout>
     </AdminLayoutContext.Provider>
@@ -41,51 +54,98 @@ const AdminLayout: React.FC<AdminLayoutProps> & {
 };
 
 const Sidebar: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { collapsed } = useAdminLayout();
+  const { collapsed, setCollapsed } = useAdminLayout();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   
   return (
-    <Layout.Sider
-      collapsible
-      collapsed={collapsed}
-      onCollapse={(collapsed) => {}}
-      theme="light"
-      style={{
-        overflow: 'auto',
-        height: '100vh',
-        position: 'fixed',
-        left: 0,
-        top: 0,
-        bottom: 0,
-        width: collapsed ? 80 : 280,
-        background: 'linear-gradient(180deg, #667eea 0%, #764ba2 100%)',
-        boxShadow: '2px 0 8px rgba(0,0,0,0.15)',
-      }}
-    >
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.3 }}
+    <>
+      {/* Mobile overlay */}
+      {isMobile && !collapsed && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            zIndex: 999,
+          }}
+          onClick={() => setCollapsed(true)}
+        />
+      )}
+      
+      <Layout.Sider
+        collapsible
+        collapsed={collapsed}
+        onCollapse={setCollapsed}
+        theme="light"
+        breakpoint="md"
+        collapsedWidth={isMobile ? 0 : 80}
+        style={{
+          overflow: 'auto',
+          height: '100vh',
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          bottom: 0,
+          zIndex: isMobile ? 1000 : 100,
+          width: collapsed ? (isMobile ? 0 : 80) : 280,
+          background: 'linear-gradient(180deg, #667eea 0%, #764ba2 100%)',
+          boxShadow: '2px 0 8px rgba(0,0,0,0.15)',
+          transform: isMobile && collapsed ? 'translateX(-100%)' : 'translateX(0)',
+          transition: 'all 0.3s ease',
+        }}
       >
-        {children}
-      </motion.div>
-    </Layout.Sider>
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          {children}
+        </motion.div>
+      </Layout.Sider>
+    </>
   );
 };
 
 const Header: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { collapsed } = useAdminLayout();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   
   return (
     <Layout.Header
       style={{
         position: 'fixed',
-        zIndex: 1,
+        zIndex: 100,
         width: '100%',
-        marginLeft: collapsed ? 80 : 280,
-        padding: '0 24px',
+        marginLeft: isMobile ? 0 : (collapsed ? 80 : 280),
+        padding: isMobile ? '0 16px' : '0 24px',
         background: 'linear-gradient(90deg, #f8f9fa 0%, #e9ecef 100%)',
         boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
         borderBottom: '1px solid #dee2e6',
+        transition: 'margin-left 0.3s ease',
       }}
     >
       <motion.div
@@ -102,13 +162,28 @@ const Header: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
 const Content: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { collapsed } = useAdminLayout();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   
   return (
-    <Layout style={{ marginLeft: collapsed ? 80 : 280 }}>
+    <Layout style={{ 
+      marginLeft: isMobile ? 0 : (collapsed ? 80 : 280),
+      transition: 'margin-left 0.3s ease'
+    }}>
       <Layout.Content
         style={{
-          margin: '88px 24px 24px',
+          margin: isMobile ? '88px 16px 24px' : '88px 24px 24px',
           overflow: 'initial',
+          minHeight: 'calc(100vh - 112px)',
         }}
       >
         <motion.div

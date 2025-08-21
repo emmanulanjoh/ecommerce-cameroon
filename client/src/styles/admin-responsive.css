@@ -1,0 +1,70 @@
+/* Admin Panel Responsive Styles */
+
+/* Mobile First Approach */
+@media (max-width: 767px) {
+  /* Adjust header for mobile */
+  .ant-layout-header {
+    margin-left: 0 !important;
+    padding: 0 12px !important;
+  }
+  
+  /* Adjust content for mobile */
+  .ant-layout-content {
+    margin: 88px 12px 24px !important;
+  }
+  
+  /* Make cards stack on mobile */
+  .ant-row .ant-col {
+    margin-bottom: 16px;
+  }
+  
+  /* Responsive tables */
+  .ant-table-wrapper {
+    overflow-x: auto;
+  }
+  
+  .ant-table {
+    min-width: 600px;
+  }
+  
+  /* Button adjustments */
+  .ant-btn-group .ant-btn {
+    margin-bottom: 8px;
+  }
+  
+  /* Modal adjustments */
+  .ant-modal {
+    margin: 16px;
+    max-width: calc(100vw - 32px);
+  }
+}
+
+/* Fix for Bootstrap forms in mobile */
+@media (max-width: 767px) {
+  .form-control,
+  .form-select {
+    font-size: 16px;
+  }
+  
+  .btn {
+    padding: 12px 16px;
+    font-size: 16px;
+  }
+  
+  .card {
+    margin-bottom: 16px;
+  }
+  
+  .row > .col,
+  .row > [class*="col-"] {
+    margin-bottom: 16px;
+  }
+  
+  /* Stack form columns on mobile */
+  .row .col-md-6,
+  .row .col-md-4,
+  .row .col-md-3 {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
