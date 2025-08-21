@@ -153,4 +153,12 @@ ProductSchema.virtual('formattedPrice').get(function() {
   }).format(this.price);
 });
 
+// Database indexes for performance
+ProductSchema.index({ category: 1, price: 1 });
+ProductSchema.index({ nameEn: 'text', nameFr: 'text', descriptionEn: 'text' });
+ProductSchema.index({ inStock: 1 });
+ProductSchema.index({ featured: 1 });
+ProductSchema.index({ createdAt: -1 });
+ProductSchema.index({ price: 1 });
+
 export default mongoose.model<IProduct>('Product', ProductSchema);

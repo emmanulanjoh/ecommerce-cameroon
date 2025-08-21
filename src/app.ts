@@ -31,6 +31,7 @@ import * as apiUploadRoutes from './routes/api/upload';
 // Import middleware
 import { setLanguage } from './middleware/language';
 import { corsMiddleware } from './middleware/cors';
+import { performanceMonitor } from './middleware/performance';
 
 // Create Express app
 const app = express();
@@ -113,6 +114,9 @@ app.use(flash());
 
 // i18n initialization
 app.use(i18n.init);
+
+// Performance monitoring
+app.use(performanceMonitor);
 
 // Language middleware
 app.use(setLanguage);

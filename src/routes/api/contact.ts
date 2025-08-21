@@ -1,12 +1,13 @@
 import express, { Request, Response } from 'express';
 import nodemailer from 'nodemailer';
+import { validateContact } from '../../middleware/validation';
 
 const router = express.Router();
 
 // @route   POST /api/contact
 // @desc    Send contact form email
 // @access  Public
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', validateContact, async (req: Request, res: Response) => {
   try {
     const { name, email, subject, message } = req.body;
 

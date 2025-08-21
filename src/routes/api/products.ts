@@ -7,6 +7,8 @@ export const router = express.Router();
 // Get all products with filtering
 router.get('/', async (req: Request, res: Response) => {
   try {
+    // Set cache headers
+    res.set('Cache-Control', 'public, max-age=300'); // 5 minutes
     const { 
       category, 
       featured, 
