@@ -4,8 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash, faSearch, faPlus, faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { Table } from 'react-bootstrap';
 import axios from 'axios';
-import { Product } from '../types';
-import ProductForm from './admin/ProductForm';
+import { Product } from '../../shared/types';
+import ProductForm from '../admin/ProductForm';
 
 
 

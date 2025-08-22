@@ -4,8 +4,9 @@ import AdminLayout from './AdminLayout';
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
 import AdminDashboard from './AdminDashboard';
-import ProductList from '../../pages/ProductList';
-import ReviewManagement from '../../pages/admin/ReviewManagement';
+import { ProductList } from '../products';
+import ReviewManagement from './ReviewManagement';
+import OrderManagement from './OrderManagement';
 import 'antd/dist/reset.css';
 
 const queryClient = new QueryClient();
@@ -17,6 +18,8 @@ const Admin: React.FC = () => {
     switch (activeKey) {
       case 'dashboard':
         return <AdminDashboard />;
+      case 'orders':
+        return <OrderManagement />;
       case 'products':
         return <ProductList />;
       case 'reviews':

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
-import { Product, Review, ReviewForm } from '../types';
+import { Product, Review, ReviewForm } from '../../shared/types';
+import { useUser } from '../auth';
 
 // Modern CSS styles
 const styles = {
@@ -291,6 +292,7 @@ const renderStars = (rating: number, interactive = false, onRate?: (rating: numb
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{id: string}>();
   const [product, setProduct] = useState<Product | null>(null);
+  const { user, isAuthenticated, token } = useUser();
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -388,11 +390,50 @@ const ProductDetail: React.FC = () => {
 
   const whatsappNumber = process.env.REACT_APP_BUSINESS_WHATSAPP_NUMBER || '237678830036';
 
-  const handleWhatsAppOrder = () => {
-    const message = product.inStock 
-      ? `Hello! I'm interested in ordering:%0A%0AProduct: ${product.nameEn}%0APrice: ${formatPrice(product.price)}%0ALink: ${window.location.href}%0A%0APlease confirm availability and delivery details.`
-      : `Hi! I would like to know when ${product.nameEn} will be back in stock.`;
-    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+  const handleWhatsAppOrder = async () => {
+    try {
+      if (isAuthenticated && product.inStock) {
+        const shippingAddress = {
+          name: user?.name || '',
+          phone: user?.phone || '',
+          street: user?.address?.street || '',
+          city: user?.address?.city || '',
+          region: user?.address?.region || '',
+          country: user?.address?.country || 'Cameroon'
+        };
+
+        const orderData = {
+          items: [{
+            product: product._id,
+            name: product.nameEn,
+            price: product.price,
+            quantity: 1,
+            image: product.images?.[0]
+          }],
+          shippingAddress,
+          notes: 'Product detail page order via WhatsApp'
+        };
+
+        const response = await axios.post('/api/orders', orderData, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        const orderId = response.data._id;
+        const message = `Hello! I'm interested in ordering:%0A%0AProduct: ${product.nameEn}%0APrice: ${formatPrice(product.price)}%0AOrder ID: ${orderId}%0ACustomer: ${user?.name}%0AEmail: ${user?.email}%0A%0APlease confirm availability and delivery details.`;
+        window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+      } else {
+        const message = product.inStock 
+          ? `Hello! I'm interested in ordering:%0A%0AProduct: ${product.nameEn}%0APrice: ${formatPrice(product.price)}%0ALink: ${window.location.href}%0A%0APlease confirm availability and delivery details.`
+          : `Hi! I would like to know when ${product.nameEn} will be back in stock.`;
+        window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+      }
+    } catch (error) {
+      console.error('Error creating order:', error);
+      const message = product.inStock 
+        ? `Hello! I'm interested in ordering:%0A%0AProduct: ${product.nameEn}%0APrice: ${formatPrice(product.price)}%0ALink: ${window.location.href}%0A%0APlease confirm availability and delivery details.`
+        : `Hi! I would like to know when ${product.nameEn} will be back in stock.`;
+      window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+    }
   };
 
   return (

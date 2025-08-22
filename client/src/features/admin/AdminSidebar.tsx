@@ -37,6 +37,11 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ onMenuSelect }) => {
       label: 'Dashboard',
     },
     {
+      key: 'orders',
+      icon: <ShoppingOutlined />,
+      label: 'Orders',
+    },
+    {
       key: 'products',
       icon: <ShoppingOutlined />,
       label: 'Products',

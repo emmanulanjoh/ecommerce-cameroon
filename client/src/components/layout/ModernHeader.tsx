@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useCart } from '../../context/CartContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { useUser } from '../../features/auth';
 import CartModal from '../cart/CartModal';
 import {
   AppBar,
@@ -15,6 +16,8 @@ import {
   Badge,
   InputBase,
   alpha,
+  Avatar,
+  Divider,
 } from '@mui/material';
 import {
   Search,
@@ -28,8 +31,10 @@ const ModernHeader: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [showCartModal, setShowCartModal] = useState(false);
   const { getTotalItems } = useCart();
-  const { language, setLanguage, t } = useLanguage();
+  const { t } = useLanguage();
+  const { user, isAuthenticated, logout } = useUser();
   const navigate = useNavigate();
+  const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -203,37 +208,64 @@ const ModernHeader: React.FC = () => {
               </Button>
             </Box>
 
-            {/* Language Switcher & Cart */}
+            {/* User Menu, Language Switcher & Cart */}
             <Box sx={{ display: 'flex', gap: 1, ml: 'auto', alignItems: 'center' }}>
-              {/* Language Switcher */}
-              <Button
-                onClick={() => setLanguage(language === 'en' ? 'fr' : 'en')}
-                sx={{
-                  minWidth: 'auto',
-                  px: 1.5,
-                  py: 0.5,
-                  fontSize: '0.875rem',
-                  fontWeight: 600,
-                  color: 'text.primary',
-                  border: '1px solid rgba(0,0,0,0.1)',
-                  borderRadius: 2,
-                  '&:hover': {
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    color: 'white',
-                  },
-                }}
-              >
-                {language === 'en' ? 'FR' : 'EN'}
-              </Button>
-              {/* Mobile Menu Button */}
-              <IconButton
-                sx={{ display: { xs: 'block', md: 'none' }, mr: 1 }}
-                onClick={handleMenuOpen}
-              >
-                <MenuIcon />
-              </IconButton>
-
+              {/* User Menu */}
+              {isAuthenticated ? (
+                <>
+                  <Button
+                    onClick={(e) => setUserMenuAnchor(e.currentTarget)}
+                    sx={{
+                      color: 'text.primary',
+                      fontWeight: 600,
+                      px: 2,
+                      textTransform: 'none',
+                      '&:hover': {
+                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        color: 'white',
+                      },
+                      borderRadius: 2,
+                    }}
+                  >
+                    <Avatar sx={{ width: 24, height: 24, mr: 1, fontSize: '0.75rem' }}>
+                      {user?.name?.charAt(0)}
+                    </Avatar>
+                    {user?.name}
+                  </Button>
+                  <Menu
+                    anchorEl={userMenuAnchor}
+                    open={Boolean(userMenuAnchor)}
+                    onClose={() => setUserMenuAnchor(null)}
+                  >
+                    <MenuItem onClick={() => { setUserMenuAnchor(null); navigate('/dashboard'); }}>
+                      Dashboard
+                    </MenuItem>
+                    <Divider />
+                    <MenuItem onClick={() => { setUserMenuAnchor(null); logout(); navigate('/'); }}>
+                      Logout
+                    </MenuItem>
+                  </Menu>
+                </>
+              ) : (
+                <Button
+                  component={Link}
+                  to="/auth"
+                  sx={{
+                    color: 'text.primary',
+                    fontWeight: 600,
+                    px: 2,
+                    '&:hover': {
+                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      color: 'white',
+                    },
+                    borderRadius: 2,
+                  }}
+                >
+                  Login
+                </Button>
+              )}
               
+              {/* Cart Button */}
               <IconButton
                 onClick={() => setShowCartModal(true)}
                 sx={{
@@ -247,6 +279,14 @@ const ModernHeader: React.FC = () => {
                 <Badge badgeContent={getTotalItems()} color="error">
                   <ShoppingCart />
                 </Badge>
+              </IconButton>
+              
+              {/* Mobile Menu Button */}
+              <IconButton
+                sx={{ display: { xs: 'block', md: 'none' } }}
+                onClick={handleMenuOpen}
+              >
+                <MenuIcon />
               </IconButton>
             </Box>
           </Toolbar>
@@ -280,6 +320,21 @@ const ModernHeader: React.FC = () => {
         <MenuItem onClick={handleMenuClose} component={Link} to="/faq">
           FAQ
         </MenuItem>
+        <Divider />
+        {isAuthenticated ? (
+          <>
+            <MenuItem onClick={() => { handleMenuClose(); navigate('/dashboard'); }}>
+              Dashboard
+            </MenuItem>
+            <MenuItem onClick={() => { handleMenuClose(); logout(); navigate('/'); }}>
+              Logout
+            </MenuItem>
+          </>
+        ) : (
+          <MenuItem onClick={handleMenuClose} component={Link} to="/auth">
+            Login
+          </MenuItem>
+        )}
       </Menu>
 
       <CartModal 

@@ -172,6 +172,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 // Import contact and chat routes
 import * as apiContactRoutes from './routes/api/contact';
 import * as apiChatRoutes from './routes/api/chat';
+import * as apiUsersRoutes from './routes/api/users';
+import * as apiOrdersRoutes from './routes/api/orders';
 
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {
@@ -191,6 +193,8 @@ app.use('/api/reviews', apiReviewRoutes.router);
 app.use('/api/upload', apiUploadRoutes.router);
 app.use('/api/contact', apiContactRoutes.router);
 app.use('/api/chat', apiChatRoutes.router);
+app.use('/api/users', apiUsersRoutes.router);
+app.use('/api/orders', apiOrdersRoutes.router);
 
 // API error handler
 app.use('/api', (err: Error, req: Request, res: Response, next: NextFunction) => {

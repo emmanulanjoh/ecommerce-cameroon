@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Product } from '../types';
+import axios from 'axios';
 
 interface CartItem {
   product: Product;
@@ -15,6 +16,7 @@ interface CartContextType {
   getTotalPrice: () => number;
   getTotalItems: () => number;
   generateWhatsAppMessage: () => string;
+  createOrder: (shippingAddress: any, isAuthenticated: boolean, userToken?: string) => Promise<string>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -117,6 +119,39 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     return encodeURIComponent(message);
   };
 
+  const createOrder = async (shippingAddress: any, isAuthenticated: boolean, userToken?: string): Promise<string> => {
+    try {
+      if (isAuthenticated && userToken) {
+        const orderData = {
+          items: cartItems.map(item => ({
+            product: item.product._id,
+            name: item.product.nameEn,
+            price: item.product.price,
+            quantity: item.quantity,
+            image: item.product.images?.[0]
+          })),
+          shippingAddress,
+          notes: 'Order placed via WhatsApp'
+        };
+
+        const response = await axios.post('/api/orders', orderData, {
+          headers: { Authorization: `Bearer ${userToken}` }
+        });
+
+        const orderId = response.data._id;
+        clearCart();
+        return orderId;
+      } else {
+        const tempOrderId = 'GUEST_' + Date.now();
+        clearCart();
+        return tempOrderId;
+      }
+    } catch (error) {
+      console.error('Error creating order:', error);
+      throw error;
+    }
+  };
+
   const value: CartContextType = {
     cartItems,
     addToCart,
@@ -125,7 +160,8 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     clearCart,
     getTotalPrice,
     getTotalItems,
-    generateWhatsAppMessage
+    generateWhatsAppMessage,
+    createOrder
   };
 
   return (

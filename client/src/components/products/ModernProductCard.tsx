@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useCart } from '../../context/CartContext';
+import { useUser } from '../../features/auth';
 import {
   Card,
   CardContent,
@@ -36,6 +37,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
   const [isFavorite, setIsFavorite] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const { addToCart } = useCart();
+  const { user, isAuthenticated, token } = useUser();
   
   const whatsappNumber = process.env.REACT_APP_BUSINESS_WHATSAPP_NUMBER || '237678830036';
   
@@ -50,9 +52,56 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
     return product.nameFr || product.nameEn;
   };
 
-  const handleWhatsAppClick = () => {
-    const message = `I'm interested in ${getProductName()} - ${formatPrice(product.price)}`;
-    window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
+  const handleWhatsAppClick = async () => {
+    try {
+      if (isAuthenticated) {
+        // Create order for logged-in users
+        const shippingAddress = {
+          name: user?.name || '',
+          phone: user?.phone || '',
+          street: user?.address?.street || '',
+          city: user?.address?.city || '',
+          region: user?.address?.region || '',
+          country: user?.address?.country || 'Cameroon'
+        };
+
+        const orderData = {
+          items: [{
+            product: product._id,
+            name: product.nameEn,
+            price: product.price,
+            quantity: 1,
+            image: product.images?.[0]
+          }],
+          shippingAddress,
+          notes: 'Single product order via WhatsApp'
+        };
+
+        const response = await fetch('/api/orders', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(orderData)
+        });
+
+        const order = await response.json();
+        const orderId = order._id;
+
+        const message = `I'm interested in ${getProductName()} - ${formatPrice(product.price)}%0A%0AOrder ID: ${orderId}%0ACustomer: ${user?.name}%0AEmail: ${user?.email}`;
+        window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
+      } else {
+        // Guest user - simple message
+        const message = `I'm interested in ${getProductName()} - ${formatPrice(product.price)}`;
+        window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
+      }
+    } catch (error) {
+      console.error('Error creating order:', error);
+      // Fallback to simple message
+      const message = `I'm interested in ${getProductName()} - ${formatPrice(product.price)}`;
+      window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
+    }
   };
 
   if (viewMode === 'list') {

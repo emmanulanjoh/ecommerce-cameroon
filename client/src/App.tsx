@@ -8,7 +8,8 @@ import PageTransition from './components/animations/PageTransition';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { LanguageProvider } from './context/LanguageContext';
-import ProtectedRoute from './components/common/ProtectedRoute';
+import { UserProvider } from './features/auth';
+import ProtectedRoute from './shared/components/common/ProtectedRoute';
 
 // Layout Components
 import ModernHeader from './components/layout/ModernHeader';
@@ -16,15 +17,14 @@ import ModernFooter from './components/layout/ModernFooter';
 
 // Pages
 import ModernHome from './pages/ModernHome';
-import PublicProductList from './pages/PublicProductList';
-import ProductDetail from './pages/ProductDetail';
+import { PublicProductList, ProductDetail } from './features/products';
 import ModernAbout from './pages/ModernAbout';
 import ModernContact from './pages/ModernContact';
 import ModernFAQ from './pages/ModernFAQ';
 import NotFound from './pages/NotFound';
-import Admin from './components/common/Admin';
-import Login from './pages/Login';
-import AdminAccess from './pages/AdminAccess';
+import { Admin } from './features/admin';
+import { Login, UserAuth } from './features/auth';
+import UserDashboard from './pages/UserDashboard';
 
 // Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -88,11 +88,14 @@ const AnimatedRoutes: React.FC = () => {
             </Container>
           </PageTransition>
         } />
-        <Route path="/admin-access" element={
+        <Route path="/auth" element={
           <PageTransition>
-            <Container>
-              <AdminAccess />
-            </Container>
+            <UserAuth />
+          </PageTransition>
+        } />
+        <Route path="/dashboard" element={
+          <PageTransition>
+            <UserDashboard />
           </PageTransition>
         } />
         {/* Admin Routes - No header/footer */}
@@ -120,13 +123,15 @@ const App: React.FC = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AuthProvider>
-        <CartProvider>
-          <LanguageProvider>
-            <Router>
-              <AppLayout />
-            </Router>
-          </LanguageProvider>
-        </CartProvider>
+        <UserProvider>
+          <CartProvider>
+            <LanguageProvider>
+              <Router>
+                <AppLayout />
+              </Router>
+            </LanguageProvider>
+          </CartProvider>
+        </UserProvider>
       </AuthProvider>
     </ThemeProvider>
   );

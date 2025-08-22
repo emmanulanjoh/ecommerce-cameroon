@@ -3,10 +3,10 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CssBaseline, Typography, Box } from '@mui/material';
 import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import ProductPageLayout from '../components/products/ProductPageLayout';
-import ProductFilters from '../components/products/ProductFilters';
-import ProductGrid from '../components/products/ProductGrid';
-import { Product } from '../types';
+import ProductPageLayout from '../../components/products/ProductPageLayout';
+import ProductFilters from '../../components/products/ProductFilters';
+import ProductGrid from '../../components/products/ProductGrid';
+import { Product } from '../../shared/types';
 
 const theme = createTheme({
   palette: {
