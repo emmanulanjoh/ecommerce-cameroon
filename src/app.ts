@@ -174,6 +174,7 @@ import * as apiContactRoutes from './routes/api/contact';
 import * as apiChatRoutes from './routes/api/chat';
 import * as apiUsersRoutes from './routes/api/users';
 import * as apiOrdersRoutes from './routes/api/orders';
+import * as googleAuthRoutes from './routes/api/google-auth';
 
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {
@@ -187,6 +188,7 @@ app.get('/health', (req: Request, res: Response) => {
 
 // API Routes for React frontend
 app.use('/api/auth', apiAuthRoutes.router);
+app.use('/api/auth', googleAuthRoutes.router);
 app.use('/api/products', apiProductRoutes.router);
 app.use('/api/categories', apiCategoryRoutes.router);
 app.use('/api/reviews', apiReviewRoutes.router);

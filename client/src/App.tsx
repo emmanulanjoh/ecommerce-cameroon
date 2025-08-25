@@ -23,7 +23,10 @@ import ModernContact from './pages/ModernContact';
 import ModernFAQ from './pages/ModernFAQ';
 import NotFound from './pages/NotFound';
 import { Admin } from './features/admin';
-import { Login, UserAuth } from './features/auth';
+import { UserAuth } from './features/auth';
+import ModernLogin from './features/auth/ModernLogin';
+import ModernRegister from './features/auth/ModernRegister';
+import AuthSuccess from './pages/AuthSuccess';
 import UserDashboard from './pages/UserDashboard';
 
 // Bootstrap CSS
@@ -83,9 +86,17 @@ const AnimatedRoutes: React.FC = () => {
         } />
         <Route path="/login" element={
           <PageTransition>
-            <Container>
-              <Login />
-            </Container>
+            <ModernLogin />
+          </PageTransition>
+        } />
+        <Route path="/register" element={
+          <PageTransition>
+            <ModernRegister />
+          </PageTransition>
+        } />
+        <Route path="/auth/success" element={
+          <PageTransition>
+            <AuthSuccess />
           </PageTransition>
         } />
         <Route path="/auth" element={

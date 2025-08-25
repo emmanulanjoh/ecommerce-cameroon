@@ -14,6 +14,8 @@ export interface IUser extends Document {
   };
   isAdmin: boolean;
   isActive: boolean;
+  googleId?: string;
+  isGoogleUser?: boolean;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(password: string): Promise<boolean>;
@@ -59,6 +61,14 @@ const UserSchema: Schema = new Schema(
     isActive: {
       type: Boolean,
       default: true
+    },
+    googleId: {
+      type: String,
+      sparse: true
+    },
+    isGoogleUser: {
+      type: Boolean,
+      default: false
     }
   },
   {

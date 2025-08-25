@@ -249,7 +249,7 @@ const ModernHeader: React.FC = () => {
               ) : (
                 <Button
                   component={Link}
-                  to="/auth"
+                  to="/login"
                   sx={{
                     color: 'text.primary',
                     fontWeight: 600,
@@ -331,7 +331,7 @@ const ModernHeader: React.FC = () => {
             </MenuItem>
           </>
         ) : (
-          <MenuItem onClick={handleMenuClose} component={Link} to="/auth">
+          <MenuItem onClick={handleMenuClose} component={Link} to="/login">
             Login
           </MenuItem>
         )}

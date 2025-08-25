@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Table, Tag, Button, Modal, Form, Select, Input, Space, Typography, Avatar } from 'antd';
+import { Card, Table, Tag, Button, Modal, Form, Select, Input, Space, Typography, Avatar, message } from 'antd';
 import { EyeOutlined, EditOutlined, UserOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
@@ -30,53 +30,15 @@ const OrderManagement: React.FC = () => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    const checkAdminAuth = async () => {
-      const token = localStorage.getItem('userToken');
-      if (!token) {
-        console.error('❌ No token found - admin login required');
-        setLoading(false);
-        return;
-      }
-      
-      try {
-        const response = await axios.get('/api/users/profile', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        
-        if (response.data.isAdmin) {
-          console.log('✅ Admin authenticated:', response.data.email);
-          fetchOrders();
-        } else {
-          console.error('❌ User is not admin');
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error('❌ Admin auth check failed:', error);
-        setLoading(false);
-      }
-    };
-    
-    checkAdminAuth();
+    fetchOrders();
   }, []);
 
   const fetchOrders = async () => {
     try {
-      const token = localStorage.getItem('userToken');
-      if (!token) {
-        console.error('❌ No authentication token found');
-        setLoading(false);
-        return;
-      }
-      
-      const response = await axios.get('/api/orders/admin/all?limit=50', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await axios.get('/api/orders/admin/all?limit=50');
       setOrders(response.data.orders || []);
     } catch (error: any) {
-      console.error('❌ Error:', error.response?.data || error.message);
-      if (error.response?.status === 401) {
-        console.error('Authentication failed - please login as admin');
-      }
+      console.error('❌ Error fetching orders:', error.response?.data || error.message);
     } finally {
       setLoading(false);
     }
@@ -85,19 +47,15 @@ const OrderManagement: React.FC = () => {
   const handleStatusUpdate = async (values: any) => {
     if (!selectedOrder) return;
     try {
-      const token = localStorage.getItem('userToken');
-      if (!token) {
-        console.error('No authentication token');
-        return;
-      }
-      
-      await axios.put(`/api/orders/admin/${selectedOrder._id}/status`, values, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      console.log('Updating order:', selectedOrder._id, 'with values:', values);
+      const response = await axios.put(`/api/orders/admin/${selectedOrder._id}/status`, values);
+      console.log('Update response:', response.data);
+      message.success('Order updated successfully!');
       fetchOrders();
       setModalVisible(false);
     } catch (error: any) {
       console.error('Error updating order:', error.response?.data || error.message);
+      message.error('Failed to update order: ' + (error.response?.data?.message || error.message));
     }
   };
 
@@ -136,12 +94,10 @@ const OrderManagement: React.FC = () => {
         <div style={{ marginBottom: 16 }}>
           <Text>Orders found: {orders.length}</Text>
           <br />
-          <Text type="secondary">Token: {localStorage.getItem('userToken') ? '✅ Present' : '❌ Missing'}</Text>
+          <Button onClick={fetchOrders} loading={loading} style={{ marginTop: 10 }}>Refresh Orders</Button>
           {orders.length === 0 && !loading && (
             <div style={{ padding: 20, textAlign: 'center' }}>
-              <Text type="secondary">No orders found. Check browser console (F12) for errors.</Text>
-              <br />
-              <Button onClick={fetchOrders} style={{ marginTop: 10 }}>Retry</Button>
+              <Text type="secondary">No orders found.</Text>
             </div>
           )}
         </div>

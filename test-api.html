@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Admin API</title>
+</head>
+<body>
+    <h1>Admin API Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        async function testAPI() {
+            const results = document.getElementById('results');
+            
+            try {
+                // First login
+                results.innerHTML += '<p>🔐 Logging in as admin...</p>';
+                
+                const loginResponse = await fetch('http://localhost:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@findall.cm',
+                        password: 'admin123'
+                    })
+                });
+                
+                if (!loginResponse.ok) {
+                    throw new Error(`Login failed: ${loginResponse.status}`);
+                }
+                
+                const loginData = await loginResponse.json();
+                results.innerHTML += '<p>✅ Login successful</p>';
+                results.innerHTML += `<p>Token: ${loginData.token.substring(0, 20)}...</p>`;
+                
+                // Now test orders endpoint
+                results.innerHTML += '<p>📦 Fetching orders...</p>';
+                
+                const ordersResponse = await fetch('http://localhost:5000/api/orders/admin/all?limit=50', {
+                    headers: {
+                        'Authorization': `Bearer ${loginData.token}`
+                    }
+                });
+                
+                if (!ordersResponse.ok) {
+                    throw new Error(`Orders API failed: ${ordersResponse.status}`);
+                }
+                
+                const ordersData = await ordersResponse.json();
+                results.innerHTML += `<p>✅ Orders fetched: ${ordersData.orders?.length || 0} orders</p>`;
+                results.innerHTML += `<pre>${JSON.stringify(ordersData, null, 2)}</pre>`;
+                
+            } catch (error) {
+                results.innerHTML += `<p>❌ Error: ${error.message}</p>`;
+                console.error('Full error:', error);
+            }
+        }
+        
+        // Run test on page load
+        testAPI();
+    </script>
+</body>
+</html>

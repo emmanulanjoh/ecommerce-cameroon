@@ -27,6 +27,78 @@ const authMiddleware = async (req: Request, res: Response, next: Function) => {
   }
 };
 
+// ADMIN ROUTES - Must come before parameterized routes
+// @route   GET /api/orders/admin/all
+// @desc    Get all orders (Admin only)
+// @access  Public (handled by admin route protection)
+router.get('/admin/all', async (req: Request, res: Response) => {
+  try {
+    console.log('📦 Admin orders endpoint called');
+
+    const { status, page = 1, limit = 10 } = req.query;
+    const query: any = {};
+    
+    if (status && status !== 'all') {
+      query.status = status;
+    }
+
+    const orders = await Order.find(query)
+      .populate('user', 'name email phone')
+      .populate('items.product', 'nameEn nameFr images price')
+      .sort({ createdAt: -1 })
+      .limit(Number(limit))
+      .skip((Number(page) - 1) * Number(limit));
+
+    const total = await Order.countDocuments(query);
+
+    console.log(`✅ Found ${orders.length} orders for admin`);
+
+    res.json({
+      orders,
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        total,
+        pages: Math.ceil(total / Number(limit))
+      }
+    });
+  } catch (error: any) {
+    console.error('Get admin orders error:', error);
+    res.status(500).json({ message: 'Failed to fetch orders' });
+  }
+});
+
+// @route   PUT /api/orders/admin/:id/status
+// @desc    Update order status (Admin only)
+// @access  Public (handled by admin route protection)
+router.put('/admin/:id/status', async (req: Request, res: Response) => {
+  try {
+    const { status, trackingNumber, notes } = req.body;
+    console.log(`📝 Updating order ${req.params.id} status to: ${status}`);
+    
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    order.status = status;
+    if (trackingNumber) order.trackingNumber = trackingNumber;
+    if (notes) order.notes = notes;
+    if (status === 'delivered') order.deliveredAt = new Date();
+
+    await order.save();
+    await order.populate('user', 'name email phone');
+    await order.populate('items.product', 'nameEn nameFr images price');
+
+    console.log(`✅ Order ${req.params.id} updated successfully`);
+    res.json(order);
+  } catch (error: any) {
+    console.error('Update order status error:', error);
+    res.status(500).json({ message: 'Failed to update order status' });
+  }
+});
+
+// USER ROUTES
 // @route   GET /api/orders
 // @desc    Get user orders
 // @access  Private
@@ -96,81 +168,6 @@ router.get('/:id', authMiddleware, async (req: Request, res: Response) => {
   }
 });
 
-// @route   GET /api/orders/admin/all
-// @desc    Get all orders (Admin only)
-// @access  Private/Admin
-router.get('/admin/all', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const user = (req as any).user;
-    if (!user.isAdmin) {
-      return res.status(403).json({ message: 'Access denied. Admin only.' });
-    }
-    console.log('📦 Admin orders endpoint called by:', user.email);
 
-    const { status, page = 1, limit = 10 } = req.query;
-    const query: any = {};
-    
-    if (status && status !== 'all') {
-      query.status = status;
-    }
-
-    const orders = await Order.find(query)
-      .populate('user', 'name email phone')
-      .populate('items.product', 'nameEn nameFr images price')
-      .sort({ createdAt: -1 })
-      .limit(Number(limit))
-      .skip((Number(page) - 1) * Number(limit));
-
-    const total = await Order.countDocuments(query);
-
-    res.json({
-      orders,
-      pagination: {
-        page: Number(page),
-        limit: Number(limit),
-        total,
-        pages: Math.ceil(total / Number(limit))
-      }
-    });
-  } catch (error: any) {
-    console.error('Get admin orders error:', error);
-    res.status(500).json({ message: 'Failed to fetch orders' });
-  }
-});
-
-// @route   PUT /api/orders/admin/:id/status
-// @desc    Update order status (Admin only)
-// @access  Private/Admin
-router.put('/admin/:id/status', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const user = (req as any).user;
-    if (!user.isAdmin) {
-      return res.status(403).json({ message: 'Access denied. Admin only.' });
-    }
-
-    const { status, trackingNumber, notes } = req.body;
-    console.log(`📝 Updating order ${req.params.id} status to: ${status}`);
-    
-    const order = await Order.findById(req.params.id);
-    if (!order) {
-      return res.status(404).json({ message: 'Order not found' });
-    }
-
-    order.status = status;
-    if (trackingNumber) order.trackingNumber = trackingNumber;
-    if (notes) order.notes = notes;
-    if (status === 'delivered') order.deliveredAt = new Date();
-
-    await order.save();
-    await order.populate('user', 'name email phone');
-    await order.populate('items.product', 'nameEn nameFr images price');
-
-    console.log(`✅ Order ${req.params.id} updated successfully`);
-    res.json(order);
-  } catch (error: any) {
-    console.error('Update order status error:', error);
-    res.status(500).json({ message: 'Failed to update order status' });
-  }
-});
 
 export { router };
