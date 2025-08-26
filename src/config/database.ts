@@ -18,12 +18,7 @@ const connectDB = async (): Promise<void> => {
     console.log('🔄 Connecting to MongoDB...');
     console.log('📍 URI:', mongoURI.replace(/\/\/([^:]+):([^@]+)@/, '//***:***@'));
     
-    await mongoose.connect(mongoURI, {
-      maxPoolSize: 10,
-      serverSelectionTimeoutMS: 30000,
-      socketTimeoutMS: 45000,
-      connectTimeoutMS: 30000
-    });
+    await mongoose.connect(mongoURI);
     
     console.log('✅ MongoDB Connected Successfully');
     console.log('🗄️  Database:', mongoose.connection.db.databaseName);

@@ -4,7 +4,7 @@
   "description": "A modern e-commerce platform for Cameroon with React frontend and Express backend",
   "main": "app.js",
   "scripts": {
-    "start": "node dist/server.js",
+    "start": "npm run build:ts && node dist/server.js",
     "build": "tsc && npm run postbuild",
     "build:ts": "tsc",
     "build:client": "cd client && npm install && npm run build",
