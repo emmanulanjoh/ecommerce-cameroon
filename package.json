@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node dist/server.js",
-    "build": "tsc",
+    "build": "tsc && npm run postbuild",
     "build:ts": "tsc",
     "build:client": "cd client && npm install && npm run build",
     "postbuild": "cd client && npm install && CI=false npm run build",
