@@ -167,12 +167,19 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-// Import contact and chat routes
-import * as apiContactRoutes from './routes/api/contact';
-import * as apiChatRoutes from './routes/api/chat';
-import * as apiUsersRoutes from './routes/api/users';
-import * as apiOrdersRoutes from './routes/api/orders';
-import * as googleAuthRoutes from './routes/api/google-auth';
+// Import contact and chat routes with error handling
+try {
+  console.log('📥 Importing route modules...');
+  var apiContactRoutes = require('./routes/api/contact');
+  var apiChatRoutes = require('./routes/api/chat');
+  var apiUsersRoutes = require('./routes/api/users');
+  var apiOrdersRoutes = require('./routes/api/orders');
+  var googleAuthRoutes = require('./routes/api/google-auth');
+  console.log('✅ All route modules imported successfully');
+} catch (error) {
+  console.error('❌ Error importing route modules:', error);
+  process.exit(1);
+}
 
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {
@@ -182,6 +189,21 @@ app.get('/health', (req: Request, res: Response) => {
     environment: process.env.NODE_ENV,
     database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
   });
+});
+
+// Simple test route
+app.get('/api/test', (req: Request, res: Response) => {
+  res.json({ message: 'API is working', timestamp: new Date().toISOString() });
+});
+
+// Test users route directly
+app.get('/api/users/direct-test', (req: Request, res: Response) => {
+  res.json({ message: 'Direct users route working' });
+});
+
+// Test auth route directly
+app.get('/api/auth/direct-test', (req: Request, res: Response) => {
+  res.json({ message: 'Direct auth route working' });
 });
 
 // Debug route registration
