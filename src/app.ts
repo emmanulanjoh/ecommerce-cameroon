@@ -78,10 +78,8 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 app.use('/webhook/', limiter);
 
-// CORS middleware for development
-if (process.env.NODE_ENV !== 'production') {
-  app.use(corsMiddleware);
-}
+// CORS middleware for all environments
+app.use(corsMiddleware);
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
@@ -186,6 +184,10 @@ app.get('/health', (req: Request, res: Response) => {
   });
 });
 
+// Debug route registration
+console.log('🔗 Registering API routes...');
+console.log('Environment:', process.env.NODE_ENV);
+
 // API Routes for React frontend
 app.use('/api/auth', apiAuthRoutes.router);
 app.use('/api/auth', googleAuthRoutes.router);
@@ -197,6 +199,8 @@ app.use('/api/contact', apiContactRoutes.router);
 app.use('/api/chat', apiChatRoutes.router);
 app.use('/api/users', apiUsersRoutes.router);
 app.use('/api/orders', apiOrdersRoutes.router);
+
+console.log('✅ API routes registered successfully');
 
 // API error handler
 app.use('/api', (err: Error, req: Request, res: Response, next: NextFunction) => {
