@@ -22,7 +22,7 @@ import ModernAbout from './pages/ModernAbout';
 import ModernContact from './pages/ModernContact';
 import ModernFAQ from './pages/ModernFAQ';
 import NotFound from './pages/NotFound';
-import { Admin } from './features/admin';
+import { Admin, AdminLogin } from './features/admin';
 import { UserAuth } from './features/auth';
 import ModernLogin from './features/auth/ModernLogin';
 import ModernRegister from './features/auth/ModernRegister';
@@ -107,6 +107,12 @@ const AnimatedRoutes: React.FC = () => {
         <Route path="/dashboard" element={
           <PageTransition>
             <UserDashboard />
+          </PageTransition>
+        } />
+        {/* Admin Login - No header/footer */}
+        <Route path="/admin/login" element={
+          <PageTransition>
+            <AdminLogin />
           </PageTransition>
         } />
         {/* Admin Routes - No header/footer */}
