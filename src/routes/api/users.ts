@@ -5,6 +5,18 @@ import { validateContact } from '../../middleware/validation';
 
 const router = express.Router();
 
+// @route   GET /api/users/test
+// @desc    Test endpoint
+// @access  Public
+router.get('/test', (req: Request, res: Response) => {
+  res.json({
+    message: 'Users API is working',
+    environment: process.env.NODE_ENV,
+    timestamp: new Date().toISOString(),
+    mongoConnected: require('mongoose').connection.readyState === 1
+  });
+});
+
 // Generate JWT Token
 const generateToken = (userId: string): string => {
   return jwt.sign({ userId }, process.env.JWT_SECRET || 'fallback_secret', {
@@ -17,7 +29,20 @@ const generateToken = (userId: string): string => {
 // @access  Public
 router.post('/register', async (req: Request, res: Response) => {
   try {
+    console.log('🔍 Registration attempt:', { 
+      body: req.body, 
+      env: process.env.NODE_ENV,
+      mongoConnected: require('mongoose').connection.readyState === 1
+    });
+    
     const { name, email, phone, password } = req.body;
+
+    // Validate required fields
+    if (!name || !email || !password) {
+      return res.status(400).json({ 
+        message: 'Name, email, and password are required' 
+      });
+    }
 
     // Check if user exists
     const existingUser = await User.findOne({ email });
@@ -34,6 +59,7 @@ router.post('/register', async (req: Request, res: Response) => {
     });
 
     await user.save();
+    console.log('✅ User created successfully:', user._id);
 
     // Generate token
     const token = generateToken(user._id);
@@ -50,9 +76,11 @@ router.post('/register', async (req: Request, res: Response) => {
       }
     });
   } catch (error: any) {
-    console.error('Registration error:', error);
+    console.error('❌ Registration error:', error);
+    console.error('Error stack:', error.stack);
     res.status(500).json({ 
-      message: error.message || 'Registration failed' 
+      message: error.message || 'Registration failed',
+      error: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 });
