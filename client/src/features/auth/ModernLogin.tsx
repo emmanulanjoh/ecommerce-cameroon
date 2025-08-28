@@ -39,13 +39,40 @@ const ModernLogin: React.FC = () => {
     <Box
       sx={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: '#ffffff',
         display: 'flex',
         alignItems: 'center',
         py: 4,
       }}
     >
-      <Container maxWidth="sm">
+      <Container maxWidth="lg">
+        <Box sx={{ display: 'flex', minHeight: '80vh', gap: 4, alignItems: 'center' }}>
+          {/* Background Image Placeholder */}
+          <Box
+            sx={{
+              flex: 1,
+              display: { xs: 'none', md: 'flex' },
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 4,
+              background: '#f8f9fa',
+              border: '2px dashed #e0e0e0',
+              minHeight: '500px',
+              position: 'relative',
+            }}
+          >
+            <Box sx={{ textAlign: 'center', color: '#666' }}>
+              <Typography variant="h6" sx={{ mb: 1 }}>
+                Background Image
+              </Typography>
+              <Typography variant="body2">
+                Placeholder for login background
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* Login Form */}
+          <Box sx={{ flex: 1, maxWidth: { xs: '100%', md: '400px' } }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -69,28 +96,59 @@ const ModernLogin: React.FC = () => {
               </Typography>
             </Box>
 
-            <Button
-              fullWidth
-              variant="outlined"
-              size="large"
-              startIcon={<Google />}
-              onClick={handleGoogleLogin}
-              sx={{
-                mb: 3,
-                py: 1.5,
-                borderRadius: 3,
-                textTransform: 'none',
-                fontSize: '1rem',
-                borderColor: '#dadce0',
-                color: '#3c4043',
-                '&:hover': {
-                  backgroundColor: '#f8f9fa',
-                  borderColor: '#dadce0',
-                },
-              }}
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 300 }}
             >
-              Continue with Google
-            </Button>
+              <Button
+                fullWidth
+                variant="outlined"
+                size="large"
+                startIcon={
+                  <motion.div
+                    animate={{ rotate: [0, 360] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                  >
+                    <Box
+                      sx={{
+                        width: 20,
+                        height: 20,
+                        borderRadius: '50%',
+                        background: 'linear-gradient(45deg, #4285F4 25%, #34A853 25%, #34A853 50%, #FBBC05 50%, #FBBC05 75%, #EA4335 75%)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                        color: 'white',
+                        mr: 1
+                      }}
+                    >
+                      G
+                    </Box>
+                  </motion.div>
+                }
+                onClick={handleGoogleLogin}
+                sx={{
+                  mb: 3,
+                  py: 1.5,
+                  borderRadius: 3,
+                  textTransform: 'none',
+                  fontSize: '1rem',
+                  borderColor: '#dadce0',
+                  color: '#3c4043',
+                  backgroundColor: '#fff',
+                  '&:hover': {
+                    backgroundColor: '#f8f9fa',
+                    borderColor: '#dadce0',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                  },
+                }}
+              >
+                Continue with Google
+              </Button>
+            </motion.div>
 
             <Divider sx={{ my: 3 }}>
               <Typography variant="body2" color="text.secondary">
@@ -181,6 +239,8 @@ const ModernLogin: React.FC = () => {
             </Box>
           </Paper>
         </motion.div>
+          </Box>
+        </Box>
       </Container>
     </Box>
   );

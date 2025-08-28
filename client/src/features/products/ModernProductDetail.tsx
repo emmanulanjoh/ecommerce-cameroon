@@ -69,6 +69,7 @@ const ModernProductDetail: React.FC = () => {
         // Fetch reviews
         const reviewsRes = await axios.get(`/api/reviews/product/${id}`);
         setReviews(reviewsRes.data || []);
+
       } catch (err) {
         setError('Failed to load product');
       } finally {
@@ -123,6 +124,8 @@ const ModernProductDetail: React.FC = () => {
   const averageRating = reviews.length > 0 
     ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length 
     : 0;
+
+
 
   return (
     <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
@@ -260,6 +263,8 @@ const ModernProductDetail: React.FC = () => {
               </Typography>
             </Box>
 
+
+
             {/* Price */}
             <Typography variant="h4" color="primary.main" fontWeight="700" sx={{ 
               mb: 2,
@@ -339,6 +344,8 @@ const ModernProductDetail: React.FC = () => {
             </Grid>
           </CardContent>
         </Card>
+
+
 
         {/* Reviews Preview */}
         {reviews.length > 0 && (

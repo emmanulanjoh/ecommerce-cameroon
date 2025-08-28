@@ -27,12 +27,10 @@ import { getCategoryBackground } from './CategoryColors';
 
 interface ModernProductCardProps {
   product: Product;
-  viewMode?: 'grid' | 'list';
 }
 
 const ModernProductCard: React.FC<ModernProductCardProps> = ({ 
-  product, 
-  viewMode = 'grid' 
+  product
 }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -104,120 +102,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
     }
   };
 
-  if (viewMode === 'list') {
-    return (
-      <motion.div
-        whileHover={{ scale: 1.02 }}
-        transition={{ duration: 0.2 }}
-      >
-        <Card
-          sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', sm: 'row' },
-            height: { xs: 'auto', sm: 200 },
-            borderRadius: 3,
-            overflow: 'hidden',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-            '&:hover': {
-              boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
-            },
-            transition: 'all 0.3s ease',
-          }}
-        >
-          <Box 
-            component={Link}
-            to={`/products/${product._id}`}
-            sx={{ 
-              width: { xs: '100%', sm: 200 }, 
-              height: { xs: 200, sm: 200 }, 
-              overflow: 'hidden',
-              display: 'block',
-              cursor: 'pointer'
-            }}
-          >
-            <img
-              src={product.thumbnailImage || (product.images && product.images[0]) || 'https://via.placeholder.com/200x200?text=No+Image'}
-              alt={getProductName()}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = 'https://via.placeholder.com/200x200?text=No+Image';
-              }}
-            />
-          </Box>
-          <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-            <CardContent sx={{ flex: 1, p: { xs: 2, sm: 3 }, pb: { xs: 3, sm: 4 } }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Chip
-                  label={product.category}
-                  size="small"
-                  sx={{
-                    background: getCategoryBackground(product.category),
-                    color: 'white',
-                    fontWeight: 600,
-                  }}
-                />
-              </Box>
-              
-              <Typography variant="h6" fontWeight="600" sx={{ mb: 1 }}>
-                {getProductName()}
-              </Typography>
-              
-              <Typography variant="h5" color="primary.main" fontWeight="700" sx={{ mb: 1 }}>
-                {formatPrice(product.price)}
-              </Typography>
-              
-              {product.warrantyMonths && product.warrantyMonths > 0 && (
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
-                  🛡️ {product.warrantyMonths} month{product.warrantyMonths > 1 ? 's' : ''} warranty
-                </Typography>
-              )}
-              
-              <Box sx={{ 
-                display: 'flex', 
-                flexDirection: { xs: 'column', sm: 'row' },
-                gap: 1, 
-                alignItems: 'stretch',
-                mb: 2 
-              }}>
-                <Button
-                  variant="contained"
-                  startIcon={<ShoppingCart />}
-                  onClick={() => addToCart(product)}
-                  sx={{ 
-                    borderRadius: 2, 
-                    flex: 1, 
-                    py: 1.5, 
-                    px: { xs: 2, sm: 3 },
-                    fontSize: { xs: '0.875rem', sm: '1rem' }
-                  }}
-                >
-                  Add to Cart
-                </Button>
-                
-                <Button
-                  variant="contained"
-                  startIcon={<WhatsApp />}
-                  onClick={handleWhatsAppClick}
-                  sx={{
-                    bgcolor: '#25D366',
-                    '&:hover': { bgcolor: '#20B858' },
-                    borderRadius: 2,
-                    py: 1.5,
-                    px: { xs: 2, sm: 3 },
-                    fontSize: { xs: '0.875rem', sm: '1rem' },
-                    minWidth: { xs: 'auto', sm: 'auto' }
-                  }}
-                >
-                  WhatsApp
-                </Button>
-              </Box>
-            </CardContent>
-          </Box>
-        </Card>
-      </motion.div>
-    );
-  }
+
 
   return (
     <motion.div

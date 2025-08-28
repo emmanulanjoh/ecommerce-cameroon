@@ -7,7 +7,7 @@ import {
   CircularProgress,
   Alert,
 } from '@mui/material';
-import { ViewModule, ViewList, Refresh } from '@mui/icons-material';
+import { Refresh } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 import ModernProductCard from './ModernProductCard';
 import { Product } from '../../types';
@@ -17,8 +17,6 @@ interface ProductGridProps {
   loading: boolean;
   error: string | null;
   selectedCategory: string;
-  viewMode: 'grid' | 'list';
-  setViewMode: (mode: 'grid' | 'list') => void;
   onRefresh: () => void;
 }
 
@@ -27,8 +25,6 @@ const ProductGrid: React.FC<ProductGridProps> = ({
   loading,
   error,
   selectedCategory,
-  viewMode,
-  setViewMode,
   onRefresh,
 }) => {
   const containerVariants = {
@@ -140,24 +136,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
             Refresh
           </Button>
 
-          <Box sx={{ display: 'flex', border: 1, borderColor: 'divider', borderRadius: 2 }}>
-            <Button
-              variant={viewMode === 'grid' ? 'contained' : 'text'}
-              size="small"
-              onClick={() => setViewMode('grid')}
-              sx={{ minWidth: { xs: 32, sm: 40 }, borderRadius: '8px 0 0 8px' }}
-            >
-              <ViewModule sx={{ fontSize: { xs: 18, sm: 24 } }} />
-            </Button>
-            <Button
-              variant={viewMode === 'list' ? 'contained' : 'text'}
-              size="small"
-              onClick={() => setViewMode('list')}
-              sx={{ minWidth: { xs: 32, sm: 40 }, borderRadius: '0 8px 8px 0' }}
-            >
-              <ViewList sx={{ fontSize: { xs: 18, sm: 24 } }} />
-            </Button>
-          </Box>
+
         </Box>
       </Box>
 
@@ -191,19 +170,17 @@ const ProductGrid: React.FC<ProductGridProps> = ({
             <Box
               sx={{
                 display: 'grid',
-                gridTemplateColumns: viewMode === 'grid' 
-                  ? {
-                      xs: 'repeat(2, 1fr)', // Exactly 2 columns on mobile
-                      sm: 'repeat(auto-fill, minmax(250px, 1fr))', // Auto-fill on larger screens
-                      md: 'repeat(auto-fill, minmax(280px, 1fr))'
-                    }
-                  : '1fr',
+                gridTemplateColumns: {
+                  xs: 'repeat(2, 1fr)', // Exactly 2 columns on mobile
+                  sm: 'repeat(auto-fill, minmax(250px, 1fr))', // Auto-fill on larger screens
+                  md: 'repeat(auto-fill, minmax(280px, 1fr))'
+                },
                 gap: { xs: 1.5, sm: 2, md: 3 }, // Smaller gaps on mobile
               }}
             >
               {products.map((product) => (
                 <motion.div key={product._id} variants={itemVariants}>
-                  <ModernProductCard product={product} viewMode={viewMode} />
+                  <ModernProductCard product={product} />
                 </motion.div>
               ))}
             </Box>

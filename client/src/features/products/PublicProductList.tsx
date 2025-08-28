@@ -59,7 +59,7 @@ const PublicProductList: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [priceRange, setPriceRange] = useState<[number, number]>([50, 50000000]);
   const [inStockOnly, setInStockOnly] = useState<boolean>(false);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+
   const [categories, setCategories] = useState<string[]>([]);
   const [searchParams] = useSearchParams();
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
@@ -69,8 +69,16 @@ const PublicProductList: React.FC = () => {
   useEffect(() => {
     fetchProducts();
     const categoryParam = searchParams.get('category');
+    const searchParam = searchParams.get('search');
     if (categoryParam) {
       setSelectedCategory(categoryParam);
+    } else {
+      setSelectedCategory('');
+    }
+    if (searchParam) {
+      setSearchTerm(searchParam);
+    } else {
+      setSearchTerm('');
     }
   }, [searchParams]);
 
@@ -221,8 +229,6 @@ const PublicProductList: React.FC = () => {
             loading={loading}
             error={error}
             selectedCategory={selectedCategory}
-            viewMode={viewMode}
-            setViewMode={setViewMode}
             onRefresh={fetchProducts}
           />
         </Box>

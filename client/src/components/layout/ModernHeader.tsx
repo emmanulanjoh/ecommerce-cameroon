@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useCart } from '../../context/CartContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useUser } from '../../features/auth';
-import CartModal from '../cart/CartModal';
+import ModernCartModal from '../cart/ModernCartModal';
 import {
   AppBar,
   Toolbar,
@@ -122,12 +122,14 @@ const ModernHeader: React.FC = () => {
                 <Search sx={{ color: 'text.secondary', fontSize: { xs: 18, md: 24 } }} />
               </Box>
               <InputBase
-                placeholder="Search..."
+                placeholder="Search products..."
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
                     const query = (e.target as HTMLInputElement).value;
                     if (query.trim()) {
-                      navigate(`/products?search=${encodeURIComponent(query)}`);
+                      navigate(`/products?search=${encodeURIComponent(query.trim())}`);
+                    } else {
+                      navigate('/products');
                     }
                   }
                 }}
@@ -362,9 +364,9 @@ const ModernHeader: React.FC = () => {
         )}
       </Menu>
 
-      <CartModal 
-        show={showCartModal} 
-        onHide={() => setShowCartModal(false)} 
+      <ModernCartModal 
+        open={showCartModal} 
+        onClose={() => setShowCartModal(false)} 
       />
     </>
   );
