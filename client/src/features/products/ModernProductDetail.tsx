@@ -170,7 +170,7 @@ const ModernProductDetail: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
-              src={product.images?.[selectedImage] || '/placeholder.jpg'}
+              src={product.images?.[selectedImage] || '/images/placeholder.jpg'}
               alt={product.nameEn}
               style={{
                 width: '100%',
@@ -238,6 +238,10 @@ const ModernProductDetail: React.FC = () => {
                     src={img}
                     alt={`${product.nameEn} ${index + 1}`}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/images/placeholder.jpg';
+                    }}
                   />
                 </Box>
               ))}
@@ -407,9 +411,13 @@ const ModernProductDetail: React.FC = () => {
                     onClick={() => navigate(`/products/${relatedProduct._id}`)}
                   >
                     <img
-                      src={relatedProduct.images?.[0] || '/placeholder.jpg'}
+                      src={relatedProduct.images?.[0] || '/images/placeholder.jpg'}
                       alt={relatedProduct.nameEn}
                       style={{ width: '100%', height: 120, objectFit: 'cover' }}
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = '/images/placeholder.jpg';
+                      }}
                     />
                     <CardContent sx={{ p: 1.5 }}>
                       <Typography variant="body2" sx={{ 

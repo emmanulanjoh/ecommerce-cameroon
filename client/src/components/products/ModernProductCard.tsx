@@ -51,54 +51,52 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
   };
 
   const handleWhatsAppClick = async () => {
+    if (!isAuthenticated) {
+      alert('Please login to order via WhatsApp');
+      window.location.href = '/login';
+      return;
+    }
+
     try {
-      if (isAuthenticated) {
-        // Create order for logged-in users
-        const shippingAddress = {
-          name: user?.name || '',
-          phone: user?.phone || '',
-          street: user?.address?.street || '',
-          city: user?.address?.city || '',
-          region: user?.address?.region || '',
-          country: user?.address?.country || 'Cameroon'
-        };
+      // Create order for logged-in users
+      const shippingAddress = {
+        name: user?.name || '',
+        phone: user?.phone || '',
+        street: user?.address?.street || '',
+        city: user?.address?.city || '',
+        region: user?.address?.region || '',
+        country: user?.address?.country || 'Cameroon'
+      };
 
-        const orderData = {
-          items: [{
-            product: product._id,
-            name: product.nameEn,
-            price: product.price,
-            quantity: 1,
-            image: product.images?.[0]
-          }],
-          shippingAddress,
-          notes: 'Single product order via WhatsApp'
-        };
+      const orderData = {
+        items: [{
+          product: product._id,
+          name: product.nameEn,
+          price: product.price,
+          quantity: 1,
+          image: product.images?.[0]
+        }],
+        shippingAddress,
+        notes: 'Single product order via WhatsApp'
+      };
 
-        const response = await fetch('/api/orders', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(orderData)
-        });
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(orderData)
+      });
 
-        const order = await response.json();
-        const orderId = order._id;
+      const order = await response.json();
+      const orderId = order._id;
 
-        const message = `I'm interested in ${getProductName()} - ${formatPrice(product.price)}%0A%0AOrder ID: ${orderId}%0ACustomer: ${user?.name}%0AEmail: ${user?.email}`;
-        window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
-      } else {
-        // Guest user - simple message
-        const message = `I'm interested in ${getProductName()} - ${formatPrice(product.price)}`;
-        window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
-      }
+      const message = `I'm interested in ${getProductName()} - ${formatPrice(product.price)}%0A%0AOrder ID: ${orderId}%0ACustomer: ${user?.name}%0AEmail: ${user?.email}`;
+      window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
     } catch (error) {
       console.error('Error creating order:', error);
-      // Fallback to simple message
-      const message = `I'm interested in ${getProductName()} - ${formatPrice(product.price)}`;
-      window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
+      alert('Failed to create order. Please try again.');
     }
   };
 
@@ -138,7 +136,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
             }}
           >
             <img
-              src={product.thumbnailImage || (product.images && product.images[0]) || 'https://via.placeholder.com/280x240?text=No+Image'}
+              src={product.thumbnailImage || (product.images && product.images[0]) || '/images/placeholder.jpg'}
               alt={getProductName()}
               style={{
                 width: '100%',
@@ -148,7 +146,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
               }}
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
-                target.src = 'https://via.placeholder.com/280x240?text=No+Image';
+                target.src = '/images/placeholder.jpg';
               }}
               onMouseEnter={(e) => {
                 const target = e.target as HTMLImageElement;

@@ -97,9 +97,16 @@ const ModernCartModal: React.FC<ModernCartModalProps> = ({ open, onClose }) => {
   };
 
   const handleWhatsAppOrder = async () => {
+    if (!isAuthenticated) {
+      alert('Please login to place an order via WhatsApp');
+      onClose();
+      window.location.href = '/login';
+      return;
+    }
+
     try {
       const shippingAddress = {
-        name: shippingInfo.name || user?.name || 'Guest Customer',
+        name: shippingInfo.name || user?.name || '',
         phone: shippingInfo.phone || user?.phone || '',
         street: shippingInfo.address || '',
         city: shippingInfo.city || '',
@@ -110,16 +117,15 @@ const ModernCartModal: React.FC<ModernCartModalProps> = ({ open, onClose }) => {
       const orderId = await createOrder(shippingAddress, isAuthenticated, token || undefined);
 
       let message = generateWhatsAppMessage();
-      if (isAuthenticated) {
-        message += `%0A%0AOrder ID: ${orderId}%0ACustomer: ${user?.name}%0AEmail: ${user?.email}`;
-      }
+      message += `%0A%0AOrder ID: ${orderId}%0ACustomer: ${user?.name}%0AEmail: ${user?.email}`;
 
-      const whatsappUrl = `https://wa.me/237678830036?text=${message}`;
+      const whatsappUrl = `https://wa.me/237678830036?text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, '_blank');
       onClose();
       clearCart();
     } catch (error) {
       console.error('Error creating order:', error);
+      alert('Failed to create order. Please try again.');
     }
   };
 
@@ -143,7 +149,7 @@ const ModernCartModal: React.FC<ModernCartModalProps> = ({ open, onClose }) => {
                   flexDirection: { xs: 'column', sm: 'row' }
                 }}>
                   <Avatar
-                    src={item.product.images?.[0] || '/placeholder.jpg'}
+                    src={item.product.images?.[0] || '/images/placeholder.jpg'}
                     alt={item.product.nameEn}
                     sx={{ width: 60, height: 60, borderRadius: 2 }}
                     variant="rounded"
@@ -353,9 +359,10 @@ const ModernCartModal: React.FC<ModernCartModalProps> = ({ open, onClose }) => {
       }}
     >
       <DialogTitle sx={{ 
-        pb: 1,
-        px: { xs: 2, md: 3 },
-        pt: { xs: 2, md: 3 }
+        pb: 2,
+        px: { xs: 3, md: 4 },
+        pt: { xs: 3, md: 4 },
+        mt: { xs: 1, md: 0 }
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -451,6 +458,11 @@ const ModernCartModal: React.FC<ModernCartModalProps> = ({ open, onClose }) => {
             onClick={clearCart}
             size={isMobile ? 'large' : 'medium'}
             fullWidth={isMobile}
+            sx={{ 
+              py: { xs: 1.5, md: 1.2 },
+              px: { xs: 3, md: 2 },
+              my: { xs: 1, md: 0.5 }
+            }}
           >
             Clear Cart
           </Button>
@@ -461,6 +473,11 @@ const ModernCartModal: React.FC<ModernCartModalProps> = ({ open, onClose }) => {
             onClick={handleBack}
             size={isMobile ? 'large' : 'medium'}
             fullWidth={isMobile}
+            sx={{ 
+              py: { xs: 1.5, md: 1.2 },
+              px: { xs: 3, md: 2 },
+              my: { xs: 1, md: 0.5 }
+            }}
           >
             Back
           </Button>
@@ -478,6 +495,11 @@ const ModernCartModal: React.FC<ModernCartModalProps> = ({ open, onClose }) => {
             }
             size={isMobile ? 'large' : 'medium'}
             fullWidth={isMobile}
+            sx={{ 
+              py: { xs: 1.5, md: 1.2 },
+              px: { xs: 3, md: 2 },
+              my: { xs: 1, md: 0.5 }
+            }}
           >
             Next
           </Button>
@@ -489,8 +511,13 @@ const ModernCartModal: React.FC<ModernCartModalProps> = ({ open, onClose }) => {
             onClick={handleWhatsAppOrder}
             size="large"
             fullWidth={isMobile}
+            sx={{ 
+              py: { xs: 1.5, md: 1.2 },
+              px: { xs: 3, md: 2 },
+              my: { xs: 1, md: 0.5 }
+            }}
           >
-            Order via WhatsApp
+            {isAuthenticated ? 'Order via WhatsApp' : 'Login to Order via WhatsApp'}
           </Button>
         )}
       </DialogActions>
