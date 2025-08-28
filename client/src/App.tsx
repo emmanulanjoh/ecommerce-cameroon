@@ -17,7 +17,8 @@ import ModernFooter from './components/layout/ModernFooter';
 
 // Pages
 import ModernHome from './pages/ModernHome';
-import { PublicProductList, ProductDetail } from './features/products';
+import { PublicProductList } from './features/products';
+import ModernProductDetail from './features/products/ModernProductDetail';
 import ModernAbout from './pages/ModernAbout';
 import ModernContact from './pages/ModernContact';
 import ModernFAQ from './pages/ModernFAQ';
@@ -64,9 +65,7 @@ const AnimatedRoutes: React.FC = () => {
         } />
         <Route path="/products/:id" element={
           <PageTransition>
-            <Container>
-              <ProductDetail />
-            </Container>
+            <ModernProductDetail />
           </PageTransition>
         } />
         <Route path="/about" element={

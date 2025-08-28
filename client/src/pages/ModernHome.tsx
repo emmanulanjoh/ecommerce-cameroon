@@ -110,7 +110,7 @@ const ModernHome: React.FC = () => {
             backgroundPosition: 'center',
             backgroundAttachment: 'fixed',
             color: 'white',
-            py: { xs: 4, md: 12 },
+            py: { xs: 2, md: 4 },
             position: 'relative',
             overflow: 'hidden',
             transition: 'background-image 1s ease-in-out',
@@ -144,15 +144,15 @@ const ModernHome: React.FC = () => {
                   sx={{
                     fontWeight: 800,
                     mb: 3,
-                    fontSize: { xs: '2.5rem', md: '3.5rem' },
+                    fontSize: { xs: '1.8rem', md: '2.4rem' },
                     lineHeight: 1.1,
                   }}
                 >
                   {t('home.hero.title')}
                 </Typography>
                 <Typography
-                  variant="h6"
-                  sx={{ mb: 4, opacity: 0.9, lineHeight: 1.6 }}
+                  variant="body1"
+                  sx={{ mb: 2, opacity: 0.9, lineHeight: 1.4, fontSize: '1rem' }}
                 >
                   {t('home.hero.subtitle')}
                 </Typography>

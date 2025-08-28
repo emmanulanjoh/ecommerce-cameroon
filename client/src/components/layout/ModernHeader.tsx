@@ -61,14 +61,14 @@ const ModernHeader: React.FC = () => {
         }}
       >
         <Container maxWidth="xl">
-          <Toolbar sx={{ py: 1 }}>
+          <Toolbar sx={{ py: { xs: 0.5, md: 1 }, minHeight: { xs: 56, md: 64 } }}>
             {/* Logo */}
             <motion.div
               whileHover={{ scale: 1.05 }}
               transition={{ type: 'spring', stiffness: 300 }}
             >
               <Typography
-                variant="h5"
+                variant="h6"
                 component={Link}
                 to="/"
                 sx={{
@@ -78,32 +78,39 @@ const ModernHeader: React.FC = () => {
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   textDecoration: 'none',
-                  mr: 4,
+                  mr: { xs: 1, md: 4 },
+                  fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' },
                 }}
               >
-                FindAll Sourcing
+                {/* Show short name on mobile */}
+                <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
+                  FindAll
+                </Box>
+                <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                  FindAll Sourcing
+                </Box>
               </Typography>
             </motion.div>
 
-            {/* Search Bar - Hidden on mobile */}
+            {/* Search Bar - Responsive */}
             <Box
               sx={{
                 position: 'relative',
-                borderRadius: 3,
+                borderRadius: { xs: 2, md: 3 },
                 backgroundColor: alpha('#000', 0.05),
                 '&:hover': {
                   backgroundColor: alpha('#000', 0.08),
                 },
                 marginLeft: 0,
                 width: '100%',
-                maxWidth: 400,
-                mx: 3,
-                display: { xs: 'none', md: 'block' },
+                maxWidth: { xs: 200, sm: 300, md: 400 },
+                mx: { xs: 1, md: 3 },
+                display: { xs: 'block', md: 'block' },
               }}
             >
               <Box
                 sx={{
-                  padding: '0 16px',
+                  padding: { xs: '0 8px', md: '0 16px' },
                   height: '100%',
                   position: 'absolute',
                   pointerEvents: 'none',
@@ -112,10 +119,10 @@ const ModernHeader: React.FC = () => {
                   justifyContent: 'center',
                 }}
               >
-                <Search sx={{ color: 'text.secondary' }} />
+                <Search sx={{ color: 'text.secondary', fontSize: { xs: 18, md: 24 } }} />
               </Box>
               <InputBase
-                placeholder="Search products..."
+                placeholder="Search..."
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
                     const query = (e.target as HTMLInputElement).value;
@@ -128,7 +135,8 @@ const ModernHeader: React.FC = () => {
                   color: 'inherit',
                   width: '100%',
                   '& .MuiInputBase-input': {
-                    padding: '12px 12px 12px 48px',
+                    padding: { xs: '8px 8px 8px 32px', md: '12px 12px 12px 48px' },
+                    fontSize: { xs: '0.875rem', md: '1rem' },
                     transition: 'width 0.3s',
                   },
                 }}
@@ -136,7 +144,7 @@ const ModernHeader: React.FC = () => {
             </Box>
 
             {/* Desktop Navigation */}
-            <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, ml: 'auto' }}>
+            <Box sx={{ display: { xs: 'none', lg: 'flex' }, gap: 1, ml: 'auto' }}>
 
               <Button
                 component={Link}
@@ -209,7 +217,7 @@ const ModernHeader: React.FC = () => {
             </Box>
 
             {/* User Menu, Language Switcher & Cart */}
-            <Box sx={{ display: 'flex', gap: 1, ml: 'auto', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', gap: { xs: 0.5, md: 1 }, ml: 'auto', alignItems: 'center' }}>
               {/* User Menu */}
               {isAuthenticated ? (
                 <>
@@ -218,19 +226,29 @@ const ModernHeader: React.FC = () => {
                     sx={{
                       color: 'text.primary',
                       fontWeight: 600,
-                      px: 2,
+                      px: { xs: 1, md: 2 },
+                      py: { xs: 0.5, md: 1 },
                       textTransform: 'none',
                       '&:hover': {
                         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                         color: 'white',
                       },
                       borderRadius: 2,
+                      fontSize: { xs: '0.75rem', md: '0.875rem' },
+                      minWidth: 'auto',
                     }}
                   >
-                    <Avatar sx={{ width: 24, height: 24, mr: 1, fontSize: '0.75rem' }}>
+                    <Avatar sx={{ 
+                      width: { xs: 20, md: 24 }, 
+                      height: { xs: 20, md: 24 }, 
+                      mr: { xs: 0.5, md: 1 }, 
+                      fontSize: { xs: '0.65rem', md: '0.75rem' }
+                    }}>
                       {user?.name?.charAt(0)}
                     </Avatar>
-                    {user?.name}
+                    <Box sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                      {user?.name}
+                    </Box>
                   </Button>
                   <Menu
                     anchorEl={userMenuAnchor}
@@ -253,12 +271,15 @@ const ModernHeader: React.FC = () => {
                   sx={{
                     color: 'text.primary',
                     fontWeight: 600,
-                    px: 2,
+                    px: { xs: 1.5, md: 2 },
+                    py: { xs: 0.5, md: 1 },
                     '&:hover': {
                       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                       color: 'white',
                     },
                     borderRadius: 2,
+                    fontSize: { xs: '0.75rem', md: '0.875rem' },
+                    minWidth: 'auto',
                   }}
                 >
                   Login
@@ -270,6 +291,7 @@ const ModernHeader: React.FC = () => {
                 onClick={() => setShowCartModal(true)}
                 sx={{
                   color: 'text.primary',
+                  p: { xs: 1, md: 1.5 },
                   '&:hover': {
                     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                     color: 'white',
@@ -277,16 +299,19 @@ const ModernHeader: React.FC = () => {
                 }}
               >
                 <Badge badgeContent={getTotalItems()} color="error">
-                  <ShoppingCart />
+                  <ShoppingCart sx={{ fontSize: { xs: 20, md: 24 } }} />
                 </Badge>
               </IconButton>
               
               {/* Mobile Menu Button */}
               <IconButton
-                sx={{ display: { xs: 'block', md: 'none' } }}
+                sx={{ 
+                  display: { xs: 'block', lg: 'none' },
+                  p: { xs: 1, md: 1.5 }
+                }}
                 onClick={handleMenuOpen}
               >
-                <MenuIcon />
+                <MenuIcon sx={{ fontSize: { xs: 20, md: 24 } }} />
               </IconButton>
             </Box>
           </Toolbar>

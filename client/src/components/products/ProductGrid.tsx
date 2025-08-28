@@ -115,9 +115,16 @@ const ProductGrid: React.FC<ProductGridProps> = ({
           )}
         </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography variant="body2" color="text.secondary" sx={{ mr: 2 }}>
-            {products.length} product{products.length !== 1 ? 's' : ''} found
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
+          <Typography 
+            variant="body2" 
+            color="text.secondary" 
+            sx={{ 
+              mr: { xs: 1, sm: 2 },
+              fontSize: { xs: '0.75rem', sm: '0.875rem' }
+            }}
+          >
+            {products.length} found
           </Typography>
 
           <Button
@@ -125,7 +132,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({
             size="small"
             startIcon={<Refresh />}
             onClick={onRefresh}
-            sx={{ borderRadius: 2 }}
+            sx={{ 
+              borderRadius: 2,
+              display: { xs: 'none', sm: 'flex' } // Hide on mobile to save space
+            }}
           >
             Refresh
           </Button>
@@ -135,17 +145,17 @@ const ProductGrid: React.FC<ProductGridProps> = ({
               variant={viewMode === 'grid' ? 'contained' : 'text'}
               size="small"
               onClick={() => setViewMode('grid')}
-              sx={{ minWidth: 40, borderRadius: '8px 0 0 8px' }}
+              sx={{ minWidth: { xs: 32, sm: 40 }, borderRadius: '8px 0 0 8px' }}
             >
-              <ViewModule />
+              <ViewModule sx={{ fontSize: { xs: 18, sm: 24 } }} />
             </Button>
             <Button
               variant={viewMode === 'list' ? 'contained' : 'text'}
               size="small"
               onClick={() => setViewMode('list')}
-              sx={{ minWidth: 40, borderRadius: '0 8px 8px 0' }}
+              sx={{ minWidth: { xs: 32, sm: 40 }, borderRadius: '0 8px 8px 0' }}
             >
-              <ViewList />
+              <ViewList sx={{ fontSize: { xs: 18, sm: 24 } }} />
             </Button>
           </Box>
         </Box>
@@ -182,9 +192,13 @@ const ProductGrid: React.FC<ProductGridProps> = ({
               sx={{
                 display: 'grid',
                 gridTemplateColumns: viewMode === 'grid' 
-                  ? 'repeat(auto-fill, minmax(280px, 1fr))' 
+                  ? {
+                      xs: 'repeat(2, 1fr)', // Exactly 2 columns on mobile
+                      sm: 'repeat(auto-fill, minmax(250px, 1fr))', // Auto-fill on larger screens
+                      md: 'repeat(auto-fill, minmax(280px, 1fr))'
+                    }
                   : '1fr',
-                gap: 3,
+                gap: { xs: 1.5, sm: 2, md: 3 }, // Smaller gaps on mobile
               }}
             >
               {products.map((product) => (

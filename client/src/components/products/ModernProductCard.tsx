@@ -228,13 +228,13 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
     >
       <Card
         sx={{
-          height: { xs: 320, sm: 380 },
-          borderRadius: 3,
+          height: { xs: 280, sm: 380 },
+          borderRadius: { xs: 2, sm: 3 },
           overflow: 'hidden',
           position: 'relative',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
           '&:hover': {
-            boxShadow: '0 12px 40px rgba(0,0,0,0.15)',
+            boxShadow: '0 8px 25px rgba(0,0,0,0.12)',
           },
           transition: 'all 0.3s ease',
         }}
@@ -246,7 +246,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
             to={`/products/${product._id}`}
             sx={{ 
               width: '100%', 
-              height: { xs: 160, sm: 200 }, 
+              height: { xs: 140, sm: 200 }, 
               overflow: 'hidden',
               display: 'block',
               cursor: 'pointer'
@@ -335,7 +335,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
           </Fade>
           
           {/* Badges */}
-          <Box sx={{ position: 'absolute', top: 12, left: 12 }}>
+          <Box sx={{ position: 'absolute', top: { xs: 6, sm: 12 }, left: { xs: 6, sm: 12 } }}>
             <Chip
               label={product.category}
               size="small"
@@ -343,29 +343,11 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
                 background: getCategoryBackground(product.category),
                 color: 'white',
                 fontWeight: 600,
-                boxShadow: 2,
-              }}
-            />
-          </Box>
-          
-          <Box sx={{ position: 'absolute', top: 12, right: 12 }}>
-            {/* Condition badge */}
-            <Chip
-              label={
-                product.condition === 'new' ? '✨ New' :
-                product.condition === 'refurbished' ? '🔄 Refurbished' : 
-                product.condition === 'used' ? '📦 Used' : '✨ New'
-              }
-              size="small"
-              sx={{
-                backgroundColor: 
-                  product.condition === 'new' ? '#4caf50' :
-                  product.condition === 'refurbished' ? '#ff9800' : 
-                  product.condition === 'used' ? '#757575' : '#4caf50',
-                color: 'white',
-                fontWeight: 600,
-                boxShadow: 2,
-                mb: 1
+                fontSize: { xs: '0.65rem', sm: '0.75rem' },
+                height: { xs: 20, sm: 24 },
+                '& .MuiChip-label': {
+                  px: { xs: 1, sm: 1.5 }
+                }
               }}
             />
           </Box>
@@ -391,48 +373,52 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
         </Box>
         
         {/* Content */}
-        <CardContent sx={{ p: { xs: 2, sm: 3 }, pb: { xs: 2, sm: 3 } }}>
+        <CardContent sx={{ p: { xs: 1.5, sm: 3 }, pb: { xs: 1.5, sm: 3 } }}>
           <Typography
-            variant="h6"
+            variant="body2"
             fontWeight="600"
             sx={{
-              mb: 1,
+              mb: { xs: 0.5, sm: 1 },
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               display: '-webkit-box',
               WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical',
+              fontSize: { xs: '0.75rem', sm: '0.875rem' },
+              lineHeight: { xs: 1.2, sm: 1.4 }
             }}
           >
             {getProductName()}
           </Typography>
           
-
-          
           <Typography
-            variant="h5"
+            variant="h6"
             color="primary.main"
             fontWeight="700"
-            sx={{ mb: 1 }}
+            sx={{ 
+              mb: { xs: 1, sm: 1 },
+              fontSize: { xs: '0.9rem', sm: '1.25rem' }
+            }}
           >
             {formatPrice(product.price)}
           </Typography>
           
-
-          
-          <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
+          <Box sx={{ display: 'flex', gap: { xs: 0.5, sm: 1 } }}>
             <Button
               variant="contained"
               onClick={() => addToCart(product)}
               sx={{ 
-                borderRadius: 2, 
+                borderRadius: { xs: 1.5, sm: 2 }, 
                 flex: 1,
-                py: { xs: 1, sm: 1.5 }, 
-                fontSize: { xs: '0.7rem', sm: '0.8rem' }
+                py: { xs: 0.5, sm: 1.5 }, 
+                px: { xs: 1, sm: 2 },
+                fontSize: { xs: '0.65rem', sm: '0.8rem' },
+                minHeight: { xs: 32, sm: 40 }
               }}
             >
-              <ShoppingCart sx={{ mr: { xs: 0.5, sm: 1 }, fontSize: { xs: 14, sm: 16 } }} /> 
-              Add
+              <ShoppingCart sx={{ mr: { xs: 0.5, sm: 1 }, fontSize: { xs: 12, sm: 16 } }} /> 
+              {/* Hide text on very small screens */}
+              <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Add</Box>
             </Button>
             
             <IconButton
@@ -443,12 +429,14 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
                   color: '#20B858',
                   backgroundColor: 'rgba(37, 211, 102, 0.1)'
                 },
-                borderRadius: 2,
-                p: { xs: 1, sm: 1.5 },
-                minWidth: { xs: 40, sm: 48 }
+                borderRadius: { xs: 1.5, sm: 2 },
+                p: { xs: 0.5, sm: 1.5 },
+                minWidth: { xs: 32, sm: 48 },
+                width: { xs: 32, sm: 48 },
+                height: { xs: 32, sm: 48 }
               }}
             >
-              <WhatsApp sx={{ fontSize: { xs: 22, sm: 26 } }} />
+              <WhatsApp sx={{ fontSize: { xs: 16, sm: 24 } }} />
             </IconButton>
           </Box>
         </CardContent>

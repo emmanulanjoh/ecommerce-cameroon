@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { CssBaseline, Typography, Box } from '@mui/material';
+import { CssBaseline, Typography, Box, IconButton, Drawer, useMediaQuery, useTheme as useMuiTheme } from '@mui/material';
+import { FilterList } from '@mui/icons-material';
 import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import ProductPageLayout from '../../components/products/ProductPageLayout';
+
 import ProductFilters from '../../components/products/ProductFilters';
 import ProductGrid from '../../components/products/ProductGrid';
 import { Product } from '../../shared/types';
@@ -61,6 +62,9 @@ const PublicProductList: React.FC = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [categories, setCategories] = useState<string[]>([]);
   const [searchParams] = useSearchParams();
+  const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
+  const muiTheme = useMuiTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down('md'));
 
   useEffect(() => {
     fetchProducts();
@@ -134,54 +138,95 @@ const PublicProductList: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <ProductPageLayout loading={loading} setLoading={setLoading}>
-        <ProductPageLayout.Header>
-          <Box sx={{ 
-            textAlign: 'center',
-            backgroundImage: 'url(https://via.placeholder.com/1200x300/667eea/ffffff?text=Products+Background)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            borderRadius: 3,
-            p: 4
-          }}>
-            <Typography variant="h3" fontWeight="700" sx={{ mb: 2 }}>
-              Discover Amazing Products
-            </Typography>
-            <Typography variant="h6" sx={{ opacity: 0.9 }}>
-              Find the perfect products for your needs from our curated collection
-            </Typography>
-          </Box>
-        </ProductPageLayout.Header>
-
-        <Box sx={{ display: 'flex', gap: 4, flexDirection: { xs: 'column', md: 'row' } }}>
-          <ProductPageLayout.Sidebar>
-            <ProductFilters
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-              selectedCategory={selectedCategory}
-              setSelectedCategory={setSelectedCategory}
-              categories={categories}
-              priceRange={priceRange}
-              setPriceRange={setPriceRange}
-              inStockOnly={inStockOnly}
-              setInStockOnly={setInStockOnly}
-              onClearFilters={handleClearFilters}
-            />
-          </ProductPageLayout.Sidebar>
-
-          <ProductPageLayout.Content>
-            <ProductGrid
-              products={filteredProducts}
-              loading={loading}
-              error={error}
-              selectedCategory={selectedCategory}
-              viewMode={viewMode}
-              setViewMode={setViewMode}
-              onRefresh={fetchProducts}
-            />
-          </ProductPageLayout.Content>
+      <Box sx={{ minHeight: '100vh', backgroundColor: 'background.default' }}>
+        {/* Compact Header */}
+        <Box sx={{ 
+          textAlign: 'center',
+          backgroundImage: 'url(https://via.placeholder.com/1200x200/667eea/ffffff?text=Products)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          borderRadius: { xs: 0, md: 3 },
+          p: { xs: 2, md: 3 },
+          mx: { xs: 0, md: 2 },
+          mt: { xs: 0, md: 2 },
+          mb: 3
+        }}>
+          <Typography variant="h4" fontWeight="700" sx={{ mb: 1, color: 'white' }}>
+            Discover Amazing Products
+          </Typography>
+          <Typography variant="body1" sx={{ opacity: 0.9, color: 'white' }}>
+            Find the perfect products for your needs
+          </Typography>
         </Box>
-      </ProductPageLayout>
+
+        {/* Main Content Container */}
+        <Box sx={{ px: { xs: 1, md: 3 }, pb: 4 }}>
+
+        {/* Filter Button */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h6" color="text.secondary">
+            {filteredProducts.length} products found
+          </Typography>
+          <IconButton
+            onClick={() => setFilterDrawerOpen(true)}
+            sx={{
+              backgroundColor: 'primary.main',
+              color: 'white',
+              '&:hover': {
+                backgroundColor: 'primary.dark',
+              },
+            }}
+          >
+            <FilterList />
+          </IconButton>
+        </Box>
+
+        {/* Filter Drawer */}
+        <Drawer
+          anchor="right"
+          open={filterDrawerOpen}
+          onClose={() => setFilterDrawerOpen(false)}
+          PaperProps={{
+            sx: {
+              width: isMobile ? '100%' : 400,
+              p: 3,
+            },
+          }}
+        >
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+            <Typography variant="h6" fontWeight="600">
+              Filter Products
+            </Typography>
+            <IconButton onClick={() => setFilterDrawerOpen(false)}>
+              ×
+            </IconButton>
+          </Box>
+          <ProductFilters
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            categories={categories}
+            priceRange={priceRange}
+            setPriceRange={setPriceRange}
+            inStockOnly={inStockOnly}
+            setInStockOnly={setInStockOnly}
+            onClearFilters={handleClearFilters}
+          />
+        </Drawer>
+
+          {/* Full Width Product Grid */}
+          <ProductGrid
+            products={filteredProducts}
+            loading={loading}
+            error={error}
+            selectedCategory={selectedCategory}
+            viewMode={viewMode}
+            setViewMode={setViewMode}
+            onRefresh={fetchProducts}
+          />
+        </Box>
+      </Box>
     </ThemeProvider>
   );
 };
