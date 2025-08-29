@@ -45,7 +45,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, language = 'en' }) =
               muted 
               loop 
               preload="metadata"
-              poster={product.thumbnailImage || (product.images && product.images[0]) || 'https://via.placeholder.com/300x200?text=No+Image'}
+              poster={product.thumbnailImage || (product.images && product.images[0]) || 'https://via.placeholder.com/300x200/cccccc/ffffff?text=No+Image'}
               onMouseOver={(e) => {
                 const video = e.target as HTMLVideoElement;
                 if (video.readyState >= 3) { // HAVE_FUTURE_DATA or higher
@@ -57,23 +57,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, language = 'en' }) =
             >
               <source src={product.videoUrl} type="video/mp4" />
               <img 
-                src={product.thumbnailImage || (product.images && product.images[0]) || 'https://via.placeholder.com/300x200?text=No+Image'} 
+                src={product.thumbnailImage || (product.images && product.images[0]) || 'https://via.placeholder.com/300x200/cccccc/ffffff?text=No+Image'} 
                 className="card-img-top" 
                 alt={getProductName()}
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  target.src = 'https://via.placeholder.com/300x200?text=No+Image';
+                  target.src = 'https://via.placeholder.com/300x200/cccccc/ffffff?text=No+Image';
                 }}
               />
             </video>
           ) : (
             <img 
-              src={product.thumbnailImage || (product.images && product.images[0]) || 'https://via.placeholder.com/300x200?text=No+Image'} 
+              src={product.thumbnailImage || (product.images && product.images[0]) || 'https://via.placeholder.com/300x200/cccccc/ffffff?text=No+Image'} 
               className="card-img-top" 
               alt={getProductName()}
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
-                target.src = 'https://via.placeholder.com/300x200?text=No+Image';
+                target.src = 'https://via.placeholder.com/300x200/cccccc/ffffff?text=No+Image';
               }}
             />
           )}
