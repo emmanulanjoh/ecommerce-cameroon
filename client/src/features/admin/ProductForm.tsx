@@ -78,9 +78,9 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onProductSaved }) =>
     };
     
     console.log('Uploading file:', file.name, file.type);
-    const response = await axios.post('/api/upload', formData, config);
+    const response = await axios.post('/api/upload/single', formData, config);
     console.log('Upload response:', response.data);
-    return response.data.originalPath;
+    return response.data.url;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
