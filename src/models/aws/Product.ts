@@ -129,7 +129,8 @@ export class ProductModel {
       console.warn('Redis cache miss');
     }
     
-    const products = await DynamoDBService.query(`CATEGORY#${category}`);
+    // Use GSI to query by category
+    const products = await DynamoDBService.queryGSI(`CATEGORY#${category}`);
     
     try {
       await RedisService.set(cacheKey, products, 1800);
