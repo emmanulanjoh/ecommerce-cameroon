@@ -23,7 +23,8 @@
     "migrate:dynamodb": "node scripts/migrate-to-dynamodb.js",
     "test:dynamodb": "node scripts/test-dynamodb.js",
     "test:s3": "node scripts/test-s3-connection.js",
-    "test:upload": "node scripts/test-upload-route.js"
+    "test:upload": "node scripts/test-upload-route.js",
+    "debug:dynamodb": "node scripts/debug-dynamodb.js"
   },
   "keywords": [
     "ecommerce",
