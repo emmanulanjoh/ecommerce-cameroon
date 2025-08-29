@@ -14,6 +14,65 @@ export interface Product {
 }
 
 export class ProductModel {
+  static async create(productData: Omit<Product, 'id' | 'createdAt'>) {
+    const id = Date.now().toString();
+    const product = {
+      PK: `PRODUCT#${id}`,
+      SK: `PRODUCT#${id}`,
+      GSI1PK: `CATEGORY#${productData.category}`,
+      GSI1SK: `PRODUCT#${productData.nameEn}`,
+      id,
+      ...productData,
+      entityType: 'PRODUCT',
+      createdAt: new Date().toISOString()
+    };
+    
+    await DynamoDBService.create(product);
+    
+    try {
+      await RedisService.set(RedisService.keys.product(id), product, 3600);
+      await RedisService.del(RedisService.keys.products());
+      await RedisService.del(RedisService.keys.products(productData.category));
+    } catch (error) {
+      console.warn('Failed to update cache');
+    }
+    
+    return product;
+  }
+
+  static async update(id: string, updates: Partial<Product>) {
+    const updated = await DynamoDBService.update(`PRODUCT#${id}`, `PRODUCT#${id}`, updates);
+    
+    try {
+      await RedisService.set(RedisService.keys.product(id), updated, 3600);
+      await RedisService.del(RedisService.keys.products());
+      if (updates.category) {
+        await RedisService.del(RedisService.keys.products(updates.category));
+      }
+    } catch (error) {
+      console.warn('Failed to update cache');
+    }
+    
+    return updated;
+  }
+
+  static async delete(id: string) {
+    const product = await this.findById(id);
+    if (!product) return false;
+    
+    await DynamoDBService.delete(`PRODUCT#${id}`, `PRODUCT#${id}`);
+    
+    try {
+      await RedisService.del(RedisService.keys.product(id));
+      await RedisService.del(RedisService.keys.products());
+      await RedisService.del(RedisService.keys.products(product.category));
+    } catch (error) {
+      console.warn('Failed to update cache');
+    }
+    
+    return true;
+  }
+
   static async findAll() {
     const cacheKey = RedisService.keys.products();
     
@@ -24,7 +83,6 @@ export class ProductModel {
       console.warn('Redis cache miss, querying DynamoDB');
     }
     
-    // Query all products from DynamoDB
     const products = await DynamoDBService.query('PRODUCT#', 'PRODUCT#');
     
     try {

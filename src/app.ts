@@ -20,6 +20,7 @@ dotenv.config();
 
 // Import configuration
 import connectDB from './config/database';
+import { connectRedis } from './config/aws';
 
 // Import routes
 import * as apiProductRoutes from './routes/api/products';
@@ -36,8 +37,9 @@ import { performanceMonitor } from './middleware/performance';
 // Create Express app
 const app = express();
 
-// Connect to MongoDB
+// Connect to MongoDB and Redis
 connectDB();
+connectRedis().catch(console.error);
 
 // Configure i18n for multilingual support
 i18n.configure({

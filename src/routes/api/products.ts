@@ -102,8 +102,15 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'Please provide all required fields' });
     }
     
-    // TODO: Implement ProductModel.create for DynamoDB
-    const savedProduct = { message: 'Create product not implemented yet' };
+    const savedProduct = await ProductModel.create({
+      nameEn,
+      nameFr,
+      price,
+      category,
+      images: images || [],
+      description: descriptionEn,
+      stock: stockQuantity || 0
+    });
     res.status(201).json(savedProduct);
   } catch (err) {
     console.error('API Error:', err);
@@ -114,8 +121,13 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
 // Update a product
 router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
   try {
-    // TODO: Implement ProductModel.update for DynamoDB
-    const updatedProduct = { message: 'Update product not implemented yet' };
+    const product = await ProductModel.findById(req.params.id);
+    
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    
+    const updatedProduct = await ProductModel.update(req.params.id, req.body);
     
     res.json(updatedProduct);
   } catch (err) {
@@ -127,8 +139,11 @@ router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
 // Delete a product
 router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
   try {
-    // TODO: Implement ProductModel.delete for DynamoDB
-    // const product = await ProductModel.findById(req.params.id);
+    const deleted = await ProductModel.delete(req.params.id);
+    
+    if (!deleted) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
     res.json({ message: 'Product removed' });
   } catch (err) {
     console.error('API Error:', err);
