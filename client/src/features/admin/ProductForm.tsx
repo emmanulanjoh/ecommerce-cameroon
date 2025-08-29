@@ -80,6 +80,9 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onProductSaved }) =>
     console.log('Uploading file:', file.name, file.type);
     const response = await axios.post('/api/upload/single', formData, config);
     console.log('Upload response:', response.data);
+    if (!response.data.success) {
+      throw new Error(response.data.message || 'Upload failed');
+    }
     return response.data.url;
   };
 
@@ -125,18 +128,13 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onProductSaved }) =>
       }
       
       const productData = {
-        ...formData,
+        nameEn: formData.nameEn,
+        nameFr: formData.nameFr,
+        descriptionEn: formData.descriptionEn,
         price: parseFloat(formData.price),
-        stockQuantity: formData.stockQuantity ? parseInt(formData.stockQuantity) : undefined,
-        weight: formData.weight ? parseFloat(formData.weight) : undefined,
-        dimensions: formData.dimensions.length || formData.dimensions.width || formData.dimensions.height 
-          ? formData.dimensions 
-          : undefined,
+        category: formData.category,
         images: uploadedImages,
-        videoUrl: uploadedVideoUrl,
-        condition: formData.condition,
-        conditionGrade: formData.conditionGrade || undefined,
-        warrantyMonths: formData.warrantyMonths ? parseInt(formData.warrantyMonths) : (formData.warrantyMonths === '' ? undefined : 12)
+        stockQuantity: formData.stockQuantity ? parseInt(formData.stockQuantity) : 0
       };
       
       // Get auth token from localStorage
