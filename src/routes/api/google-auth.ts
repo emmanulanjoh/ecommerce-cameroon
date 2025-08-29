@@ -71,7 +71,7 @@ router.get('/google/callback', async (req: Request, res: Response) => {
     const googleUser = await userResponse.json();
 
     // Find or create user (optimized)
-    let user = await User.findOne({ email: googleUser.email }).lean();
+    let user = await User.findOne({ email: googleUser.email });
 
     if (!user) {
       user = await User.create({
@@ -92,9 +92,9 @@ router.get('/google/callback', async (req: Request, res: Response) => {
 
     // Redirect to frontend with token
     res.redirect(`${process.env.CLIENT_URL}/auth/success?token=${token}`);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Google OAuth error:', error);
-    if (error.name === 'AbortError') {
+    if (error?.name === 'AbortError') {
       return res.redirect(`${process.env.CLIENT_URL}/login?error=timeout`);
     }
     res.redirect(`${process.env.CLIENT_URL}/login?error=oauth_failed`);
