@@ -34,7 +34,7 @@ router.get('/', async (req: Request, res: Response) => {
     }
     
     // Execute query with pagination
-    const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
+    // const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
     
     console.log('Getting products, category:', category);
     
