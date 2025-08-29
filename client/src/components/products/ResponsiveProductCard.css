@@ -94,7 +94,7 @@
 /* Mobile Responsiveness */
 @media (max-width: 576px) {
   .product-card-grid {
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
   }
   
   .product-image-container {

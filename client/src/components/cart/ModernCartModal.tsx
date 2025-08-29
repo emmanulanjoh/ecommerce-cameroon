@@ -38,7 +38,7 @@ import {
 import { TransitionProps } from '@mui/material/transitions';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../../context/CartContext';
-import { useUser } from '../../features/auth';
+
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -74,10 +74,7 @@ const ModernCartModal: React.FC<ModernCartModalProps> = ({ open, onClose }) => {
     clearCart,
     getTotalPrice,
     generateWhatsAppMessage,
-    createOrder,
   } = useCart();
-
-  const { user, isAuthenticated, token } = useUser();
 
   const steps = ['Cart Review', 'Shipping Info', 'Confirm Order'];
 
@@ -96,37 +93,14 @@ const ModernCartModal: React.FC<ModernCartModalProps> = ({ open, onClose }) => {
     setActiveStep((prev) => prev - 1);
   };
 
-  const handleWhatsAppOrder = async () => {
-    if (!isAuthenticated) {
-      alert('Please login to place an order via WhatsApp');
-      onClose();
-      window.location.href = '/login';
-      return;
-    }
-
-    try {
-      const shippingAddress = {
-        name: shippingInfo.name || user?.name || '',
-        phone: shippingInfo.phone || user?.phone || '',
-        street: shippingInfo.address || '',
-        city: shippingInfo.city || '',
-        region: '',
-        country: 'Cameroon',
-      };
-
-      const orderId = await createOrder(shippingAddress, isAuthenticated, token || undefined);
-
-      let message = generateWhatsAppMessage();
-      message += `%0A%0AOrder ID: ${orderId}%0ACustomer: ${user?.name}%0AEmail: ${user?.email}`;
-
-      const whatsappUrl = `https://wa.me/237678830036?text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, '_blank');
-      onClose();
-      clearCart();
-    } catch (error) {
-      console.error('Error creating order:', error);
-      alert('Failed to create order. Please try again.');
-    }
+  const handleWhatsAppOrder = () => {
+    const message = generateWhatsAppMessage();
+    const customerInfo = `%0A%0ACustomer: ${shippingInfo.name}%0APhone: ${shippingInfo.phone}%0AAddress: ${shippingInfo.address}, ${shippingInfo.city}`;
+    const fullMessage = message + customerInfo;
+    const whatsappUrl = `https://wa.me/237678830036?text=${fullMessage}`;
+    window.open(whatsappUrl, '_blank');
+    clearCart();
+    onClose();
   };
 
   const renderCartItems = () => (
@@ -517,7 +491,7 @@ const ModernCartModal: React.FC<ModernCartModalProps> = ({ open, onClose }) => {
               my: { xs: 1, md: 0.5 }
             }}
           >
-            {isAuthenticated ? 'Order via WhatsApp' : 'Login to Order via WhatsApp'}
+            Order via WhatsApp
           </Button>
         )}
       </DialogActions>

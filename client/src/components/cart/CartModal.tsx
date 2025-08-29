@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { useCart } from '../../context/CartContext';
-import { useUser } from '../../features/auth';
+
 
 interface CartModalProps {
   show: boolean;
@@ -20,10 +20,8 @@ const CartModal: React.FC<CartModalProps> = ({ show, onHide }) => {
     updateQuantity, 
     clearCart, 
     getTotalPrice, 
-    generateWhatsAppMessage,
-    createOrder
+    generateWhatsAppMessage
   } = useCart();
-  const { user, isAuthenticated, token } = useUser();
   const { t } = useLanguage();
 
   const whatsappNumber = '+237678830036';
@@ -35,32 +33,12 @@ const CartModal: React.FC<CartModalProps> = ({ show, onHide }) => {
     }).format(price);
   };
 
-  const handleWhatsAppOrder = async () => {
-    try {
-      const shippingAddress = {
-        name: user?.name || 'Guest Customer',
-        phone: user?.phone || '',
-        street: user?.address?.street || '',
-        city: user?.address?.city || '',
-        region: user?.address?.region || '',
-        country: user?.address?.country || 'Cameroon'
-      };
-
-      const orderId = await createOrder(shippingAddress, isAuthenticated, token || undefined);
-      
-      let message = generateWhatsAppMessage();
-      
-      if (isAuthenticated) {
-        message += `%0A%0AOrder ID: ${orderId}%0ACustomer: ${user?.name}%0AEmail: ${user?.email}`;
-      }
-      
-      const whatsappUrl = `https://wa.me/${whatsappNumber.replace('+', '')}?text=${message}`;
-      window.open(whatsappUrl, '_blank');
-      onHide();
-    } catch (error) {
-      console.error('Error creating order:', error);
-      alert('Failed to create order. Please try again.');
-    }
+  const handleWhatsAppOrder = () => {
+    const message = generateWhatsAppMessage();
+    const whatsappUrl = `https://wa.me/${whatsappNumber.replace('+', '')}?text=${message}`;
+    window.open(whatsappUrl, '_blank');
+    clearCart();
+    onHide();
   };
 
   return (
