@@ -10,7 +10,6 @@ export class S3Service {
       Key: key,
       Body: body,
       ContentType: contentType,
-      ACL: 'public-read',
     });
     
     await s3Client.send(command);
@@ -23,7 +22,6 @@ export class S3Service {
       Bucket: AWS_CONFIG.S3_BUCKET,
       Key: key,
       ContentType: contentType,
-      ACL: 'public-read',
     });
     
     return await getSignedUrl(s3Client, command, { expiresIn: 3600 });
