@@ -36,6 +36,8 @@ router.get('/', async (req: Request, res: Response) => {
     // Execute query with pagination
     const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
     
+    console.log('Getting products, category:', category);
+    
     let products;
     if (category) {
       products = await ProductModel.findByCategory(category as string);
@@ -43,6 +45,7 @@ router.get('/', async (req: Request, res: Response) => {
       products = await ProductModel.findAll();
     }
     
+    console.log('Found products:', products.length);
     const total = products.length;
     
     res.json({
