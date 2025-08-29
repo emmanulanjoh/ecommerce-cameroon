@@ -98,23 +98,30 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
     } = req.body;
     
     // Validate required fields
-    if (!nameEn || !descriptionEn || !price || !category) {
+    if (!nameEn || !price || !category) {
       return res.status(400).json({ message: 'Please provide all required fields' });
     }
     
+    console.log('Creating product with data:', { nameEn, price, category, images });
+    
     const savedProduct = await ProductModel.create({
       nameEn,
-      nameFr,
-      price,
+      nameFr: nameFr || '',
+      price: parseFloat(price),
       category,
       images: images || [],
-      description: descriptionEn,
-      stock: stockQuantity || 0
+      description: descriptionEn || '',
+      stock: parseInt(stockQuantity) || 0
     });
+    
+    console.log('Product created successfully:', savedProduct.id);
     res.status(201).json(savedProduct);
   } catch (err) {
-    console.error('API Error:', err);
-    res.status(500).json({ message: (err as Error).message });
+    console.error('Product creation error:', err);
+    res.status(500).json({ 
+      message: (err as Error).message,
+      error: process.env.NODE_ENV === 'development' ? err : undefined
+    });
   }
 });
 
