@@ -39,6 +39,6 @@ export const connectRedis = async () => {
 
 export const AWS_CONFIG = {
   S3_BUCKET: process.env.S3_BUCKET_NAME || 'ecommerce-cameroon-assets',
-  CLOUDFRONT_URL: process.env.CLOUDFRONT_URL || '',
+  CLOUDFRONT_URL: process.env.CLOUDFRONT_URL || `https://${process.env.S3_BUCKET_NAME || 'ecommerce-cameroon-assets'}.s3.amazonaws.com`,
   DYNAMODB_TABLE: process.env.DYNAMODB_TABLE || 'ecommerce-cameroon',
 };
