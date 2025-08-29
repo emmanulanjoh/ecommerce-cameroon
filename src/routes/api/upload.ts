@@ -24,6 +24,10 @@ const upload = multer({
 // Upload single file to S3
 router.post('/single', authMiddleware, upload.single('file'), async (req: Request, res: Response) => {
   try {
+    console.log('Upload request received');
+    console.log('File:', req.file ? 'Present' : 'Missing');
+    console.log('Body:', req.body);
+    
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });
     }
@@ -31,20 +35,28 @@ router.post('/single', authMiddleware, upload.single('file'), async (req: Reques
     const folder = req.body.folder || 'products';
     const key = S3Service.generateKey(folder, req.file.originalname);
     
+    console.log('Uploading to S3:', key);
+    
     const fileUrl = await S3Service.uploadFile(
       key,
       req.file.buffer,
       req.file.mimetype
     );
+    
+    console.log('Upload successful:', fileUrl);
 
     res.json({
       success: true,
       url: fileUrl,
       key: key
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Upload error:', error);
-    res.status(500).json({ message: 'Upload failed' });
+    res.status(500).json({ 
+      message: 'Upload failed',
+      error: error.message,
+      details: process.env.NODE_ENV === 'development' ? error : undefined
+    });
   }
 });
 

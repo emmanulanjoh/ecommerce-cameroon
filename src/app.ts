@@ -221,6 +221,7 @@ app.use('/api/categories', apiCategoryRoutes.router);
 app.use('/api/reviews', apiReviewRoutes.router);
 app.use('/api/upload', apiUploadRoutes.router);
 app.use('/api/upload-local', simpleUploadRoutes.router);
+app.use('/api/upload-test', require('./routes/api/test-upload').router);
 app.use('/api/contact', apiContactRoutes.router);
 app.use('/api/chat', apiChatRoutes.router);
 app.use('/api/users', apiUsersRoutes.router);
