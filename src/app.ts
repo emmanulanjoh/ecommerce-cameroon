@@ -28,6 +28,7 @@ import * as apiCategoryRoutes from './routes/api/categories';
 import * as apiReviewRoutes from './routes/api/reviews';
 import * as apiAuthRoutes from './routes/api/auth';
 import * as apiUploadRoutes from './routes/api/upload';
+import * as simpleUploadRoutes from './routes/api/simple-upload';
 
 // Import middleware
 import { setLanguage } from './middleware/language';
@@ -218,7 +219,8 @@ app.use('/api/auth', googleAuthRoutes.router);
 app.use('/api/products', apiProductRoutes.router);
 app.use('/api/categories', apiCategoryRoutes.router);
 app.use('/api/reviews', apiReviewRoutes.router);
-app.use('/api/upload', apiUploadRoutes.router);
+app.use('/api/upload', simpleUploadRoutes.router);
+app.use('/api/upload-s3', apiUploadRoutes.router);
 app.use('/api/contact', apiContactRoutes.router);
 app.use('/api/chat', apiChatRoutes.router);
 app.use('/api/users', apiUsersRoutes.router);
