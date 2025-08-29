@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import Product from '../../models/Product';
+import { ProductModel } from '../../models/aws/Product';
 import { authMiddleware } from './auth';
 
 export const router = express.Router();
@@ -36,12 +36,14 @@ router.get('/', async (req: Request, res: Response) => {
     // Execute query with pagination
     const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
     
-    const products = await Product.find(query)
-      .sort(sort as string)
-      .limit(parseInt(limit as string))
-      .skip(skip);
-      
-    const total = await Product.countDocuments(query);
+    let products;
+    if (category) {
+      products = await ProductModel.findByCategory(category as string);
+    } else {
+      products = await ProductModel.findAll();
+    }
+    
+    const total = products.length;
     
     res.json({
       products,
@@ -60,7 +62,7 @@ router.get('/', async (req: Request, res: Response) => {
 // Get single product
 router.get('/:id', async (req: Request, res: Response) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await ProductModel.findById(req.params.id);
     
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
