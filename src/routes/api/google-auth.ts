@@ -31,13 +31,17 @@ router.get('/google/callback', async (req: Request, res: Response) => {
   }
 
   try {
-    // Exchange code for access token
+    // Exchange code for access token with timeout
     const redirectUri = process.env.GOOGLE_REDIRECT_URI || 
       `${req.protocol}://${req.get('host')}/api/auth/google/callback`;
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
     
     const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      signal: controller.signal,
       body: JSON.stringify({
         client_id: process.env.GOOGLE_CLIENT_ID,
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
@@ -46,6 +50,7 @@ router.get('/google/callback', async (req: Request, res: Response) => {
         redirect_uri: redirectUri,
       }),
     });
+    clearTimeout(timeoutId);
 
     const tokenData = await tokenResponse.json();
 
@@ -53,25 +58,29 @@ router.get('/google/callback', async (req: Request, res: Response) => {
       return res.redirect(`${process.env.CLIENT_URL}/login?error=token_failed`);
     }
 
-    // Get user info from Google
+    // Get user info from Google with timeout
+    const userController = new AbortController();
+    const userTimeoutId = setTimeout(() => userController.abort(), 5000);
+    
     const userResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
       headers: { Authorization: `Bearer ${tokenData.access_token}` },
+      signal: userController.signal,
     });
+    clearTimeout(userTimeoutId);
 
     const googleUser = await userResponse.json();
 
-    // Find or create user
-    let user = await User.findOne({ email: googleUser.email });
+    // Find or create user (optimized)
+    let user = await User.findOne({ email: googleUser.email }).lean();
 
     if (!user) {
-      user = new User({
+      user = await User.create({
         name: googleUser.name,
         email: googleUser.email,
-        password: 'google_oauth', // Placeholder password
+        password: 'google_oauth',
         googleId: googleUser.id,
         isGoogleUser: true,
       });
-      await user.save();
     }
 
     // Generate JWT token
@@ -85,6 +94,9 @@ router.get('/google/callback', async (req: Request, res: Response) => {
     res.redirect(`${process.env.CLIENT_URL}/auth/success?token=${token}`);
   } catch (error) {
     console.error('Google OAuth error:', error);
+    if (error.name === 'AbortError') {
+      return res.redirect(`${process.env.CLIENT_URL}/login?error=timeout`);
+    }
     res.redirect(`${process.env.CLIENT_URL}/login?error=oauth_failed`);
   }
 });
