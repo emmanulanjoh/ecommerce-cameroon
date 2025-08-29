@@ -1,4 +1,4 @@
-import { PutCommand, GetCommand, QueryCommand, UpdateCommand, DeleteCommand } from '@aws-sdk/lib-dynamodb';
+import { PutCommand, GetCommand, QueryCommand, UpdateCommand, DeleteCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
 import { docClient, AWS_CONFIG } from '../config/aws';
 
 const TABLE_NAME = AWS_CONFIG.DYNAMODB_TABLE;
@@ -79,5 +79,14 @@ export class DynamoDBService {
       Key: { PK: pk, SK: sk },
     });
     await docClient.send(command);
+  }
+
+  // Scan all items
+  static async scanAll() {
+    const command = new ScanCommand({
+      TableName: TABLE_NAME,
+    });
+    const result = await docClient.send(command);
+    return result.Items || [];
   }
 }

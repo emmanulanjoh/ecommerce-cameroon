@@ -83,15 +83,17 @@ export class ProductModel {
       console.warn('Redis cache miss, querying DynamoDB');
     }
     
-    const products = await DynamoDBService.query('PRODUCT#', 'PRODUCT#');
+    // Use scan to get all products
+    const products = await DynamoDBService.scanAll();
+    const productItems = products.filter(item => item.entityType === 'PRODUCT');
     
     try {
-      await RedisService.set(cacheKey, products, 1800);
+      await RedisService.set(cacheKey, productItems, 1800);
     } catch (error) {
       console.warn('Failed to cache products');
     }
     
-    return products;
+    return productItems;
   }
 
   static async findById(id: string) {
