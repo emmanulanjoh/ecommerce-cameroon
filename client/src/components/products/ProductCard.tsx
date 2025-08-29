@@ -68,7 +68,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, language = 'en' }) =
             </video>
           ) : (
             <img 
-              src={product.thumbnailImage || (product.images && product.images[0]) || 'https://via.placeholder.com/300x200/cccccc/ffffff?text=No+Image'} 
+              src={product.thumbnailImage || (product.images && product.images[0] ? `${window.location.origin}${product.images[0]}` : 'https://via.placeholder.com/300x200/cccccc/ffffff?text=No+Image')} 
               className="card-img-top" 
               alt={getProductName()}
               onError={(e) => {
