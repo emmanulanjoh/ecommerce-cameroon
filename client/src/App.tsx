@@ -29,6 +29,7 @@ import ModernLogin from './features/auth/ModernLogin';
 import ModernRegister from './features/auth/ModernRegister';
 import AuthSuccess from './pages/AuthSuccess';
 import UserDashboard from './pages/UserDashboard';
+import AdminAccess from './pages/AdminAccess';
 
 // Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -106,6 +107,11 @@ const AnimatedRoutes: React.FC = () => {
         <Route path="/dashboard" element={
           <PageTransition>
             <UserDashboard />
+          </PageTransition>
+        } />
+        <Route path="/admin-access" element={
+          <PageTransition>
+            <AdminAccess />
           </PageTransition>
         } />
         {/* Admin Login - No header/footer */}
