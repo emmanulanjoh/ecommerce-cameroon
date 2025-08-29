@@ -48,8 +48,12 @@ router.get('/', async (req: Request, res: Response) => {
     console.log('Found products:', products.length);
     const total = products.length;
     
+    // Apply pagination
+    const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
+    const paginatedProducts = products.slice(skip, skip + parseInt(limit as string));
+    
     res.json({
-      products,
+      products: paginatedProducts,
       pagination: {
         total,
         page: parseInt(page as string),

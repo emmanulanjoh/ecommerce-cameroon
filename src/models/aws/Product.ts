@@ -74,26 +74,31 @@ export class ProductModel {
   }
 
   static async findAll() {
-    const cacheKey = RedisService.keys.products();
-    
     try {
-      const cached = await RedisService.get(cacheKey);
-      if (cached) return cached;
+      const cacheKey = RedisService.keys.products();
+      
+      try {
+        const cached = await RedisService.get(cacheKey);
+        if (cached) return cached;
+      } catch (error) {
+        console.warn('Redis cache miss, querying DynamoDB');
+      }
+      
+      // Use scan to get all products
+      const products = await DynamoDBService.scanAll();
+      const productItems = products.filter(item => item.entityType === 'PRODUCT');
+      
+      try {
+        await RedisService.set(cacheKey, productItems, 1800);
+      } catch (error) {
+        console.warn('Failed to cache products');
+      }
+      
+      return productItems;
     } catch (error) {
-      console.warn('Redis cache miss, querying DynamoDB');
+      console.error('Error in ProductModel.findAll:', error);
+      return [];
     }
-    
-    // Use scan to get all products
-    const products = await DynamoDBService.scanAll();
-    const productItems = products.filter(item => item.entityType === 'PRODUCT');
-    
-    try {
-      await RedisService.set(cacheKey, productItems, 1800);
-    } catch (error) {
-      console.warn('Failed to cache products');
-    }
-    
-    return productItems;
   }
 
   static async findById(id: string) {

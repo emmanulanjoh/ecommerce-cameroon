@@ -83,11 +83,16 @@ export class DynamoDBService {
 
   // Scan all items
   static async scanAll() {
-    const command = new ScanCommand({
-      TableName: TABLE_NAME,
-    });
-    const result = await docClient.send(command);
-    return result.Items || [];
+    try {
+      const command = new ScanCommand({
+        TableName: TABLE_NAME,
+      });
+      const result = await docClient.send(command);
+      return result.Items || [];
+    } catch (error) {
+      console.error('DynamoDB scan error:', error);
+      throw error;
+    }
   }
 
   // Query GSI
