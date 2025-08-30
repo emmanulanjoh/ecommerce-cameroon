@@ -3,19 +3,38 @@ import { redisClient } from '../config/aws';
 export class RedisService {
   // Set value with expiration
   static async set(key: string, value: any, ttl: number = 3600) {
-    const serialized = JSON.stringify(value);
-    await redisClient.setEx(key, ttl, serialized);
+    try {
+      if (redisClient.isOpen) {
+        const serialized = JSON.stringify(value);
+        await redisClient.setEx(key, ttl, serialized);
+      }
+    } catch (error) {
+      console.warn('Redis set failed:', error.message);
+    }
   }
 
   // Get value
   static async get(key: string) {
-    const value = await redisClient.get(key);
-    return value ? JSON.parse(value) : null;
+    try {
+      if (redisClient.isOpen) {
+        const value = await redisClient.get(key);
+        return value ? JSON.parse(value) : null;
+      }
+    } catch (error) {
+      console.warn('Redis get failed:', error.message);
+    }
+    return null;
   }
 
   // Delete key
   static async del(key: string) {
-    await redisClient.del(key);
+    try {
+      if (redisClient.isOpen) {
+        await redisClient.del(key);
+      }
+    } catch (error) {
+      console.warn('Redis del failed:', error.message);
+    }
   }
 
   // Check if key exists
