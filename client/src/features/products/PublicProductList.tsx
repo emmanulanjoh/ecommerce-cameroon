@@ -119,8 +119,11 @@ const PublicProductList: React.FC = () => {
       setLoading(true);
       setError(null);
       
+      console.log('🔍 PublicProductList: Fetching products...');
       const response = await axios.get('/api/products');
+      console.log('📦 PublicProductList API Response:', response.data);
       const productsData = response.data.products || response.data || [];
+      console.log('✅ PublicProductList: Products loaded:', productsData.length);
       
       const uniqueCategories = Array.from(new Set(productsData.map((p: Product) => p.category).filter(Boolean))) as string[];
       setCategories(uniqueCategories);
