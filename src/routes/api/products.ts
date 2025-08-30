@@ -27,13 +27,16 @@ router.get('/test', (req: Request, res: Response) => {
   });
 });
 
+// In-memory storage for created products
+let createdProducts: any[] = [];
+
 // Get all products with filtering
 router.get('/', async (req: Request, res: Response) => {
   try {
     console.log('🔍 Products API called at:', new Date().toISOString());
     
-    // Immediate mock response to prevent 502 errors
-    const products = [
+    // Base mock products
+    const baseProducts = [
       {
         _id: 'mock-1',
         id: 'mock-1',
@@ -93,12 +96,15 @@ router.get('/', async (req: Request, res: Response) => {
       }
     ];
     
-    console.log('✅ Returning mock products:', products.length);
+    // Combine base products with created products
+    const allProducts = [...baseProducts, ...createdProducts];
+    
+    console.log('✅ Returning products:', allProducts.length, '(base:', baseProducts.length, 'created:', createdProducts.length, ')');
     
     res.json({
-      products,
+      products: allProducts,
       pagination: {
-        total: products.length,
+        total: allProducts.length,
         page: 1,
         pages: 1
       }
@@ -146,15 +152,21 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
     }
     
     // Mock successful creation
+    const productId = `product-${Date.now()}`;
     const newProduct = {
-      _id: `product-${Date.now()}`,
-      id: `product-${Date.now()}`,
+      _id: productId,
+      id: productId,
       nameEn,
       nameFr: nameFr || '',
       descriptionEn: descriptionEn || '',
       price: parseFloat(price),
       category,
-      images: images || [],
+      images: (images || []).map((img: string) => {
+        // If it's already a full URL, keep it; otherwise make it a placeholder
+        if (img.startsWith('http')) return img;
+        return `https://via.placeholder.com/300x300/667eea/ffffff?text=${encodeURIComponent(nameEn)}`;
+      }),
+      thumbnailImage: `https://via.placeholder.com/300x300/667eea/ffffff?text=${encodeURIComponent(nameEn)}`,
       featured: false,
       inStock: true,
       stockQuantity: parseInt(stockQuantity) || 0,
@@ -164,7 +176,11 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
       updatedAt: new Date().toISOString()
     };
     
-    console.log('✅ Product created successfully:', newProduct.nameEn);
+    // Add to in-memory storage
+    createdProducts.push(newProduct);
+    
+    console.log('✅ Product created and stored:', newProduct.nameEn);
+    console.log('📊 Total created products:', createdProducts.length);
     res.status(201).json(newProduct);
   } catch (err) {
     console.error('❌ Product creation error:', err);
