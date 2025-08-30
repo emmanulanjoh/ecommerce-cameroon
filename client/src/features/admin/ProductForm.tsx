@@ -245,9 +245,10 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onProductSaved }) =>
                   <Row>
                     <Col md={6}>
                       <Form.Group className="mb-3">
-                        <Form.Label>Product Name (English) *</Form.Label>
+                        <Form.Label htmlFor="nameEn">Product Name (English) *</Form.Label>
                         <Form.Control
                           type="text"
+                          id="nameEn"
                           name="nameEn"
                           value={formData.nameEn}
                           onChange={handleChange}
