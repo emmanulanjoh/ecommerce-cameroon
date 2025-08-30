@@ -24,7 +24,7 @@ router.get('/', async (req: Request, res: Response) => {
         console.log('No products found, checking DynamoDB directly...');
         const { DynamoDBService } = require('../../services/dynamodb');
         const allItems = await DynamoDBService.scanAll();
-        const productItems = allItems.filter(item => item.entityType === 'PRODUCT');
+        const productItems = allItems.filter((item: any) => item.entityType === 'PRODUCT');
         console.log('Direct DynamoDB scan found:', productItems.length, 'products');
         products = productItems;
       }
