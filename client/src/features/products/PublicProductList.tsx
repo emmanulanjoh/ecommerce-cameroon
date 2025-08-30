@@ -153,7 +153,7 @@ const PublicProductList: React.FC = () => {
         {/* Compact Header */}
         <Box sx={{ 
           textAlign: 'center',
-          backgroundImage: 'url(https://via.placeholder.com/1200x200/667eea/ffffff?text=Products)',
+          backgroundImage: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           borderRadius: { xs: 0, md: 3 },

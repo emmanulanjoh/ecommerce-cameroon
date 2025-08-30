@@ -45,8 +45,8 @@ router.get('/', async (req: Request, res: Response) => {
         descriptionEn: 'Latest iPhone with advanced features',
         price: 850000,
         category: 'Electronics',
-        images: ['https://via.placeholder.com/300x300/667eea/ffffff?text=iPhone+14'],
-        thumbnailImage: 'https://via.placeholder.com/300x300/667eea/ffffff?text=iPhone+14',
+        images: ['https://picsum.photos/300/300?random=1'],
+        thumbnailImage: 'https://picsum.photos/300/300?random=1',
         featured: true,
         inStock: true,
         stockQuantity: 10,
@@ -64,8 +64,8 @@ router.get('/', async (req: Request, res: Response) => {
         descriptionEn: 'Premium Android smartphone',
         price: 750000,
         category: 'Electronics',
-        images: ['https://via.placeholder.com/300x300/764ba2/ffffff?text=Galaxy+S24'],
-        thumbnailImage: 'https://via.placeholder.com/300x300/764ba2/ffffff?text=Galaxy+S24',
+        images: ['https://picsum.photos/300/300?random=2'],
+        thumbnailImage: 'https://picsum.photos/300/300?random=2',
         featured: true,
         inStock: true,
         stockQuantity: 8,
@@ -83,8 +83,8 @@ router.get('/', async (req: Request, res: Response) => {
         descriptionEn: 'Lightweight laptop with M2 chip',
         price: 1200000,
         category: 'Electronics',
-        images: ['https://via.placeholder.com/300x300/43e97b/ffffff?text=MacBook+Air'],
-        thumbnailImage: 'https://via.placeholder.com/300x300/43e97b/ffffff?text=MacBook+Air',
+        images: ['https://picsum.photos/300/300?random=3'],
+        thumbnailImage: 'https://picsum.photos/300/300?random=3',
         featured: false,
         inStock: true,
         stockQuantity: 5,
@@ -164,9 +164,9 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
       images: (images || []).map((img: string) => {
         // If it's already a full URL, keep it; otherwise make it a placeholder
         if (img.startsWith('http')) return img;
-        return `https://via.placeholder.com/300x300/667eea/ffffff?text=${encodeURIComponent(nameEn)}`;
+        return `https://picsum.photos/300/300?random=${Date.now()}`;
       }),
-      thumbnailImage: `https://via.placeholder.com/300x300/667eea/ffffff?text=${encodeURIComponent(nameEn)}`,
+      thumbnailImage: `https://picsum.photos/300/300?random=${Date.now()}`,
       featured: false,
       inStock: true,
       stockQuantity: parseInt(stockQuantity) || 0,
