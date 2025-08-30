@@ -10,7 +10,7 @@ router.get('/', async (req: Request, res: Response) => {
     console.log('Products API called');
     const { category, page = '1', limit = '20' } = req.query;
     
-    let products;
+    let products = [];
     try {
       if (category) {
         products = await ProductModel.findByCategory(category as string);
@@ -18,35 +18,42 @@ router.get('/', async (req: Request, res: Response) => {
         products = await ProductModel.findAll();
       }
       console.log('Found products from DB:', products.length);
+      
+      // If no products found, return the ones we know exist from debug
+      if (products.length === 0) {
+        console.log('No products found, checking DynamoDB directly...');
+        const { DynamoDBService } = require('../../services/dynamodb');
+        const allItems = await DynamoDBService.scanAll();
+        const productItems = allItems.filter(item => item.entityType === 'PRODUCT');
+        console.log('Direct DynamoDB scan found:', productItems.length, 'products');
+        products = productItems;
+      }
     } catch (dbError) {
-      console.error('Database error, using fallback:', dbError);
-      // Fallback to mock data if DB fails
-      products = [
-        {
-          id: '1',
-          nameEn: 'Sample Product 1',
-          price: 25000,
-          category: 'Electronics',
-          images: [],
-          description: 'Sample product description',
-          stock: 10,
-          createdAt: new Date().toISOString()
-        }
-      ];
+      console.error('Database error:', dbError);
+      products = [];
     }
+    
+    console.log('Final products to return:', products.length);
     
     const total = products.length;
     const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
     const paginatedProducts = products.slice(skip, skip + parseInt(limit as string));
     
-    res.json({
+    const response = {
       products: paginatedProducts,
       pagination: {
         total,
         page: parseInt(page as string),
         pages: Math.ceil(total / parseInt(limit as string))
       }
+    };
+    
+    console.log('API Response:', {
+      productsCount: response.products.length,
+      total: response.pagination.total
     });
+    
+    res.json(response);
   } catch (err) {
     console.error('API Error:', err);
     res.status(500).json({ message: (err as Error).message });
