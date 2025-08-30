@@ -68,10 +68,25 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, language = 'en' }) =
             </video>
           ) : (
             <img 
-              src='https://via.placeholder.com/300x200/cccccc/ffffff?text=Product+Image'
+              src={(() => {
+                const imageUrl = product.thumbnailImage || (product.images && product.images[0]);
+                if (imageUrl) {
+                  // If it's already a full URL (S3/CloudFront), use as is
+                  if (imageUrl.startsWith('http')) {
+                    return imageUrl;
+                  }
+                  // If it's a local path, convert to full URL
+                  return `${window.location.origin}${imageUrl}`;
+                }
+                return 'https://via.placeholder.com/300x200/cccccc/ffffff?text=Product+Image';
+              })()} 
               className="card-img-top" 
               alt={getProductName()}
               style={{ objectFit: 'cover', height: '200px' }}
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = 'https://via.placeholder.com/300x200/cccccc/ffffff?text=No+Image';
+              }}
             />
           )}
           

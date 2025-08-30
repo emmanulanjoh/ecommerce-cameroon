@@ -125,24 +125,39 @@ export class ProductModel {
   }
 
   static async findByCategory(category: string) {
-    const cacheKey = RedisService.keys.products(category);
-    
     try {
-      const cached = await RedisService.get(cacheKey);
-      if (cached) return cached;
+      const cacheKey = RedisService.keys.products(category);
+      
+      try {
+        const cached = await RedisService.get(cacheKey);
+        if (cached) return cached;
+      } catch (error) {
+        console.warn('Redis cache miss');
+      }
+      
+      // Use GSI to query by category, fallback to scan if GSI fails
+      let products;
+      try {
+        products = await DynamoDBService.queryGSI(`CATEGORY#${category}`);
+      } catch (gsiError) {
+        console.warn('GSI query failed, using scan fallback:', gsiError);
+        const allProducts = await DynamoDBService.scanAll();
+        products = allProducts.filter(item => 
+          item.entityType === 'PRODUCT' && 
+          item.category?.toLowerCase() === category.toLowerCase()
+        );
+      }
+      
+      try {
+        await RedisService.set(cacheKey, products, 1800);
+      } catch (error) {
+        console.warn('Failed to cache products');
+      }
+      
+      return products;
     } catch (error) {
-      console.warn('Redis cache miss');
+      console.error('Error in ProductModel.findByCategory:', error);
+      return [];
     }
-    
-    // Use GSI to query by category
-    const products = await DynamoDBService.queryGSI(`CATEGORY#${category}`);
-    
-    try {
-      await RedisService.set(cacheKey, products, 1800);
-    } catch (error) {
-      console.warn('Failed to cache products');
-    }
-    
-    return products;
   }
 }

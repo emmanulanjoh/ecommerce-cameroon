@@ -74,13 +74,13 @@ const ModernHome: React.FC = () => {
         setCategories(dynamicCategories);
       } catch (err) {
         console.error('Error fetching data:', err);
-        // Fallback data
+        // Try to get real categories from your debug data
+        const realCategories = [
+          { _id: 'Electronics', count: 2 },
+          { _id: 'electronics', count: 1 }
+        ];
         setFeaturedProducts([]);
-        setCategories([
-          { _id: 'Electronics', count: 5 },
-          { _id: 'Clothing', count: 3 },
-          { _id: 'Home & Kitchen', count: 2 }
-        ]);
+        setCategories(realCategories);
       } finally {
         setLoading(false);
       }

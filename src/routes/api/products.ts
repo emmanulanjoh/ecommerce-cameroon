@@ -8,37 +8,43 @@ export const router = express.Router();
 router.get('/', async (req: Request, res: Response) => {
   try {
     console.log('Products API called');
+    const { category, page = '1', limit = '20' } = req.query;
     
-    // Return mock data temporarily to prevent 502
-    const mockProducts = [
-      {
-        id: '1',
-        nameEn: 'Sample Product 1',
-        price: 25000,
-        category: 'Electronics',
-        images: [],
-        description: 'Sample product description',
-        stock: 10,
-        createdAt: new Date().toISOString()
-      },
-      {
-        id: '2', 
-        nameEn: 'Sample Product 2',
-        price: 35000,
-        category: 'Clothing',
-        images: [],
-        description: 'Another sample product',
-        stock: 5,
-        createdAt: new Date().toISOString()
+    let products;
+    try {
+      if (category) {
+        products = await ProductModel.findByCategory(category as string);
+      } else {
+        products = await ProductModel.findAll();
       }
-    ];
+      console.log('Found products from DB:', products.length);
+    } catch (dbError) {
+      console.error('Database error, using fallback:', dbError);
+      // Fallback to mock data if DB fails
+      products = [
+        {
+          id: '1',
+          nameEn: 'Sample Product 1',
+          price: 25000,
+          category: 'Electronics',
+          images: [],
+          description: 'Sample product description',
+          stock: 10,
+          createdAt: new Date().toISOString()
+        }
+      ];
+    }
+    
+    const total = products.length;
+    const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
+    const paginatedProducts = products.slice(skip, skip + parseInt(limit as string));
     
     res.json({
-      products: mockProducts,
+      products: paginatedProducts,
       pagination: {
-        total: mockProducts.length,
-        page: 1,
-        pages: 1
+        total,
+        page: parseInt(page as string),
+        pages: Math.ceil(total / parseInt(limit as string))
       }
     });
   } catch (err) {

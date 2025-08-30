@@ -97,15 +97,20 @@ export class DynamoDBService {
 
   // Query GSI
   static async queryGSI(gsi1pk: string) {
-    const command = new QueryCommand({
-      TableName: TABLE_NAME,
-      IndexName: 'GSI1',
-      KeyConditionExpression: 'GSI1PK = :gsi1pk',
-      ExpressionAttributeValues: {
-        ':gsi1pk': gsi1pk,
-      },
-    });
-    const result = await docClient.send(command);
-    return result.Items || [];
+    try {
+      const command = new QueryCommand({
+        TableName: TABLE_NAME,
+        IndexName: 'GSI1',
+        KeyConditionExpression: 'GSI1PK = :gsi1pk',
+        ExpressionAttributeValues: {
+          ':gsi1pk': gsi1pk,
+        },
+      });
+      const result = await docClient.send(command);
+      return result.Items || [];
+    } catch (error) {
+      console.error('GSI query error:', error);
+      throw error;
+    }
   }
 }
