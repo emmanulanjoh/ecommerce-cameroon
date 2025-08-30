@@ -96,7 +96,15 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'Please provide all required fields' });
     }
     
-    console.log('Creating product with data:', { nameEn, price, category, images });
+    console.log('Creating product with data:', { 
+      nameEn, 
+      descriptionEn: descriptionEn || '', 
+      price: parseFloat(price), 
+      category, 
+      images: images || [],
+      featured: featured || false,
+      inStock: inStock !== false
+    });
     
     const savedProduct = await ProductModel.create({
       nameEn,
@@ -117,7 +125,12 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
       isActive: isActive !== false
     });
     
-    console.log('Product created successfully:', savedProduct.id);
+    console.log('Product created successfully:', {
+      id: savedProduct.id,
+      nameEn: savedProduct.nameEn,
+      price: savedProduct.price,
+      category: savedProduct.category
+    });
     res.status(201).json(savedProduct);
   } catch (err) {
     console.error('Product creation error:', err);
