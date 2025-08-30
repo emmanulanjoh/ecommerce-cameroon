@@ -143,9 +143,9 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onProductSaved }) =>
         sku: formData.sku,
         weight: formData.weight ? parseFloat(formData.weight) : undefined,
         dimensions: formData.dimensions.length || formData.dimensions.width || formData.dimensions.height ? {
-          length: formData.dimensions.length ? parseFloat(formData.dimensions.length) : undefined,
-          width: formData.dimensions.width ? parseFloat(formData.dimensions.width) : undefined,
-          height: formData.dimensions.height ? parseFloat(formData.dimensions.height) : undefined
+          length: formData.dimensions.length ? parseFloat(String(formData.dimensions.length)) : undefined,
+          width: formData.dimensions.width ? parseFloat(String(formData.dimensions.width)) : undefined,
+          height: formData.dimensions.height ? parseFloat(String(formData.dimensions.height)) : undefined
         } : undefined,
         isActive: formData.isActive,
         condition: formData.condition,
