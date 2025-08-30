@@ -131,10 +131,26 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onProductSaved }) =>
         nameEn: formData.nameEn,
         nameFr: formData.nameFr,
         descriptionEn: formData.descriptionEn,
+        descriptionFr: formData.descriptionFr,
         price: parseFloat(formData.price),
         category: formData.category,
         images: uploadedImages,
-        stockQuantity: formData.stockQuantity ? parseInt(formData.stockQuantity) : 0
+        thumbnailImage: formData.thumbnailImage,
+        videoUrl: uploadedVideoUrl,
+        featured: formData.featured,
+        inStock: formData.inStock,
+        stockQuantity: formData.stockQuantity ? parseInt(formData.stockQuantity) : 0,
+        sku: formData.sku,
+        weight: formData.weight ? parseFloat(formData.weight) : undefined,
+        dimensions: formData.dimensions.length || formData.dimensions.width || formData.dimensions.height ? {
+          length: formData.dimensions.length ? parseFloat(formData.dimensions.length) : undefined,
+          width: formData.dimensions.width ? parseFloat(formData.dimensions.width) : undefined,
+          height: formData.dimensions.height ? parseFloat(formData.dimensions.height) : undefined
+        } : undefined,
+        isActive: formData.isActive,
+        condition: formData.condition,
+        conditionGrade: formData.conditionGrade || undefined,
+        warrantyMonths: formData.warrantyMonths ? parseInt(formData.warrantyMonths) : undefined
       };
       
       // Get auth token from localStorage

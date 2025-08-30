@@ -41,7 +41,7 @@ export class S3Service {
   static generateKey(folder: string, filename: string): string {
     const timestamp = Date.now();
     const extension = filename.split('.').pop();
-    const cleanName = filename.replace(/[^a-zA-Z0-9.-]/g, '_').substring(0, 50);
-    return `${folder}/${timestamp}-${cleanName}`;
+    const cleanName = filename.replace(/[^a-zA-Z0-9.-]/g, '_').substring(0, 30);
+    return `${folder}/${timestamp}-${Math.random().toString(36).substring(7)}.${extension}`;
   }
 }

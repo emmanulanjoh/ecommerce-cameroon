@@ -5,16 +5,35 @@ export interface Product {
   id: string;
   nameEn: string;
   nameFr?: string;
+  descriptionEn: string;
+  descriptionFr?: string;
   price: number;
   category: string;
   images: string[];
-  description?: string;
-  stock: number;
+  thumbnailImage?: string;
+  videoUrl?: string;
+  featured: boolean;
+  inStock: boolean;
+  stockQuantity?: number;
+  sku?: string;
+  weight?: number;
+  dimensions?: {
+    length?: number;
+    width?: number;
+    height?: number;
+  };
+  averageRating?: number;
+  reviewCount?: number;
+  isActive: boolean;
+  condition?: 'new' | 'refurbished' | 'used';
+  conditionGrade?: 'A' | 'B' | 'C';
+  warrantyMonths?: number;
   createdAt: string;
+  updatedAt: string;
 }
 
 export class ProductModel {
-  static async create(productData: Omit<Product, 'id' | 'createdAt'>) {
+  static async create(productData: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) {
     const id = Date.now().toString();
     const product = {
       PK: `PRODUCT#${id}`,
@@ -23,8 +42,17 @@ export class ProductModel {
       GSI1SK: `PRODUCT#${productData.nameEn}`,
       id,
       ...productData,
+      // Set defaults for missing fields
+      featured: productData.featured ?? false,
+      inStock: productData.inStock ?? true,
+      isActive: productData.isActive ?? true,
+      condition: productData.condition ?? 'new',
+      warrantyMonths: productData.warrantyMonths ?? 12,
+      averageRating: 0,
+      reviewCount: 0,
       entityType: 'PRODUCT',
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
     
     await DynamoDBService.create(product);

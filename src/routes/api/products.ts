@@ -101,11 +101,20 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
     const savedProduct = await ProductModel.create({
       nameEn,
       nameFr: nameFr || '',
+      descriptionEn: descriptionEn || '',
+      descriptionFr: descriptionFr || '',
       price: parseFloat(price),
       category,
       images: images || [],
-      description: descriptionEn || '',
-      stock: parseInt(stockQuantity) || 0
+      thumbnailImage,
+      videoUrl,
+      featured: featured || false,
+      inStock: inStock !== false,
+      stockQuantity: parseInt(stockQuantity) || 0,
+      sku,
+      weight: weight ? parseFloat(weight) : undefined,
+      dimensions,
+      isActive: isActive !== false
     });
     
     console.log('Product created successfully:', savedProduct.id);
