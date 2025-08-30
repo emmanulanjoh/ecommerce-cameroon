@@ -9,7 +9,7 @@ export class RedisService {
         await redisClient.setEx(key, ttl, serialized);
       }
     } catch (error) {
-      console.warn('Redis set failed:', error.message);
+      console.warn('Redis set failed:', (error as Error).message);
     }
   }
 
@@ -21,7 +21,7 @@ export class RedisService {
         return value ? JSON.parse(value) : null;
       }
     } catch (error) {
-      console.warn('Redis get failed:', error.message);
+      console.warn('Redis get failed:', (error as Error).message);
     }
     return null;
   }
@@ -33,7 +33,7 @@ export class RedisService {
         await redisClient.del(key);
       }
     } catch (error) {
-      console.warn('Redis del failed:', error.message);
+      console.warn('Redis del failed:', (error as Error).message);
     }
   }
 

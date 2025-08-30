@@ -39,7 +39,7 @@ export const connectRedis = async () => {
       console.log('⚠️ Redis disabled - no REDIS_URL provided');
     }
   } catch (error) {
-    console.warn('⚠️ Redis connection failed, continuing without cache:', error.message);
+    console.warn('⚠️ Redis connection failed, continuing without cache:', (error as Error).message);
   }
 };
 
