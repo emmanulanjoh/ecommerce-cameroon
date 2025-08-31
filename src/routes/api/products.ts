@@ -35,8 +35,24 @@ router.get('/', async (req: Request, res: Response) => {
   try {
     console.log('🔍 Products API called at:', new Date().toISOString());
     
-    // Base mock products
-    const baseProducts = [
+    let allProducts = [];
+    
+    // Try to get products from DynamoDB first
+    try {
+      const dbProducts = await ProductModel.findAll();
+      console.log('📊 DynamoDB products found:', dbProducts.length);
+      allProducts = [...dbProducts];
+    } catch (dbError) {
+      console.warn('⚠️ DynamoDB query failed, using mock data:', dbError.message);
+    }
+    
+    // Add created products from memory
+    allProducts = [...allProducts, ...createdProducts];
+    
+    // If no products at all, use base mock products
+    if (allProducts.length === 0) {
+      console.log('🔄 Using base mock products');
+      const baseProducts = [
       {
         _id: 'mock-1',
         id: 'mock-1',
@@ -94,12 +110,11 @@ router.get('/', async (req: Request, res: Response) => {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }
-    ];
+      ];
+      allProducts = baseProducts;
+    }
     
-    // Combine base products with created products
-    const allProducts = [...baseProducts, ...createdProducts];
-    
-    console.log('✅ Returning products:', allProducts.length, '(base:', baseProducts.length, 'created:', createdProducts.length, ')');
+    console.log('✅ Returning products:', allProducts.length);
     
     res.json({
       products: allProducts,
@@ -134,54 +149,99 @@ router.get('/:id', async (req: Request, res: Response) => {
 // Create a new product
 router.post('/', authMiddleware, async (req: Request, res: Response) => {
   try {
+    console.log('📝 Creating product with data:', req.body);
+    
     const {
       nameEn,
       nameFr,
       descriptionEn,
+      descriptionFr,
       price,
       category,
       images,
-      stockQuantity
+      thumbnailImage,
+      videoUrl,
+      featured,
+      inStock,
+      stockQuantity,
+      sku,
+      weight,
+      dimensions,
+      isActive,
+      condition,
+      conditionGrade,
+      warrantyMonths
     } = req.body;
-    
-    console.log('📝 Creating product:', { nameEn, price, category });
     
     // Validate required fields
     if (!nameEn || !price || !category) {
       return res.status(400).json({ message: 'Please provide all required fields' });
     }
     
-    // Mock successful creation
-    const productId = `product-${Date.now()}`;
-    const newProduct = {
-      _id: productId,
-      id: productId,
-      nameEn,
-      nameFr: nameFr || '',
-      descriptionEn: descriptionEn || '',
-      price: parseFloat(price),
-      category,
-      images: (images || []).map((img: string) => {
-        // If it's already a full URL, keep it; otherwise make it a placeholder
-        if (img.startsWith('http')) return img;
-        return `https://picsum.photos/300/300?random=${Date.now()}`;
-      }),
-      thumbnailImage: `https://picsum.photos/300/300?random=${Date.now()}`,
-      featured: false,
-      inStock: true,
-      stockQuantity: parseInt(stockQuantity) || 0,
-      isActive: true,
-      condition: 'new',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    
-    // Add to in-memory storage
-    createdProducts.push(newProduct);
-    
-    console.log('✅ Product created and stored:', newProduct.nameEn);
-    console.log('📊 Total created products:', createdProducts.length);
-    res.status(201).json(newProduct);
+    try {
+      // Try to save to DynamoDB
+      const savedProduct = await ProductModel.create({
+        nameEn,
+        nameFr: nameFr || '',
+        descriptionEn: descriptionEn || '',
+        descriptionFr: descriptionFr || '',
+        price: parseFloat(price),
+        category,
+        images: images || [],
+        thumbnailImage,
+        videoUrl,
+        featured: featured || false,
+        inStock: inStock !== false,
+        stockQuantity: parseInt(stockQuantity) || 0,
+        sku,
+        weight: weight ? parseFloat(weight) : undefined,
+        dimensions,
+        isActive: isActive !== false,
+        condition: condition || 'new',
+        conditionGrade,
+        warrantyMonths: warrantyMonths ? parseInt(warrantyMonths) : 12
+      });
+      
+      console.log('✅ Product saved to DynamoDB:', savedProduct.nameEn);
+      res.status(201).json(savedProduct);
+      
+    } catch (dbError) {
+      console.error('❌ DynamoDB save failed, using fallback:', dbError);
+      
+      // Fallback: create mock product and add to memory
+      const productId = `product-${Date.now()}`;
+      const newProduct = {
+        _id: productId,
+        id: productId,
+        nameEn,
+        nameFr: nameFr || '',
+        descriptionEn: descriptionEn || '',
+        descriptionFr: descriptionFr || '',
+        price: parseFloat(price),
+        category,
+        images: images || [],
+        thumbnailImage: thumbnailImage || `https://picsum.photos/300/300?random=${Date.now()}`,
+        videoUrl,
+        featured: featured || false,
+        inStock: inStock !== false,
+        stockQuantity: parseInt(stockQuantity) || 0,
+        sku,
+        weight: weight ? parseFloat(weight) : undefined,
+        dimensions,
+        isActive: isActive !== false,
+        condition: condition || 'new',
+        conditionGrade,
+        warrantyMonths: warrantyMonths ? parseInt(warrantyMonths) : 12,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      // Add to in-memory storage as fallback
+      createdProducts.push(newProduct);
+      
+      console.log('✅ Product created with fallback storage:', newProduct.nameEn);
+      res.status(201).json(newProduct);
+    }
   } catch (err) {
     console.error('❌ Product creation error:', err);
     res.status(500).json({ 
