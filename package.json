@@ -25,7 +25,8 @@
     "test:s3": "node scripts/test-s3-connection.js",
     "debug:dynamodb": "node scripts/debug-dynamodb.js",
     "fix:dynamodb-schema": "node scripts/fix-dynamodb-schema.js",
-    "test:product-flow": "node scripts/test-product-flow.js"
+    "test:product-flow": "node scripts/test-product-flow.js",
+    "test:s3-upload": "node scripts/test-s3-upload.js"
   },
   "keywords": [
     "ecommerce",

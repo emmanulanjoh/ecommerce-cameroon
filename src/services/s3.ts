@@ -5,15 +5,27 @@ import { s3Client, AWS_CONFIG } from '../config/aws';
 export class S3Service {
   // Upload file to S3
   static async uploadFile(key: string, body: Buffer, contentType: string) {
-    const command = new PutObjectCommand({
-      Bucket: AWS_CONFIG.S3_BUCKET,
-      Key: key,
-      Body: body,
-      ContentType: contentType,
-    });
-    
-    await s3Client.send(command);
-    return `${AWS_CONFIG.CLOUDFRONT_URL}/${key}`;
+    try {
+      const command = new PutObjectCommand({
+        Bucket: AWS_CONFIG.S3_BUCKET,
+        Key: key,
+        Body: body,
+        ContentType: contentType,
+        // Remove ACL - bucket should have public read policy
+      });
+      
+      console.log('📤 Uploading to S3:', { bucket: AWS_CONFIG.S3_BUCKET, key });
+      await s3Client.send(command);
+      
+      // Return direct S3 URL
+      const fileUrl = `https://${AWS_CONFIG.S3_BUCKET}.s3.amazonaws.com/${key}`;
+      console.log('✅ S3 upload complete:', fileUrl);
+      
+      return fileUrl;
+    } catch (error) {
+      console.error('❌ S3 upload failed:', error);
+      throw error;
+    }
   }
 
   // Get signed URL for upload
