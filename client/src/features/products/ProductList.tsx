@@ -204,7 +204,7 @@ const ProductList: React.FC = () => {
             <tr key={product._id}>
               <td>
                 <img 
-                  src={product.thumbnailImage || (product.images && product.images[0]) || 'https://via.placeholder.com/50x50?text=No+Image'} 
+                  src={product.thumbnailImage || (product.images && product.images[0]) || 'https://picsum.photos/50/50?random=1'} 
                   alt={product.nameEn}
                   style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }}
                   onError={(e) => {

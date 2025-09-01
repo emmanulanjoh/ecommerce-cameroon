@@ -220,6 +220,7 @@ app.use('/api/products', apiProductRoutes.router);
 app.use('/api/categories', apiCategoryRoutes.router);
 app.use('/api/reviews', apiReviewRoutes.router);
 app.use('/api/upload', apiUploadRoutes.router);
+app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 // Removed unused routes
 app.use('/api/contact', apiContactRoutes.router);
 app.use('/api/chat', apiChatRoutes.router);

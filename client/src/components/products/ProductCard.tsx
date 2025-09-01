@@ -68,18 +68,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, language = 'en' }) =
             </video>
           ) : (
             <img 
-              src={(() => {
-                const imageUrl = product.thumbnailImage || (product.images && product.images[0]);
-                if (imageUrl) {
-                  // If it's already a full URL (S3/CloudFront), use as is
-                  if (imageUrl.startsWith('http')) {
-                    return imageUrl;
-                  }
-                  // If it's a local path, convert to full URL
-                  return `${window.location.origin}${imageUrl}`;
-                }
-                return 'https://via.placeholder.com/300x200/cccccc/ffffff?text=Product+Image';
-              })()} 
+              src={product.thumbnailImage || (product.images && product.images[0]) || 'https://picsum.photos/300/200?random=1'} 
               className="card-img-top" 
               alt={getProductName()}
               style={{ objectFit: 'cover', height: '200px' }}
