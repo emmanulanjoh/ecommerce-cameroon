@@ -20,7 +20,6 @@ dotenv.config();
 
 // Import configuration
 import connectDB from './config/database';
-import { connectRedis } from './config/aws';
 
 // Import routes
 import * as apiProductRoutes from './routes/api/products';
@@ -38,9 +37,8 @@ import { performanceMonitor } from './middleware/performance';
 // Create Express app
 const app = express();
 
-// Connect to MongoDB and Redis
+// Connect to MongoDB
 connectDB();
-connectRedis().catch(console.error);
 
 // Configure i18n for multilingual support
 i18n.configure({
@@ -216,8 +214,7 @@ console.log('Environment:', process.env.NODE_ENV);
 // API Routes for React frontend
 app.use('/api/auth', apiAuthRoutes.router);
 app.use('/api/auth', googleAuthRoutes.router);
-// Use professional cloud products API
-app.use('/api/products', require('./routes/api/products-cloud').router);
+app.use('/api/products', apiProductRoutes.router);
 app.use('/api/categories', apiCategoryRoutes.router);
 app.use('/api/reviews', apiReviewRoutes.router);
 app.use('/api/upload', apiUploadRoutes.router);

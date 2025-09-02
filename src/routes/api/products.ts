@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import Product from '../../models/Product'; // Use original MongoDB model
+import Product from '../../models/Product';
 import { authMiddleware } from './auth';
 
 export const router = express.Router();
@@ -57,23 +57,45 @@ router.get('/:id', async (req: Request, res: Response) => {
 // Create a new product
 router.post('/', authMiddleware, async (req: Request, res: Response) => {
   try {
-    console.log('📝 Creating product with data:', req.body);
+    console.log('📝 Creating product:', req.body.nameEn);
+    console.log('🖼️ Images received:', req.body.images);
+    console.log('🖼️ Thumbnail received:', req.body.thumbnailImage);
     
-    // Images from S3 upload are already full URLs, save them directly
-    const productData = {
-      ...req.body,
-      // Ensure images array exists
-      images: req.body.images || [],
-      // Set thumbnail from first image if not provided
-      thumbnailImage: req.body.thumbnailImage || (req.body.images && req.body.images[0]) || null
-    };
+    // Ensure we have proper image URLs from S3
+    const images = Array.isArray(req.body.images) ? req.body.images : [];
+    const thumbnailImage = req.body.thumbnailImage || (images.length > 0 ? images[0] : null);
     
-    const product = new Product(productData);
+    console.log('🖼️ Processing images:', images);
+    console.log('🖼️ Processing thumbnail:', thumbnailImage);
+    
+    const product = new Product({
+      nameEn: req.body.nameEn,
+      nameFr: req.body.nameFr,
+      descriptionEn: req.body.descriptionEn,
+      descriptionFr: req.body.descriptionFr,
+      price: req.body.price,
+      category: req.body.category,
+      images: images,
+      thumbnailImage: thumbnailImage,
+      videoUrl: req.body.videoUrl,
+      featured: req.body.featured || false,
+      inStock: req.body.inStock !== false,
+      stockQuantity: req.body.stockQuantity || 0,
+      sku: req.body.sku,
+      weight: req.body.weight,
+      dimensions: req.body.dimensions,
+      isActive: req.body.isActive !== false,
+      condition: req.body.condition || 'new',
+      conditionGrade: req.body.conditionGrade,
+      warrantyMonths: req.body.warrantyMonths || 12
+    });
+    
     const savedProduct = await product.save();
     
-    console.log('✅ Product saved to MongoDB with S3 images:', savedProduct.nameEn);
-    console.log('🖼️ Images saved:', savedProduct.images);
-    console.log('🖼️ Thumbnail:', savedProduct.thumbnailImage);
+    console.log('✅ Product saved to MongoDB:', savedProduct.nameEn);
+    console.log('🖼️ Saved images:', savedProduct.images);
+    console.log('🖼️ Saved thumbnail:', savedProduct.thumbnailImage);
+    
     res.status(201).json(savedProduct);
   } catch (err) {
     console.error('❌ Product creation error:', err);
