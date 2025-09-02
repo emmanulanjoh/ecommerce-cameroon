@@ -11,5 +11,5 @@ export const s3Client = new S3Client({
 
 export const AWS_CONFIG = {
   S3_BUCKET: process.env.S3_BUCKET_NAME || 'ecommerce-cameroon-assets',
-  CLOUDFRONT_URL: process.env.CLOUDFRONT_URL || `https://${process.env.S3_BUCKET_NAME || 'ecommerce-cameroon-assets'}.s3.amazonaws.com`,
+  CLOUDFRONT_URL: process.env.CLOUDFRONT_URL || 'https://d35ew0puu9c5cz.cloudfront.net',
 };
