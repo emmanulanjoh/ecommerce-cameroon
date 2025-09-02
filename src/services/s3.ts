@@ -17,11 +17,9 @@ export class S3Service {
       console.log('📤 Uploading to S3:', { bucket: AWS_CONFIG.S3_BUCKET, key });
       await s3Client.send(command);
       
-      // Return CloudFront URL if available, otherwise S3 URL
-      const fileUrl = AWS_CONFIG.CLOUDFRONT_URL ? 
-        `${AWS_CONFIG.CLOUDFRONT_URL}/${key}` : 
-        `https://${AWS_CONFIG.S3_BUCKET}.s3.amazonaws.com/${key}`;
-      console.log('✅ S3 upload complete:', fileUrl);
+      // Always return CloudFront URL
+      const fileUrl = `${AWS_CONFIG.CLOUDFRONT_URL}/${key}`;
+      console.log('✅ S3 upload complete, returning CloudFront URL:', fileUrl);
       
       return fileUrl;
     } catch (error) {

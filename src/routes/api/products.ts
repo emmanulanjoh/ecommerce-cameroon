@@ -22,12 +22,25 @@ router.get('/', async (req: Request, res: Response) => {
       .sort({ createdAt: -1 })
       .lean();
     
-    console.log('✅ MongoDB products found:', products.length);
+    // Convert S3 URLs to CloudFront URLs
+    const productsWithCloudFront = products.map(product => ({
+      ...product,
+      images: product.images?.map((img: string) => 
+        img.includes('s3.amazonaws.com') ? 
+          img.replace(/https:\/\/[^.]+\.s3\.amazonaws\.com/, 'https://d35ew0puu9c5cz.cloudfront.net') : 
+          img
+      ) || [],
+      thumbnailImage: product.thumbnailImage?.includes('s3.amazonaws.com') ? 
+        product.thumbnailImage.replace(/https:\/\/[^.]+\.s3\.amazonaws\.com/, 'https://d35ew0puu9c5cz.cloudfront.net') : 
+        product.thumbnailImage
+    }));
+    
+    console.log('✅ MongoDB products found:', productsWithCloudFront.length);
     
     res.json({
-      products,
+      products: productsWithCloudFront,
       pagination: {
-        total: products.length,
+        total: productsWithCloudFront.length,
         page: 1,
         pages: 1
       }
