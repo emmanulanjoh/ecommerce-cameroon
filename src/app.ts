@@ -216,7 +216,8 @@ console.log('Environment:', process.env.NODE_ENV);
 // API Routes for React frontend
 app.use('/api/auth', apiAuthRoutes.router);
 app.use('/api/auth', googleAuthRoutes.router);
-app.use('/api/products', apiProductRoutes.router);
+// Use professional cloud products API
+app.use('/api/products', require('./routes/api/products-cloud').router);
 app.use('/api/categories', apiCategoryRoutes.router);
 app.use('/api/reviews', apiReviewRoutes.router);
 app.use('/api/upload', apiUploadRoutes.router);
