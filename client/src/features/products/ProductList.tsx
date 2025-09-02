@@ -209,7 +209,7 @@ const ProductList: React.FC = () => {
                   style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }}
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
-                    target.src = 'https://via.placeholder.com/50x50?text=No+Image';
+                    target.src = 'https://picsum.photos/50/50?random=1';
                   }}
                 />
               </td>

@@ -45,7 +45,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, language = 'en' }) =
               muted 
               loop 
               preload="metadata"
-              poster='https://via.placeholder.com/300x200/cccccc/ffffff?text=Video+Thumbnail'
+              poster='https://picsum.photos/300/200?random=2'
               onMouseOver={(e) => {
                 const video = e.target as HTMLVideoElement;
                 if (video.readyState >= 3) { // HAVE_FUTURE_DATA or higher
@@ -57,12 +57,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, language = 'en' }) =
             >
               <source src={product.videoUrl} type="video/mp4" />
               <img 
-                src='https://via.placeholder.com/300x200/cccccc/ffffff?text=Video+Fallback' 
+                src='https://picsum.photos/300/200?random=3' 
                 className="card-img-top" 
                 alt={getProductName()}
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  target.src = 'https://via.placeholder.com/300x200/cccccc/ffffff?text=No+Image';
+                  target.src = 'https://picsum.photos/300/200?random=4';
                 }}
               />
             </video>
@@ -74,7 +74,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, language = 'en' }) =
               style={{ objectFit: 'cover', height: '200px' }}
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
-                target.src = 'https://via.placeholder.com/300x200/cccccc/ffffff?text=No+Image';
+                target.src = 'https://picsum.photos/300/200?random=5';
               }}
             />
           )}

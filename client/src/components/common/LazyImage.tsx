@@ -74,7 +74,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
           onLoad={() => setIsLoaded(true)}
           onError={(e) => {
             const target = e.target as HTMLImageElement;
-            target.src = 'https://via.placeholder.com/300x200?text=No+Image';
+            target.src = 'https://picsum.photos/300/200?random=1';
             setIsLoaded(true);
           }}
         />

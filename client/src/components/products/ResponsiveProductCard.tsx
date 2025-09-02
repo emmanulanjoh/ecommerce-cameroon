@@ -48,12 +48,12 @@ const ResponsiveProductCard: React.FC<ResponsiveProductCardProps> = ({
             <Col xs={12} sm={4} md={3}>
               <div className="product-image-container">
                 <img
-                  src={product.thumbnailImage || (product.images && product.images[0]) || 'https://via.placeholder.com/300x200?text=No+Image'}
+                  src={product.thumbnailImage || (product.images && product.images[0]) || 'https://picsum.photos/300/200?random=6'}
                   alt={getProductName()}
                   className="product-image"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
-                    target.src = 'https://via.placeholder.com/300x200?text=No+Image';
+                    target.src = 'https://picsum.photos/300/200?random=7';
                   }}
                 />
                 <Badge bg="primary" className="category-badge">
@@ -111,12 +111,12 @@ const ResponsiveProductCard: React.FC<ResponsiveProductCardProps> = ({
       <Card className="product-card-grid h-100">
         <div className="product-image-container">
           <img
-            src={product.thumbnailImage || (product.images && product.images[0]) || 'https://via.placeholder.com/300x200?text=No+Image'}
+            src={product.thumbnailImage || (product.images && product.images[0]) || 'https://picsum.photos/300/200?random=8'}
             alt={getProductName()}
             className="product-image"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
-              target.src = 'https://via.placeholder.com/300x200?text=No+Image';
+              target.src = 'https://picsum.photos/300/200?random=9';
             }}
           />
           <div className="product-overlay">
