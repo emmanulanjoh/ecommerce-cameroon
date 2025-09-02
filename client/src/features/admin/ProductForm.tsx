@@ -137,7 +137,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onProductSaved }) =>
         price: parseFloat(formData.price),
         category: formData.category,
         images: uploadedImages,
-        thumbnailImage: formData.thumbnailImage,
+        thumbnailImage: uploadedImages[0] || formData.thumbnailImage,
         videoUrl: uploadedVideoUrl,
         featured: formData.featured,
         inStock: formData.inStock,
