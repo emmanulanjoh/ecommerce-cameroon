@@ -99,18 +99,20 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onProductSaved }) =>
       // Upload image files
       if (imageFiles && imageFiles.length > 0) {
         setUploading(true);
-        console.log('Uploading', imageFiles.length, 'image files');
+        console.log('📤 Uploading', imageFiles.length, 'image files');
         for (let i = 0; i < imageFiles.length; i++) {
           try {
+            console.log('📷 Uploading file:', imageFiles[i].name);
             const imagePath = await uploadFile(imageFiles[i]);
             uploadedImages.push(imagePath);
-            console.log('Image uploaded:', imagePath);
+            console.log('✅ Image uploaded:', imagePath);
           } catch (uploadErr) {
             console.error('Error uploading image:', uploadErr);
             throw new Error(`Failed to upload image: ${imageFiles[i].name}`);
           }
         }
         setUploading(false);
+        console.log('📊 Final uploaded images array:', uploadedImages);
       }
       
       // Upload video file

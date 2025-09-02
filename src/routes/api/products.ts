@@ -72,7 +72,8 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
     const savedProduct = await product.save();
     
     console.log('✅ Product saved to MongoDB with S3 images:', savedProduct.nameEn);
-    console.log('🖼️ Images:', savedProduct.images);
+    console.log('🖼️ Images saved:', savedProduct.images);
+    console.log('🖼️ Thumbnail:', savedProduct.thumbnailImage);
     res.status(201).json(savedProduct);
   } catch (err) {
     console.error('❌ Product creation error:', err);

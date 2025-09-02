@@ -44,12 +44,18 @@ router.post('/single', authMiddleware, upload.single('file'), async (req: Reques
     );
     
     console.log('✅ S3 Upload successful:', fileUrl);
+    console.log('📤 Sending response with URL:', fileUrl);
 
     res.json({
       success: true,
       url: fileUrl,
       key: key,
-      message: 'File uploaded to S3 successfully'
+      message: 'File uploaded to S3 successfully',
+      debug: {
+        bucket: process.env.S3_BUCKET_NAME,
+        region: process.env.AWS_REGION,
+        timestamp: new Date().toISOString()
+      }
     });
   } catch (error: any) {
     console.error('Upload error:', error);
