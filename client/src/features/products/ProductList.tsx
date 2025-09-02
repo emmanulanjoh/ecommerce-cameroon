@@ -204,7 +204,7 @@ const ProductList: React.FC = () => {
             <tr key={product._id}>
               <td>
                 <img 
-                  src={product.thumbnailImage || (product.images && product.images[0]) || 'https://picsum.photos/50/50?random=1'} 
+                  src={product.thumbnailImage || (product.images && product.images[0]) || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNSAyMEMyNi4zODA3IDIwIDI3LjUgMjEuMTE5MyAyNy41IDIyLjVDMjcuNSAyMy44ODA3IDI2LjM4MDcgMjUgMjUgMjVDMjMuNjE5MyAyNSAyMi41IDIzLjg4MDcgMjIuNSAyMi41QzIyLjUgMjEuMTE5MyAyMy42MTkzIDIwIDI1IDIwWiIgZmlsbD0iIzlDQTNBRiIvPgo8cGF0aCBkPSJNMTcuNSAzMEwyMi41IDI1TDI3LjUgMzBIMzIuNUwzNyAyNUw0MiAzMFYzNUgxNy41VjMwWiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K'} 
                   alt={product.nameEn}
                   style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }}
                   onError={(e) => {
