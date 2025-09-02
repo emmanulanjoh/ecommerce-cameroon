@@ -68,7 +68,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, language = 'en' }) =
             </video>
           ) : (
             <img 
-              src={product.thumbnailImage || (product.images && product.images[0]) || 'https://picsum.photos/300/200?random=1'} 
+              src={product.thumbnailImage || (product.images && product.images[0]) || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNTAgODBDMTU2LjYyNyA4MCAxNjIgODUuMzczIDE2MiA5MkMxNjIgOTguNjI3IDE1Ni42MjcgMTA0IDE1MCAxMDRDMTQzLjM3MyAxMDQgMTM4IDk4LjYyNyAxMzggOTJDMTM4IDg1LjM3MyAxNDMuMzczIDgwIDE1MCA4MFoiIGZpbGw9IiM5Q0EzQUYiLz4KPHBhdGggZD0iTTEwNSAxMjBMMTM1IDkwTDE2NSAxMjBIMTk1TDIyNSA5MEwyNTUgMTIwVjE0MEgxMDVWMTIwWiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K'} 
               className="card-img-top" 
               alt={getProductName()}
               style={{ objectFit: 'cover', height: '200px' }}
