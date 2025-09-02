@@ -1,0 +1,44 @@
+{
+  "ResponseHeadersPolicyConfig": {
+    "Name": "ecommerce-cameroon-headers",
+    "Comment": "Headers for ecommerce images",
+    "CorsConfig": {
+      "AccessControlAllowCredentials": false,
+      "AccessControlAllowHeaders": {
+        "Quantity": 4,
+        "Items": ["Accept", "Accept-Language", "Content-Language", "Content-Type"]
+      },
+      "AccessControlAllowMethods": {
+        "Quantity": 2,
+        "Items": ["GET", "HEAD"]
+      },
+      "AccessControlAllowOrigins": {
+        "Quantity": 1,
+        "Items": ["*"]
+      },
+      "AccessControlExposeHeaders": {
+        "Quantity": 0
+      },
+      "AccessControlMaxAgeSec": 86400,
+      "OriginOverride": true
+    },
+    "SecurityHeadersConfig": {
+      "StrictTransportSecurity": {
+        "AccessControlMaxAgeSec": 31536000,
+        "IncludeSubdomains": true,
+        "Override": true
+      },
+      "ContentTypeOptions": {
+        "Override": true
+      },
+      "FrameOptions": {
+        "FrameOption": "DENY",
+        "Override": true
+      },
+      "ReferrerPolicy": {
+        "ReferrerPolicy": "strict-origin-when-cross-origin",
+        "Override": true
+      }
+    }
+  }
+}

@@ -59,10 +59,11 @@ app.use(helmet({
       styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://fonts.googleapis.com"],
       scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://code.jquery.com", "https://cdnjs.cloudflare.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdn.jsdelivr.net"],
-      imgSrc: ["'self'", "data:", "https:", "blob:"],
+      imgSrc: ["'self'", "data:", "https:", "blob:", "https://d35ew0puu9c5cz.cloudfront.net"],
       connectSrc: ["'self'", "https://api.whatsapp.com", "wss:", "ws:"],
     },
   },
+  crossOriginEmbedderPolicy: false,
 }));
 
 // Compression middleware
