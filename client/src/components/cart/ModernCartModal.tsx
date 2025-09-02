@@ -93,7 +93,44 @@ const ModernCartModal: React.FC<ModernCartModalProps> = ({ open, onClose }) => {
     setActiveStep((prev) => prev - 1);
   };
 
-  const handleWhatsAppOrder = () => {
+  const handleWhatsAppOrder = async () => {
+    try {
+      // Create order in database first
+      const token = localStorage.getItem('token');
+      if (token) {
+        const orderData = {
+          items: cartItems.map(item => ({
+            product: item.product._id,
+            quantity: item.quantity,
+            price: item.product.price
+          })),
+          shippingAddress: {
+            name: shippingInfo.name,
+            street: shippingInfo.address,
+            city: shippingInfo.city,
+            region: 'Cameroon',
+            country: 'Cameroon',
+            phone: shippingInfo.phone
+          },
+          notes: 'Order placed via WhatsApp'
+        };
+
+        await fetch('/api/orders', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(orderData)
+        });
+        
+        console.log('✅ Order saved to database');
+      }
+    } catch (error) {
+      console.error('❌ Failed to save order:', error);
+    }
+    
+    // Send WhatsApp message
     const message = generateWhatsAppMessage();
     const customerInfo = `%0A%0ACustomer: ${shippingInfo.name}%0APhone: ${shippingInfo.phone}%0AAddress: ${shippingInfo.address}, ${shippingInfo.city}`;
     const fullMessage = message + customerInfo;

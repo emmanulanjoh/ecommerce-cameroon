@@ -49,11 +49,11 @@ export class S3Service {
     await s3Client.send(command);
   }
 
-  // Generate file key - no folder prefix since CloudFront origin path is /products
+  // Generate file key with folder prefix
   static generateKey(folder: string, filename: string): string {
     const timestamp = Date.now();
     const extension = filename.split('.').pop();
     const cleanName = filename.replace(/[^a-zA-Z0-9.-]/g, '_').substring(0, 30);
-    return `${timestamp}-${Math.random().toString(36).substring(7)}.${extension}`;
+    return `${folder}/${timestamp}-${Math.random().toString(36).substring(7)}.${extension}`;
   }
 }
