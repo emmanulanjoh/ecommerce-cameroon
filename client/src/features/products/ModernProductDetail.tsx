@@ -37,6 +37,7 @@ import { useCart } from '../../context/CartContext';
 import { useUser } from '../auth';
 import axios from 'axios';
 import { Product, Review } from '../../types';
+import ReviewSection from '../../components/reviews/ReviewSection';
 
 const ModernProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -351,39 +352,12 @@ const ModernProductDetail: React.FC = () => {
 
 
 
-        {/* Reviews Preview */}
-        {reviews.length > 0 && (
-          <Card sx={{ mb: 2 }}>
-            <CardContent>
-              <Typography variant="h6" fontWeight="600" sx={{ mb: 2 }}>
-                Customer Reviews
-              </Typography>
-              {reviews.slice(0, 2).map((review) => (
-                <Box key={review._id} sx={{ mb: 2, pb: 2, borderBottom: 1, borderColor: 'divider' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                    <Avatar sx={{ width: 32, height: 32, fontSize: '0.875rem' }}>
-                      {review.username?.charAt(0).toUpperCase() || 'U'}
-                    </Avatar>
-                    <Box>
-                      <Typography variant="body2" fontWeight="600">
-                        {review.username || 'Anonymous'}
-                      </Typography>
-                      <Rating value={review.rating} size="small" readOnly />
-                    </Box>
-                  </Box>
-                  <Typography variant="body2" color="text.secondary">
-                    {review.comment}
-                  </Typography>
-                </Box>
-              ))}
-              {reviews.length > 2 && (
-                <Button size="small" variant="outlined">
-                  View All Reviews ({reviews.length})
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-        )}
+        {/* Reviews Section */}
+        <Card sx={{ mb: 2 }}>
+          <CardContent>
+            <ReviewSection productId={product._id} />
+          </CardContent>
+        </Card>
 
         {/* Related Products */}
         {relatedProducts.length > 0 && (
