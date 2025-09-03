@@ -14,15 +14,28 @@ const authMiddleware = async (req: Request, res: Response, next: Function) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret') as any;
-    const user = await User.findById(decoded.userId);
+    console.log('Decoded token:', decoded);
+    
+    let user;
+    // Handle both admin and regular user tokens
+    if (decoded.admin) {
+      // Admin token structure
+      user = { _id: decoded.admin.id, name: decoded.admin.username, isAdmin: true };
+    } else if (decoded.userId) {
+      // Regular user token
+      user = await User.findById(decoded.userId);
+    } else {
+      return res.status(401).json({ message: 'Invalid token structure' });
+    }
     
     if (!user) {
-      return res.status(401).json({ message: 'Invalid token' });
+      return res.status(401).json({ message: 'User not found' });
     }
 
     (req as any).user = user;
     next();
   } catch (error) {
+    console.error('Auth middleware error:', error);
     res.status(401).json({ message: 'Invalid token' });
   }
 };
