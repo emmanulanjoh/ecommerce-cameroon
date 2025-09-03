@@ -40,18 +40,31 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
   const submitReview = async () => {
     try {
       const token = localStorage.getItem('token');
-      await axios.post('/api/reviews', {
+      if (!token) {
+        alert('Please login to write a review');
+        return;
+      }
+      
+      console.log('Submitting review with token:', token ? 'Present' : 'Missing');
+      
+      const response = await axios.post('/api/reviews', {
         product: productId,
-        ...newReview
+        rating: newReview.rating,
+        comment: newReview.comment
       }, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
       });
       
+      console.log('Review submitted successfully:', response.data);
       setShowForm(false);
       setNewReview({ rating: 5, comment: '' });
       fetchReviews();
     } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to submit review');
+      console.error('Review submission error:', error.response?.data || error.message);
+      alert(error.response?.data?.message || 'Failed to submit review. Please try logging in again.');
     }
   };
 
@@ -70,7 +83,14 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
 
       <Button 
         variant="contained" 
-        onClick={() => setShowForm(!showForm)}
+        onClick={() => {
+          const token = localStorage.getItem('token');
+          if (!token) {
+            alert('Please login to write a review');
+            return;
+          }
+          setShowForm(!showForm);
+        }}
         sx={{ mb: 3 }}
       >
         Write a Review
