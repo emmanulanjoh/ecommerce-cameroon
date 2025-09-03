@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Badge, Alert, Card } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faTimes, faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { Card, Table, Tag, Button, Modal, Rate, Typography, Space, message } from 'antd';
+import { EyeOutlined, DeleteOutlined } from '@ant-design/icons';
 import axios from 'axios';
+
+const { Title, Text } = Typography;
 
 interface Review {
   _id: string;
-  productId: string;
-  username: string;
+  user: { name: string; email: string; };
+  product: { nameEn: string; };
   rating: number;
   comment: string;
-  isApproved: boolean;
+  verified: boolean;
   createdAt: string;
 }
 
 const ReviewManagement: React.FC = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [selectedReview, setSelectedReview] = useState<Review | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     fetchReviews();
@@ -25,182 +27,64 @@ const ReviewManagement: React.FC = () => {
 
   const fetchReviews = async () => {
     try {
-      setLoading(true);
-      setError(null);
-      const token = localStorage.getItem('token');
-      const config = {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      };
-      const response = await axios.get('/api/reviews/all', config);
+      const response = await axios.get('/api/reviews/admin/all');
       setReviews(response.data || []);
-    } catch (err: any) {
-      console.error('Error fetching reviews:', err);
-      setError(`Failed to load reviews: ${err.response?.data?.message || err.message}`);
+    } catch (error: any) {
+      console.error('Error fetching reviews:', error);
+      message.error('Failed to fetch reviews');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleApprove = async (reviewId: string) => {
+  const deleteReview = async (reviewId: string) => {
     try {
-      const token = localStorage.getItem('token');
-      const config = {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      };
-      await axios.put(`/api/reviews/${reviewId}/approve`, {}, config);
-      setReviews(reviews.map(review => 
-        review._id === reviewId ? { ...review, isApproved: true } : review
-      ));
-    } catch (err) {
-      console.error('Error approving review:', err);
-      alert('Failed to approve review');
+      await axios.delete(`/api/reviews/admin/${reviewId}`);
+      message.success('Review deleted successfully');
+      fetchReviews();
+    } catch (error: any) {
+      message.error('Failed to delete review');
     }
   };
 
-  const handleDelete = async (reviewId: string) => {
-    if (window.confirm('Are you sure you want to delete this review?')) {
-      try {
-        const token = localStorage.getItem('token');
-        const config = {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        };
-        await axios.delete(`/api/reviews/${reviewId}`, config);
-        setReviews(reviews.filter(review => review._id !== reviewId));
-      } catch (err) {
-        console.error('Error deleting review:', err);
-        alert('Failed to delete review');
-      }
+  const columns = [
+    { title: 'Product', dataIndex: ['product', 'nameEn'], render: (name: string) => <Text strong>{name}</Text> },
+    { title: 'Customer', dataIndex: ['user', 'name'] },
+    { title: 'Rating', dataIndex: 'rating', render: (rating: number) => <Rate disabled value={rating} /> },
+    { title: 'Comment', dataIndex: 'comment', render: (comment: string) => <Text>{comment.substring(0, 50)}...</Text> },
+    { title: 'Status', dataIndex: 'verified', render: (verified: boolean) => <Tag color={verified ? 'green' : 'orange'}>{verified ? 'Verified' : 'Pending'}</Tag> },
+    { title: 'Date', dataIndex: 'createdAt', render: (date: string) => new Date(date).toLocaleDateString() },
+    { 
+      title: 'Actions', 
+      render: (_: any, record: Review) => (
+        <Space>
+          <Button type="primary" icon={<EyeOutlined />} onClick={() => { setSelectedReview(record); setModalVisible(true); }}>View</Button>
+          <Button danger icon={<DeleteOutlined />} onClick={() => deleteReview(record._id)}>Delete</Button>
+        </Space>
+      )
     }
-  };
-
-  const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <span key={i} style={{ color: i < rating ? '#fbbf24' : '#d1d5db' }}>★</span>
-    ));
-  };
-
-  const pendingReviews = reviews.filter(review => !review.isApproved);
-  const approvedReviews = reviews.filter(review => review.isApproved);
-
-  if (loading) {
-    return <Alert variant="info">Loading reviews...</Alert>;
-  }
+  ];
 
   return (
     <div>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Review Management</h2>
-        <Button variant="outline-secondary" onClick={fetchReviews}>
-          <FontAwesomeIcon icon={faRefresh} className="me-2" />
-          Refresh
-        </Button>
-      </div>
+      <Card>
+        <Title level={3}>Review Management</Title>
+        <Text>Total reviews: {reviews.length}</Text>
+        <Table columns={columns} dataSource={reviews} rowKey="_id" loading={loading} />
+      </Card>
 
-      {error && <Alert variant="danger">{error}</Alert>}
-
-      {/* Pending Reviews */}
-      <div className="mb-5">
-        <h4 className="mb-3">
-          Pending Reviews 
-          <Badge bg="warning" className="ms-2">{pendingReviews.length}</Badge>
-        </h4>
-        
-        {pendingReviews.length === 0 ? (
-          <Alert variant="info">No pending reviews</Alert>
-        ) : (
-          pendingReviews.map(review => (
-            <Card key={review._id} className="mb-3">
-              <Card.Body>
-                <div className="d-flex justify-content-between align-items-start mb-2">
-                  <div>
-                    <strong>{review.username}</strong>
-                    <div className="d-flex align-items-center gap-2 mt-1">
-                      {renderStars(review.rating)}
-                      <small className="text-muted">
-                        {new Date(review.createdAt).toLocaleDateString()}
-                      </small>
-                    </div>
-                  </div>
-                  <Badge bg="warning">Pending</Badge>
-                </div>
-                
-                {review.comment && (
-                  <p className="mb-3">{review.comment}</p>
-                )}
-                
-                <div className="d-flex gap-2">
-                  <Button 
-                    variant="success" 
-                    size="sm"
-                    onClick={() => handleApprove(review._id)}
-                  >
-                    <FontAwesomeIcon icon={faCheck} className="me-1" />
-                    Approve
-                  </Button>
-                  <Button 
-                    variant="danger" 
-                    size="sm"
-                    onClick={() => handleDelete(review._id)}
-                  >
-                    <FontAwesomeIcon icon={faTimes} className="me-1" />
-                    Delete
-                  </Button>
-                </div>
-              </Card.Body>
-            </Card>
-          ))
+      <Modal title="Review Details" open={modalVisible} onCancel={() => setModalVisible(false)} footer={null}>
+        {selectedReview && (
+          <div>
+            <p><strong>Product:</strong> {selectedReview.product.nameEn}</p>
+            <p><strong>Customer:</strong> {selectedReview.user.name} ({selectedReview.user.email})</p>
+            <p><strong>Rating:</strong> <Rate disabled value={selectedReview.rating} /></p>
+            <p><strong>Comment:</strong> {selectedReview.comment}</p>
+            <p><strong>Date:</strong> {new Date(selectedReview.createdAt).toLocaleString()}</p>
+            <p><strong>Status:</strong> <Tag color={selectedReview.verified ? 'green' : 'orange'}>{selectedReview.verified ? 'Verified' : 'Pending'}</Tag></p>
+          </div>
         )}
-      </div>
-
-      {/* Approved Reviews */}
-      <div>
-        <h4 className="mb-3">
-          Approved Reviews 
-          <Badge bg="success" className="ms-2">{approvedReviews.length}</Badge>
-        </h4>
-        
-        {approvedReviews.length === 0 ? (
-          <Alert variant="info">No approved reviews</Alert>
-        ) : (
-          approvedReviews.map(review => (
-            <Card key={review._id} className="mb-3">
-              <Card.Body>
-                <div className="d-flex justify-content-between align-items-start mb-2">
-                  <div>
-                    <strong>{review.username}</strong>
-                    <div className="d-flex align-items-center gap-2 mt-1">
-                      {renderStars(review.rating)}
-                      <small className="text-muted">
-                        {new Date(review.createdAt).toLocaleDateString()}
-                      </small>
-                    </div>
-                  </div>
-                  <Badge bg="success">Approved</Badge>
-                </div>
-                
-                {review.comment && (
-                  <p className="mb-3">{review.comment}</p>
-                )}
-                
-                <Button 
-                  variant="outline-danger" 
-                  size="sm"
-                  onClick={() => handleDelete(review._id)}
-                >
-                  <FontAwesomeIcon icon={faTimes} className="me-1" />
-                  Delete
-                </Button>
-              </Card.Body>
-            </Card>
-          ))
-        )}
-      </div>
+      </Modal>
     </div>
   );
 };

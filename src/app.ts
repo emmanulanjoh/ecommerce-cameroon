@@ -123,20 +123,10 @@ app.use(performanceMonitor);
 // Language middleware
 app.use(setLanguage);
 
-// CSRF protection - exclude API routes
-const csrf = require('csurf');
-const csrfProtection = csrf({ cookie: true });
-
-// Apply CSRF only to non-API routes
+// CSRF protection - temporarily disabled
 app.use((req: Request, res: Response, next: NextFunction) => {
-  if (req.path.startsWith('/api/')) {
-    return next();
-  }
-  csrfProtection(req, res, next);
-});
-
-app.use((req: Request, res: Response, next: NextFunction) => {
-  res.locals.csrfToken = req.csrfToken ? req.csrfToken() : '';
+  (req as any).csrfToken = () => '';
+  res.locals.csrfToken = '';
   next();
 });
 

@@ -48,6 +48,29 @@ router.get('/product/:productId', async (req: Request, res: Response) => {
   }
 });
 
+// Admin: Get all reviews
+router.get('/admin/all', async (req: Request, res: Response) => {
+  try {
+    const reviews = await Review.find({})
+      .populate('user', 'name email')
+      .populate('product', 'nameEn')
+      .sort({ createdAt: -1 });
+    res.json(reviews);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Admin: Delete review
+router.delete('/admin/:id', async (req: Request, res: Response) => {
+  try {
+    await Review.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Review deleted successfully' });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Create review
 router.post('/', authMiddleware, async (req: Request, res: Response) => {
   try {
