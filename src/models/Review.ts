@@ -1,51 +1,44 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IReview extends Document {
-  productId: mongoose.Types.ObjectId;
-  customerName: string;
-  customerEmail?: string;
+  product: mongoose.Types.ObjectId;
+  user: mongoose.Types.ObjectId;
   rating: number;
-  comment?: string;
-  isApproved: boolean;
+  comment: string;
+  verified: boolean;
   createdAt: Date;
-  updatedAt: Date;
 }
 
-const ReviewSchema: Schema = new Schema(
-  {
-    productId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Product',
-      required: [true, 'Product ID is required']
-    },
-    customerName: {
-      type: String,
-      required: [true, 'Customer name is required'],
-      trim: true
-    },
-    customerEmail: {
-      type: String,
-      trim: true,
-      lowercase: true
-    },
-    rating: {
-      type: Number,
-      required: [true, 'Rating is required'],
-      min: 1,
-      max: 5
-    },
-    comment: {
-      type: String,
-      trim: true
-    },
-    isApproved: {
-      type: Boolean,
-      default: false
-    }
+const ReviewSchema: Schema = new Schema({
+  product: {
+    type: Schema.Types.ObjectId,
+    ref: 'Product',
+    required: true
   },
-  {
-    timestamps: true
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  rating: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 5
+  },
+  comment: {
+    type: String,
+    required: true,
+    maxlength: 500
+  },
+  verified: {
+    type: Boolean,
+    default: false
   }
-);
+}, {
+  timestamps: true
+});
+
+ReviewSchema.index({ product: 1, user: 1 }, { unique: true });
 
 export default mongoose.model<IReview>('Review', ReviewSchema);

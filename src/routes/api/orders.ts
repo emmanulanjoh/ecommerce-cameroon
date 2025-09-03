@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import Order from '../../models/Order';
 import User from '../../models/User';
+import { EmailService } from '../../services/email';
 
 const router = express.Router();
 
@@ -140,6 +141,12 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
 
     await order.save();
     await order.populate('items.product', 'nameEn nameFr images price');
+
+    // Send confirmation email
+    const user = await User.findById(userId);
+    if (user?.email) {
+      await EmailService.sendOrderConfirmation(user.email, order);
+    }
 
     res.status(201).json(order);
   } catch (error: any) {

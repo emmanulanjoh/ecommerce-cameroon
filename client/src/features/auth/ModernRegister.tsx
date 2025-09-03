@@ -123,28 +123,23 @@ const ModernRegister: React.FC = () => {
                 variant="outlined"
                 size="large"
                 startIcon={
-                  <motion.div
-                    animate={{ rotate: [0, 360] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                  <Box
+                    sx={{
+                      width: 20,
+                      height: 20,
+                      borderRadius: '50%',
+                      background: 'linear-gradient(45deg, #4285F4 25%, #34A853 25%, #34A853 50%, #FBBC05 50%, #FBBC05 75%, #EA4335 75%)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                      color: 'white',
+                      mr: 1
+                    }}
                   >
-                    <Box
-                      sx={{
-                        width: 20,
-                        height: 20,
-                        borderRadius: '50%',
-                        background: 'linear-gradient(45deg, #4285F4 25%, #34A853 25%, #34A853 50%, #FBBC05 50%, #FBBC05 75%, #EA4335 75%)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        color: 'white',
-                        mr: 1
-                      }}
-                    >
-                      G
-                    </Box>
-                  </motion.div>
+                    G
+                  </Box>
                 }
                 onClick={handleGoogleLogin}
                 sx={{

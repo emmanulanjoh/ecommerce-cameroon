@@ -34,7 +34,7 @@ const ProductPageLayout: React.FC<ProductPageLayoutProps> & {
         sx={{
           minHeight: '100vh',
           background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-          py: 4,
+          py: { xs: 1, md: 4 },
         }}
       >
         <Container maxWidth="xl">
@@ -63,8 +63,8 @@ const Header: React.FC<{ children: ReactNode }> = ({ children }) => {
         sx={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           color: 'white',
-          p: 4,
-          mb: 4,
+          p: { xs: 2, md: 4 },
+          mb: { xs: 2, md: 4 },
           borderRadius: 3,
           boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
         }}

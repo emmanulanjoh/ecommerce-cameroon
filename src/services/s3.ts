@@ -1,23 +1,33 @@
 import { PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { s3Client, AWS_CONFIG } from '../config/aws';
+import sharp from 'sharp';
 
 export class S3Service {
   // Upload file to S3
   static async uploadFile(key: string, body: Buffer, contentType: string) {
     try {
+      let optimizedBody = body;
+      
+      // Optimize images
+      if (contentType.startsWith('image/')) {
+        optimizedBody = await sharp(body)
+          .resize(800, 600, { fit: 'inside', withoutEnlargement: true })
+          .jpeg({ quality: 85 })
+          .toBuffer();
+        contentType = 'image/jpeg';
+      }
+      
       const command = new PutObjectCommand({
         Bucket: AWS_CONFIG.S3_BUCKET,
         Key: key,
-        Body: body,
+        Body: optimizedBody,
         ContentType: contentType,
-        // Remove ACL - bucket should have public read policy
       });
       
-      console.log('📤 Uploading to S3:', { bucket: AWS_CONFIG.S3_BUCKET, key });
+      console.log('📤 Uploading optimized to S3:', { bucket: AWS_CONFIG.S3_BUCKET, key });
       await s3Client.send(command);
       
-      // Always return CloudFront URL
       const fileUrl = `${AWS_CONFIG.CLOUDFRONT_URL}/${key}`;
       console.log('✅ S3 upload complete, returning CloudFront URL:', fileUrl);
       

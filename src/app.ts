@@ -87,7 +87,9 @@ app.use(corsMiddleware);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// MongoDB sanitization
+// Input sanitization
+const xss = require('xss-clean');
+app.use(xss());
 app.use(mongoSanitize());
 
 // Cookie parser
@@ -121,9 +123,12 @@ app.use(performanceMonitor);
 // Language middleware
 app.use(setLanguage);
 
-// CSRF protection - temporarily disabled
+// CSRF protection
+const csrf = require('csurf');
+const csrfProtection = csrf({ cookie: true });
+app.use(csrfProtection);
 app.use((req: Request, res: Response, next: NextFunction) => {
-  (req as any).csrfToken = () => '';
+  res.locals.csrfToken = req.csrfToken();
   next();
 });
 
@@ -225,6 +230,10 @@ app.use('/api/contact', apiContactRoutes.router);
 app.use('/api/chat', apiChatRoutes.router);
 app.use('/api/users', apiUsersRoutes.router);
 app.use('/api/orders', apiOrdersRoutes.router);
+
+// Import and register sitemap route
+var sitemapRoutes = require('./routes/api/sitemap');
+app.use('/', sitemapRoutes.router);
 
 console.log('✅ API routes registered successfully');
 
