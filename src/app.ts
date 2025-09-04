@@ -69,16 +69,22 @@ app.use(helmet({
 // Compression middleware
 app.use(compression());
 
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.'
-});
+// Rate limiting with different limits per endpoint
+const createLimiter = (windowMs, max, message) => rateLimit({ windowMs, max, message });
 
-// Apply rate limiting to API routes
-app.use('/api/', limiter);
-app.use('/webhook/', limiter);
+// General API rate limiting
+const generalLimiter = createLimiter(15 * 60 * 1000, 100, 'Too many requests, try again later');
+const authLimiter = createLimiter(15 * 60 * 1000, 5, 'Too many login attempts, try again later');
+const uploadLimiter = createLimiter(60 * 1000, 10, 'Too many uploads, try again later');
+const reviewLimiter = createLimiter(60 * 60 * 1000, 3, 'Too many reviews, try again later');
+
+// Apply different rate limits
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/register', authLimiter);
+app.use('/api/upload', uploadLimiter);
+app.use('/api/reviews', reviewLimiter);
+app.use('/api/', generalLimiter);
+app.use('/webhook/', generalLimiter);
 
 // CORS middleware for all environments
 app.use(corsMiddleware);
@@ -119,6 +125,10 @@ app.use(i18n.init);
 
 // Performance monitoring
 app.use(performanceMonitor);
+
+// Request logging
+import { requestLogger, errorLogger } from './middleware/logger';
+app.use(requestLogger);
 
 // Language middleware
 app.use(setLanguage);
@@ -237,17 +247,7 @@ app.use('/', sitemapRoutes.router);
 console.log('✅ API routes registered successfully');
 
 // API error handler
-app.use('/api', (err: Error, req: Request, res: Response, next: NextFunction) => {
-  // Log error
-  console.error(err.stack);
-  
-  // Send JSON error response
-  res.status(500).json({
-    success: false,
-    message: err.message || 'Server error',
-    error: process.env.NODE_ENV === 'development' ? err : {}
-  });
-});
+app.use('/api', errorLogger);
 
 // Serve React app for all other routes in production
 if (process.env.NODE_ENV === 'production') {

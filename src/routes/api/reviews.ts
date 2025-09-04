@@ -1,4 +1,6 @@
 import express, { Request, Response } from 'express';
+import { param } from 'express-validator';
+import { validateReview, handleValidationErrors } from '../../middleware/validation';
 import jwt from 'jsonwebtoken';
 import Review from '../../models/Review';
 import User from '../../models/User';
@@ -41,7 +43,7 @@ const authMiddleware = async (req: Request, res: Response, next: Function) => {
 };
 
 // Get reviews for a product
-router.get('/product/:productId', async (req: Request, res: Response) => {
+router.get('/product/:productId', [param('productId').isMongoId().withMessage('Valid product ID required'), handleValidationErrors], async (req: Request, res: Response) => {
   try {
     const reviews = await Review.find({ product: req.params.productId })
       .populate('user', 'name')
@@ -85,7 +87,7 @@ router.delete('/admin/:id', async (req: Request, res: Response) => {
 });
 
 // Create review
-router.post('/', authMiddleware, async (req: Request, res: Response) => {
+router.post('/', authMiddleware, validateReview, async (req: Request, res: Response) => {
   try {
     const { product, rating, comment } = req.body;
     const userId = (req as any).user._id;

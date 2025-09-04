@@ -23,7 +23,9 @@
     "migrate:dynamodb": "node scripts/migrate-to-dynamodb.js",
     "test:dynamodb": "node scripts/test-dynamodb.js",
     "test:s3": "node scripts/test-s3-connection.js",
-    "debug:dynamodb": "node scripts/debug-dynamodb.js"
+    "debug:dynamodb": "node scripts/debug-dynamodb.js",
+    "optimize:db": "node src/scripts/optimize-database.js",
+    "clean:logs": "node src/scripts/clean-logs.js"
   },
   "keywords": [
     "ecommerce",
