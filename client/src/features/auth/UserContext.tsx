@@ -64,6 +64,20 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   // Load user profile on mount if token exists
   useEffect(() => {
     const loadUser = async () => {
+      // Check for token in localStorage (in case it was set by OAuth redirect)
+      const storedToken = localStorage.getItem('userToken') || localStorage.getItem('token');
+      if (storedToken && storedToken !== token) {
+        setToken(storedToken);
+        return; // This will trigger another useEffect call
+      }
+      
+      // Check for updated token in localStorage
+      const storedToken = localStorage.getItem('userToken') || localStorage.getItem('token');
+      if (storedToken && storedToken !== token) {
+        setToken(storedToken);
+        return;
+      }
+      
       if (token) {
         try {
           const response = await axios.get('/api/users/profile');
@@ -78,6 +92,35 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
     loadUser();
   }, [token]);
+
+  // Check for OAuth success on page load
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const oauthToken = urlParams.get('token');
+    
+    if (oauthToken) {
+      localStorage.setItem('userToken', oauthToken);
+      setToken(oauthToken);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
+  // Check for OAuth success on page load
+  useEffect(() => {
+    const checkOAuthSuccess = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const oauthToken = urlParams.get('token');
+      
+      if (oauthToken) {
+        localStorage.setItem('userToken', oauthToken);
+        setToken(oauthToken);
+        // Clean up URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    };
+    
+    checkOAuthSuccess();
+  }, []);
 
   const login = async (email: string, password: string) => {
     try {
