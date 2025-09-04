@@ -73,6 +73,7 @@
     "sharp": "^0.34.3",
     "typescript": "^5.0.4",
     "web-push": "^3.6.7",
+    "@types/web-push": "^3.6.3",
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {

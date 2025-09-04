@@ -70,7 +70,7 @@ app.use(helmet({
 app.use(compression());
 
 // Rate limiting with different limits per endpoint
-const createLimiter = (windowMs, max, message) => rateLimit({ windowMs, max, message });
+const createLimiter = (windowMs: number, max: number, message: string) => rateLimit({ windowMs, max, message });
 
 // General API rate limiting
 const generalLimiter = createLimiter(15 * 60 * 1000, 100, 'Too many requests, try again later');

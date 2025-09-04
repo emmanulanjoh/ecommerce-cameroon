@@ -66,3 +66,12 @@ export const validateQuery = [
   query('category').optional().trim().isLength({ max: 50 }).withMessage('Category too long'),
   handleValidationErrors
 ];
+
+// Contact validation
+export const validateContact = [
+  body('name').trim().isLength({ min: 2, max: 50 }).withMessage('Name must be 2-50 characters'),
+  body('email').isEmail().normalizeEmail().withMessage('Valid email required'),
+  body('subject').trim().isLength({ min: 5, max: 100 }).withMessage('Subject must be 5-100 characters'),
+  body('message').trim().isLength({ min: 10, max: 1000 }).withMessage('Message must be 10-1000 characters'),
+  handleValidationErrors
+];
