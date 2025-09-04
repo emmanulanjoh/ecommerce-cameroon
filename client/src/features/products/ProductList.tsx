@@ -195,6 +195,7 @@ const ProductList: React.FC = () => {
             <th>Name</th>
             <th>Category</th>
             <th>Price</th>
+            
             <th>Stock</th>
             <th>Status</th>
             <th>Created</th>

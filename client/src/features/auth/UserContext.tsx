@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+// Fixed duplicate variable issue
 import axios from 'axios';
 
 interface User {
@@ -52,7 +53,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [token, setToken] = useState<string | null>(localStorage.getItem('userToken'));
   const [isLoading, setIsLoading] = useState(true);
 
-  // Set up axios interceptor for auth token
   useEffect(() => {
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -61,13 +61,11 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }
   }, [token]);
 
-  // Load user profile on mount if token exists
   useEffect(() => {
     const loadUser = async () => {
-      // Check for token in localStorage (in case it was set by OAuth redirect)
-      const storedToken = localStorage.getItem('userToken') || localStorage.getItem('token');
-      if (storedToken && storedToken !== token) {
-        setToken(storedToken);
+      const currentToken = localStorage.getItem('userToken') || localStorage.getItem('token');
+      if (currentToken && currentToken !== token) {
+        setToken(currentToken);
         return;
       }
       
@@ -86,7 +84,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     loadUser();
   }, [token]);
 
-  // Check for OAuth success on page load
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const oauthToken = urlParams.get('token');
