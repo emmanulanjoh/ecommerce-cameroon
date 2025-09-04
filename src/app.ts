@@ -191,6 +191,7 @@ try {
   var apiOrdersRoutes = require('./routes/api/orders');
   var googleAuthRoutes = require('./routes/api/google-auth');
   var apiReviewsRoutes = require('./routes/api/reviews');
+  var apiNotificationsRoutes = require('./routes/api/notifications');
   console.log('✅ All route modules imported successfully');
 } catch (error) {
   console.error('❌ Error importing route modules:', error);
@@ -232,6 +233,7 @@ app.use('/api/auth', googleAuthRoutes.router);
 app.use('/api/products', apiProductRoutes.router);
 app.use('/api/categories', apiCategoryRoutes.router);
 app.use('/api/reviews', apiReviewsRoutes.router);
+app.use('/api/notifications', apiNotificationsRoutes.router);
 app.use('/api/upload', apiUploadRoutes.router);
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 // Removed unused routes
