@@ -7,6 +7,7 @@ import axios from 'axios';
 
 import ProductFilters from '../../components/products/ProductFilters';
 import ProductGrid from '../../components/products/ProductGrid';
+import AdvancedSearch from '../../components/search/AdvancedSearch';
 import { Product } from '../../shared/types';
 
 const theme = createTheme({
@@ -168,6 +169,19 @@ const PublicProductList: React.FC = () => {
           <Typography variant="body1" sx={{ opacity: 0.9, color: 'white' }}>
             Find the perfect products for your needs
           </Typography>
+        </Box>
+
+        {/* Advanced Search */}
+        <Box sx={{ px: { xs: 1, md: 3 }, mb: 2 }}>
+          <AdvancedSearch 
+            onSearch={(filters) => {
+              setSearchTerm(filters.search);
+              setSelectedCategory(filters.category);
+              setPriceRange([filters.minPrice, filters.maxPrice]);
+              setInStockOnly(filters.inStock);
+            }}
+            loading={loading}
+          />
         </Box>
 
         {/* Main Content Container */}

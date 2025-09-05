@@ -38,6 +38,7 @@ import { useUser } from '../auth';
 import axios from 'axios';
 import { Product, Review } from '../../types';
 import ReviewSection from '../../components/reviews/ReviewSection';
+import ProductRecommendations from '../../components/products/ProductRecommendations';
 
 const ModernProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -356,6 +357,13 @@ const ModernProductDetail: React.FC = () => {
         <Card sx={{ mb: 2 }}>
           <CardContent>
             <ReviewSection productId={product._id} />
+          </CardContent>
+        </Card>
+
+        {/* Product Recommendations */}
+        <Card sx={{ mb: 2 }}>
+          <CardContent>
+            <ProductRecommendations productId={product._id} />
           </CardContent>
         </Card>
 
