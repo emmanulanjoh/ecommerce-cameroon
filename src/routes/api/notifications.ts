@@ -3,12 +3,14 @@ import webpush from 'web-push';
 
 const router = express.Router();
 
-// Configure web-push (in production, use environment variables)
-webpush.setVapidDetails(
-  'mailto:admin@findallsourcing.com',
-  process.env.VAPID_PUBLIC_KEY || 'BEl62iUYgUivxIkv69yViEuiBIa40HI80NqIUHI80NqIUHI80NqIUHI80NqIUHI80NqIUHI80NqI',
-  process.env.VAPID_PRIVATE_KEY || 'your-private-key-here'
-);
+// Configure web-push only if keys are provided
+if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+  webpush.setVapidDetails(
+    'mailto:admin@findallsourcing.com',
+    process.env.VAPID_PUBLIC_KEY,
+    process.env.VAPID_PRIVATE_KEY
+  );
+}
 
 // Store subscriptions (in production, use database)
 const subscriptions: any[] = [];
@@ -25,6 +27,10 @@ router.post('/subscribe', (req: Request, res: Response) => {
 
 // Send notification to all subscribers
 router.post('/send', async (req: Request, res: Response) => {
+  if (!process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
+    return res.status(503).json({ error: 'Push notifications not configured' });
+  }
+
   const { title, body, url } = req.body;
   
   const payload = JSON.stringify({
@@ -49,6 +55,10 @@ router.post('/send', async (req: Request, res: Response) => {
 
 // Send notification for new order
 router.post('/order-update', async (req: Request, res: Response) => {
+  if (!process.env.VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) {
+    return res.status(503).json({ error: 'Push notifications not configured' });
+  }
+
   const { orderId, status } = req.body;
   
   const payload = JSON.stringify({
