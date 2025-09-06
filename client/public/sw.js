@@ -18,12 +18,21 @@ self.addEventListener('install', event => {
 
 // Fetch event
 self.addEventListener('fetch', event => {
+  // Skip caching for CloudFront images to avoid CSP issues
+  if (event.request.url.includes('cloudfront.net')) {
+    return;
+  }
+  
   event.respondWith(
     caches.match(event.request)
       .then(response => {
         // Return cached version or fetch from network
         return response || fetch(event.request);
       }
+      .catch(() => {
+        // Fallback for failed requests
+        return new Response('Network error', { status: 408 });
+      })
     )
   );
 });
