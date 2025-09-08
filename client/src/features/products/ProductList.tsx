@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Button, Form, InputGroup, Badge, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash, faSearch, faPlus, faRefresh } from '@fortawesome/free-solid-svg-icons';
@@ -6,6 +6,7 @@ import { Table } from 'react-bootstrap';
 import axios from 'axios';
 import { Product } from '../../shared/types';
 import ProductForm from '../admin/ProductForm';
+import { sanitizeForLog } from '../../utils/sanitize';
 
 
 
@@ -16,23 +17,19 @@ const ProductList: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>('');
+  const debounceRef = useRef<NodeJS.Timeout>();
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
       console.log('Fetching products...');
       
       const response = await axios.get('/api/products');
-      console.log('API Response:', response.data);
+      console.log('API Response:', sanitizeForLog(JSON.stringify(response.data)));
       
       let productsData = [];
       if (response.data.products) {
@@ -41,18 +38,41 @@ const ProductList: React.FC = () => {
         productsData = response.data;
       }
       
-      console.log('Setting products:', productsData);
+      console.log('Setting products count:', sanitizeForLog(String(productsData.length)));
       setProducts(productsData);
       
     } catch (err: any) {
-      console.error('Error fetching products:', err);
+      console.error('Error fetching products:', sanitizeForLog(err.message));
       setError(`Failed to load products: ${err.response?.data?.message || err.message}`);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const handleDelete = async (id: string) => {
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  useEffect(() => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+    debounceRef.current = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300);
+
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, [searchTerm]);
+
+
+
+
+
+  const handleDelete = useCallback(async (id: string) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
         const token = localStorage.getItem('token');
@@ -62,41 +82,42 @@ const ProductList: React.FC = () => {
           }
         };
         await axios.delete(`/api/products/${id}`, config);
-        setProducts(products.filter(product => product._id !== id));
-      } catch (err) {
-        console.error('Error deleting product:', err);
+        setProducts(prev => prev.filter(product => product._id !== id));
+      } catch (err: any) {
+        console.error('Error deleting product:', sanitizeForLog(err.message));
         alert('Failed to delete product');
       }
     }
-  };
+  }, []);
 
-  const handleEdit = (product: Product) => {
+  const handleEdit = useCallback((product: Product) => {
     setEditingProduct(product);
-  };
+  }, []);
 
-  const handleProductSaved = (savedProduct: Product) => {
+  const handleProductSaved = useCallback((savedProduct: Product) => {
     if (editingProduct) {
-      setProducts(products.map(p => p._id === savedProduct._id ? savedProduct : p));
+      setProducts(prev => prev.map(p => p._id === savedProduct._id ? savedProduct : p));
       setEditingProduct(null);
     } else {
-      setProducts([...products, savedProduct]);
+      setProducts(prev => [...prev, savedProduct]);
       setShowAddForm(false);
     }
-  };
+  }, [editingProduct]);
 
 
 
 
 
   const filteredProducts = useMemo(() => {
-    console.log('Filtering products:', products);
-    if (!searchTerm) return products;
+    console.log('Filtering products count:', sanitizeForLog(String(products.length)));
+    if (!debouncedSearchTerm) return products;
+    const searchLower = debouncedSearchTerm.toLowerCase();
     return products.filter(product => 
-      product.nameEn?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (product.nameFr && product.nameFr.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      product.category?.toLowerCase().includes(searchTerm.toLowerCase())
+      product.nameEn?.toLowerCase().includes(searchLower) ||
+      (product.nameFr && product.nameFr.toLowerCase().includes(searchLower)) ||
+      product.category?.toLowerCase().includes(searchLower)
     );
-  }, [products, searchTerm]);
+  }, [products, debouncedSearchTerm]);
 
   if (editingProduct) {
     return (

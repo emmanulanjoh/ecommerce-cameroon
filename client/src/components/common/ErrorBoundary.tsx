@@ -1,6 +1,6 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { Box, Typography, Button, Paper } from '@mui/material';
-import { Refresh, BugReport } from '@mui/icons-material';
+import { Alert, Container, Button } from 'react-bootstrap';
+import { sanitizeForLog } from '../../utils/sanitize';
 
 interface Props {
   children: ReactNode;
@@ -21,7 +21,8 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Error caught by boundary:', error, errorInfo);
+    console.error('ErrorBoundary caught an error:', sanitizeForLog(error.message));
+    console.error('Error details:', sanitizeForLog(JSON.stringify(errorInfo)));
   }
 
   private handleReload = () => {
@@ -31,39 +32,20 @@ class ErrorBoundary extends Component<Props, State> {
   public render() {
     if (this.state.hasError) {
       return (
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            minHeight: '50vh',
-            p: 3
-          }}
-        >
-          <Paper
-            sx={{
-              p: 4,
-              textAlign: 'center',
-              maxWidth: 500,
-              width: '100%'
-            }}
-          >
-            <BugReport sx={{ fontSize: 64, color: 'error.main', mb: 2 }} />
-            <Typography variant="h5" gutterBottom>
-              Oops! Something went wrong
-            </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-              We're sorry for the inconvenience. Please try refreshing the page.
-            </Typography>
-            <Button
-              variant="contained"
-              startIcon={<Refresh />}
-              onClick={this.handleReload}
-            >
-              Refresh Page
-            </Button>
-          </Paper>
-        </Box>
+        <Container className="mt-5">
+          <Alert variant="danger">
+            <Alert.Heading>Something went wrong!</Alert.Heading>
+            <p>
+              We're sorry, but something unexpected happened. Please try refreshing the page.
+            </p>
+            <hr />
+            <div className="d-flex justify-content-end">
+              <Button onClick={this.handleReload} variant="outline-danger">
+                Refresh Page
+              </Button>
+            </div>
+          </Alert>
+        </Container>
       );
     }
 

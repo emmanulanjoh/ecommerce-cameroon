@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Product } from '../types';
 import axios from 'axios';
+import { sanitizeForLog } from '../utils/sanitize';
 
 interface CartItem {
   product: Product;
@@ -37,7 +38,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
   const addToCart = (product: Product, quantity: number = 1) => {
-    console.log('addToCart called with:', product.nameEn, 'quantity:', quantity);
+    console.log('addToCart called with:', sanitizeForLog(product.nameEn || ''), 'quantity:', sanitizeForLog(String(quantity)));
     setCartItems(prevItems => {
       const existingItem = prevItems.find(item => item.product._id === product._id);
       
@@ -122,14 +123,22 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const createOrder = async (shippingAddress: any, isAuthenticated: boolean, userToken?: string): Promise<string> => {
     try {
       if (isAuthenticated && userToken) {
-        const orderData = {
-          items: cartItems.map(item => ({
+        // Validate product IDs to prevent NoSQL injection
+        const validatedItems = cartItems.map(item => {
+          if (!item.product._id || typeof item.product._id !== 'string' || !/^[a-fA-F0-9]{24}$/.test(item.product._id)) {
+            throw new Error('Invalid product ID');
+          }
+          return {
             product: item.product._id,
-            name: item.product.nameEn,
-            price: item.product.price,
-            quantity: item.quantity,
-            image: item.product.images?.[0]
-          })),
+            name: sanitizeForLog(item.product.nameEn || ''),
+            price: Number(item.product.price) || 0,
+            quantity: Number(item.quantity) || 1,
+            image: item.product.images?.[0] || ''
+          };
+        });
+
+        const orderData = {
+          items: validatedItems,
           shippingAddress,
           notes: 'Order placed via WhatsApp'
         };

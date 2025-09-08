@@ -15,7 +15,10 @@ const authMiddleware = async (req: Request, res: Response, next: Function) => {
       return res.status(401).json({ message: 'No token provided' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret') as any;
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ message: 'Server configuration error' });
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as any;
     console.log('Decoded token:', decoded);
     
     let user;

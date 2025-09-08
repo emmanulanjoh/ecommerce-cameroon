@@ -3,6 +3,8 @@ import jwt from 'jsonwebtoken';
 import Order from '../../models/Order';
 import User from '../../models/User';
 import { EmailService } from '../../services/email';
+import { sanitizeForLog, sanitizeForHtml } from '../../utils/sanitize';
+import { csrfProtection } from '../../middleware/csrf';
 
 const router = express.Router();
 
@@ -14,7 +16,10 @@ const authMiddleware = async (req: Request, res: Response, next: Function) => {
       return res.status(401).json({ message: 'No token provided' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret') as any;
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ message: 'Server configuration error' });
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as any;
     const user = await User.findById(decoded.userId);
     
     if (!user) {
@@ -72,10 +77,10 @@ router.get('/admin/all', async (req: Request, res: Response) => {
 // @route   PUT /api/orders/admin/:id/status
 // @desc    Update order status (Admin only)
 // @access  Public (handled by admin route protection)
-router.put('/admin/:id/status', async (req: Request, res: Response) => {
+router.put('/admin/:id/status', csrfProtection, async (req: Request, res: Response) => {
   try {
     const { status, trackingNumber, notes } = req.body;
-    console.log(`📝 Updating order ${req.params.id} status to: ${status}`);
+    console.log(`📝 Updating order ${sanitizeForLog(req.params.id)} status to: ${sanitizeForLog(status)}`);
     
     const order = await Order.findById(req.params.id);
     if (!order) {
@@ -120,7 +125,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
 // @route   POST /api/orders
 // @desc    Create new order
 // @access  Private
-router.post('/', authMiddleware, async (req: Request, res: Response) => {
+router.post('/', csrfProtection, authMiddleware, async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user._id;
     const { items, shippingAddress, notes } = req.body;

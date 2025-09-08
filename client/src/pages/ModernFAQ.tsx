@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Container, Row, Col, Card, Form, InputGroup, Button, Accordion } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faQuestionCircle, faShoppingCart, faShippingFast, faCreditCard, faShieldAlt, faHeadset } from '@fortawesome/free-solid-svg-icons';
@@ -8,16 +8,16 @@ const ModernFAQ: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
 
-  const categories = [
+  const categories = useMemo(() => [
     { id: 'all', label: 'All Questions', icon: faQuestionCircle, color: 'primary' },
     { id: 'orders', label: 'Orders', icon: faShoppingCart, color: 'success' },
     { id: 'shipping', label: 'Shipping', icon: faShippingFast, color: 'warning' },
     { id: 'payment', label: 'Payment', icon: faCreditCard, color: 'info' },
     { id: 'security', label: 'Security', icon: faShieldAlt, color: 'danger' },
     { id: 'support', label: 'Support', icon: faHeadset, color: 'secondary' },
-  ];
+  ], []);
 
-  const faqs = [
+  const faqs = useMemo(() => [
     {
       category: 'orders',
       question: 'How do I place an order?',
@@ -83,7 +83,7 @@ const ModernFAQ: React.FC = () => {
       question: 'Do you have a return policy?',
       answer: 'Yes, we offer a 7-day return policy for most products. Items must be in original condition with packaging. Some restrictions apply for certain product categories.',
     },
-  ];
+  ], []);
 
   const filteredFAQs = faqs.filter(faq => {
     const matchesSearch = faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||

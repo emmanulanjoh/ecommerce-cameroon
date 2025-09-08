@@ -1,6 +1,9 @@
 import express, { Request, Response } from 'express';
 import Product from '../../models/Product';
 import { authMiddleware } from './auth';
+import { sanitizeForLog, sanitizeForHtml } from '../../utils/sanitize';
+import { csrfProtection } from '../../middleware/csrf';
+import mongoose from 'mongoose';
 
 export const router = express.Router();
 
@@ -33,18 +36,22 @@ router.get('/', async (req: Request, res: Response) => {
     // Build query
     let query: any = { isActive: true };
     
-    // Text search
-    if (search) {
+    // Text search with input validation
+    if (search && typeof search === 'string') {
+      // Escape regex special characters to prevent injection
+      const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       query.$or = [
-        { nameEn: { $regex: search, $options: 'i' } },
-        { nameFr: { $regex: search, $options: 'i' } },
-        { descriptionEn: { $regex: search, $options: 'i' } },
-        { category: { $regex: search, $options: 'i' } }
+        { nameEn: { $regex: escapedSearch, $options: 'i' } },
+        { nameFr: { $regex: escapedSearch, $options: 'i' } },
+        { descriptionEn: { $regex: escapedSearch, $options: 'i' } },
+        { category: { $regex: escapedSearch, $options: 'i' } }
       ];
     }
     
-    // Category filter
-    if (category) query.category = category;
+    // Category filter with validation
+    if (category && typeof category === 'string') {
+      query.category = category.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
     
     // Price range filter
     if (!isNaN(minPrice) || !isNaN(maxPrice)) {
@@ -101,14 +108,18 @@ router.get('/', async (req: Request, res: Response) => {
       }
     });
   } catch (err) {
-    console.error('API Error:', err);
-    res.status(500).json({ message: (err as Error).message });
+    console.error('API Error:', sanitizeForLog((err as Error).message));
+    res.status(500).json({ message: sanitizeForHtml((err as Error).message) });
   }
 });
 
 // Get single product
 router.get('/:id', async (req: Request, res: Response) => {
   try {
+    // Validate MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: 'Invalid product ID' });
+    }
     const product = await Product.findById(req.params.id);
     
     if (!product) {
@@ -117,17 +128,17 @@ router.get('/:id', async (req: Request, res: Response) => {
     
     res.json(product);
   } catch (err) {
-    console.error('API Error:', err);
-    res.status(500).json({ message: (err as Error).message });
+    console.error('API Error:', sanitizeForLog((err as Error).message));
+    res.status(500).json({ message: sanitizeForHtml((err as Error).message) });
   }
 });
 
 // Create a new product
 router.post('/', authMiddleware, async (req: Request, res: Response) => {
   try {
-    console.log('📝 Creating product:', req.body.nameEn);
-    console.log('🖼️ Images received:', req.body.images);
-    console.log('🖼️ Thumbnail received:', req.body.thumbnailImage);
+    console.log('📝 Creating product:', sanitizeForLog(req.body.nameEn));
+    console.log('🖼️ Images received:', sanitizeForLog(JSON.stringify(req.body.images)));
+    console.log('🖼️ Thumbnail received:', sanitizeForLog(req.body.thumbnailImage));
     
     // Ensure we have proper image URLs from S3
     const images = Array.isArray(req.body.images) ? req.body.images : [];
@@ -166,15 +177,15 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
     
     res.status(201).json(savedProduct);
   } catch (err) {
-    console.error('❌ Product creation error:', err);
+    console.error('❌ Product creation error:', sanitizeForLog((err as Error).message));
     res.status(500).json({ 
-      message: (err as Error).message
+      message: sanitizeForHtml((err as Error).message)
     });
   }
 });
 
 // Update a product
-router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
+router.put('/:id', csrfProtection, authMiddleware, async (req: Request, res: Response) => {
   try {
     const product = await Product.findByIdAndUpdate(
       req.params.id, 
@@ -246,7 +257,7 @@ router.get('/:id/recommendations', async (req: Request, res: Response) => {
 });
 
 // Delete a product
-router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
+router.delete('/:id', csrfProtection, authMiddleware, async (req: Request, res: Response) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
     

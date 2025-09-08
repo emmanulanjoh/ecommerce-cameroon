@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Modal, Button, ListGroup, Row, Col, Form } from 'react-bootstrap';
 import './CartModal.css';
 import { useLanguage } from '../../context/LanguageContext';
@@ -26,12 +26,12 @@ const CartModal: React.FC<CartModalProps> = ({ show, onHide }) => {
 
   const whatsappNumber = '+237678830036';
 
-  const formatPrice = (price: number): string => {
+  const formatPrice = useCallback((price: number): string => {
     return new Intl.NumberFormat('fr-CM', {
       style: 'currency',
       currency: 'XAF'
     }).format(price);
-  };
+  }, []);
 
   const handleWhatsAppOrder = () => {
     const message = generateWhatsAppMessage();

@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import multer from 'multer';
 import { S3Service } from '../../services/s3';
 import { authMiddleware } from './auth';
+import { sanitizeForLog, sanitizeForHtml } from '../../utils/sanitize';
 
 const router = express.Router();
 
@@ -26,7 +27,7 @@ router.post('/single', authMiddleware, upload.single('file'), async (req: Reques
   try {
     console.log('Upload request received');
     console.log('File:', req.file ? 'Present' : 'Missing');
-    console.log('Body:', req.body);
+    console.log('Body:', sanitizeForLog(JSON.stringify(req.body)));
     
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });
@@ -35,7 +36,7 @@ router.post('/single', authMiddleware, upload.single('file'), async (req: Reques
     const folder = req.body.folder || 'products';
     const key = S3Service.generateKey(folder, req.file.originalname);
     
-    console.log('Uploading to S3:', key);
+    console.log('Uploading to S3:', sanitizeForLog(key));
     
     const fileUrl = await S3Service.uploadFile(
       key,
@@ -43,8 +44,8 @@ router.post('/single', authMiddleware, upload.single('file'), async (req: Reques
       req.file.mimetype
     );
     
-    console.log('✅ S3 Upload successful:', fileUrl);
-    console.log('📤 Sending response with URL:', fileUrl);
+    console.log('✅ S3 Upload successful:', sanitizeForLog(fileUrl));
+    console.log('📤 Sending response with URL:', sanitizeForLog(fileUrl));
 
     res.json({
       success: true,
@@ -58,11 +59,11 @@ router.post('/single', authMiddleware, upload.single('file'), async (req: Reques
       }
     });
   } catch (error: any) {
-    console.error('Upload error:', error);
+    console.error('Upload error:', sanitizeForLog(error.message || error));
     res.status(500).json({ 
       message: 'Upload failed',
-      error: error.message,
-      details: process.env.NODE_ENV === 'development' ? error : undefined
+      error: sanitizeForHtml(error.message || 'Unknown error'),
+      details: process.env.NODE_ENV === 'development' ? sanitizeForHtml(JSON.stringify(error)) : undefined
     });
   }
 });

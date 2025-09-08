@@ -1,6 +1,8 @@
 import express, { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import Admin from '../../models/Admin';
+import { sanitizeForHtml } from '../../utils/sanitize';
+import { csrfProtection } from '../../middleware/csrf';
 
 const router = express.Router();
 
@@ -16,7 +18,10 @@ const authMiddleware = async (req: Request, res: Response, next: Function) => {
 
   try {
     // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as any;
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ message: 'Server configuration error' });
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as any;
     
     // Add admin from payload to request
     (req as any).admin = decoded.admin;
@@ -29,7 +34,7 @@ const authMiddleware = async (req: Request, res: Response, next: Function) => {
 // @route   POST /api/auth/login
 // @desc    Authenticate admin & get token
 // @access  Public
-router.post('/login', async (req: Request, res: Response) => {
+router.post('/login', csrfProtection, async (req: Request, res: Response) => {
   try {
     const { username, password } = req.body;
 
@@ -60,16 +65,16 @@ router.post('/login', async (req: Request, res: Response) => {
 
     jwt.sign(
       payload,
-      process.env.JWT_SECRET || 'your-secret-key',
+      process.env.JWT_SECRET!,
       { expiresIn: '24h' },
       (err, token) => {
         if (err) throw err;
         res.json({ 
           token,
           user: {
-            _id: admin.id,
-            username: admin.username,
-            email: admin.email,
+            _id: sanitizeForHtml(admin.id),
+            username: sanitizeForHtml(admin.username),
+            email: sanitizeForHtml(admin.email),
             isAdmin: true
           }
         });

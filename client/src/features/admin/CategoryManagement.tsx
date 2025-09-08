@@ -6,6 +6,7 @@ import axios from 'axios';
 
 interface Category {
   _id: string;
+  name: string;
   count: number;
 }
 
@@ -46,7 +47,7 @@ const CategoryManagement: React.FC = () => {
 
   const handleShowEditModal = (category: Category) => {
     setModalMode('edit');
-    setCurrentCategory(category._id);
+    setCurrentCategory(category.name);
     setEditCategoryId(category._id);
     setShowModal(true);
   };
@@ -68,7 +69,8 @@ const CategoryManagement: React.FC = () => {
         
         // For now, just add it to the local state
         const newCategory: Category = {
-          _id: currentCategory,
+          _id: Date.now().toString(),
+          name: currentCategory,
           count: 0
         };
         setCategories([...categories, newCategory]);
@@ -79,7 +81,7 @@ const CategoryManagement: React.FC = () => {
         
         // For now, just update the local state
         const updatedCategories = categories.map(cat => 
-          cat._id === editCategoryId ? { ...cat, _id: currentCategory } : cat
+          cat._id === editCategoryId ? { ...cat, name: currentCategory } : cat
         );
         setCategories(updatedCategories);
         setSuccess('Category updated successfully');
@@ -142,7 +144,7 @@ const CategoryManagement: React.FC = () => {
               <tbody>
                 {categories.map((category) => (
                   <tr key={category._id}>
-                    <td>{category._id}</td>
+                    <td>{category.name}</td>
                     <td>{category.count}</td>
                     <td>
                       <Button 

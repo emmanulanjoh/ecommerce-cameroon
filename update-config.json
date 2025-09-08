@@ -53,9 +53,6 @@
                         "GET"
                     ]
                 }
-                 "ResponseHeadersPolicyId": "60669652-455b-4ae9-85a4-c4c02393f86c",
-                "TargetOriginId": "existing-value",
-                "ViewerProtocolPolicy": "existing-value",
             },
             "SmoothStreaming": false,
             "Compress": true,

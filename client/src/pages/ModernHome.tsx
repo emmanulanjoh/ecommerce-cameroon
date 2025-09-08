@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import {
   Box,
@@ -36,11 +36,11 @@ const ModernHome: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  const heroImages = [
+  const heroImages = useMemo(() => [
      '/images/hero/hero1.jpg',
      '/images/hero/hero2.jpg',
      '/images/hero/hero3.jpg'
-  ];
+  ], []);
 
   useEffect(() => {
     const interval = setInterval(() => {

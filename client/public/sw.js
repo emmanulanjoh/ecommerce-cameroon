@@ -1,18 +1,19 @@
 const CACHE_NAME = 'findall-v1';
 const urlsToCache = [
   '/',
-  '/static/js/bundle.js',
-  '/static/css/main.css',
-  '/manifest.json',
-  '/images/logo.png',
-  '/images/placeholder.jpg'
+  '/manifest.json'
 ];
 
 // Install event
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
+      .then(cache => {
+        return cache.addAll(urlsToCache).catch(err => {
+          console.warn('Cache addAll failed:', err);
+          return Promise.resolve();
+        });
+      })
   );
 });
 
@@ -89,5 +90,24 @@ self.addEventListener('notificationclick', event => {
     event.waitUntil(
       clients.openWindow('/')
     );
+  }
+});
+
+// Message event with origin verification
+self.addEventListener('message', event => {
+  // Verify origin for security
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'https://your-domain.com' // Replace with your actual domain
+  ];
+  
+  if (!allowedOrigins.includes(event.origin)) {
+    console.warn('Message from unauthorized origin:', event.origin);
+    return;
+  }
+  
+  // Handle verified messages
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
   }
 });

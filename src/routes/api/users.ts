@@ -2,6 +2,8 @@ import express, { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../../models/User';
 import { validateUser } from '../../middleware/validation';
+import { sanitizeForLog, sanitizeForHtml } from '../../utils/sanitize';
+import { csrfProtection } from '../../middleware/csrf';
 
 const router = express.Router();
 
@@ -19,7 +21,10 @@ router.get('/test', (req: Request, res: Response) => {
 
 // Generate JWT Token
 const generateToken = (userId: string): string => {
-  return jwt.sign({ userId }, process.env.JWT_SECRET || 'fallback_secret', {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET environment variable is required');
+  }
+  return jwt.sign({ userId }, process.env.JWT_SECRET, {
     expiresIn: '30d'
   });
 };
@@ -27,7 +32,7 @@ const generateToken = (userId: string): string => {
 // @route   POST /api/users/register
 // @desc    Register new user
 // @access  Public
-router.post('/register', async (req: Request, res: Response) => {
+router.post('/register', csrfProtection, async (req: Request, res: Response) => {
   try {
     console.log('🔍 Registration attempt:', { 
       body: req.body, 
@@ -44,7 +49,10 @@ router.post('/register', async (req: Request, res: Response) => {
       });
     }
 
-    // Check if user exists
+    // Validate email format and check if user exists
+    if (typeof email !== 'string' || !email.includes('@')) {
+      return res.status(400).json({ message: 'Invalid email format' });
+    }
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists with this email' });
@@ -88,7 +96,7 @@ router.post('/register', async (req: Request, res: Response) => {
 // @route   POST /api/users/login
 // @desc    Login user
 // @access  Public
-router.post('/login', async (req: Request, res: Response) => {
+router.post('/login', csrfProtection, async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 

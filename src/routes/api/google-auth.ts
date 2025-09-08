@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import User from '../../models/User';
 
 const router = express.Router();
@@ -70,23 +71,29 @@ router.get('/google/callback', async (req: Request, res: Response) => {
 
     const googleUser = await userResponse.json();
 
-    // Find or create user (optimized)
+    // Find or create user (optimized) - validate email format
+    if (!googleUser.email || typeof googleUser.email !== 'string') {
+      throw new Error('Invalid email from Google');
+    }
     let user = await User.findOne({ email: googleUser.email });
 
     if (!user) {
       user = await User.create({
         name: googleUser.name,
         email: googleUser.email,
-        password: 'google_oauth',
+        password: process.env.GOOGLE_OAUTH_PASSWORD || crypto.randomBytes(32).toString('hex'),
         googleId: googleUser.id,
         isGoogleUser: true,
       });
     }
 
     // Generate JWT token
+    if (!process.env.JWT_SECRET) {
+      throw new Error('JWT_SECRET environment variable is required');
+    }
     const token = jwt.sign(
       { userId: user._id },
-      process.env.JWT_SECRET || 'fallback_secret',
+      process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
 

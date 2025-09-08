@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import nodemailer from 'nodemailer';
 import { validateContact } from '../../middleware/validation';
+import { sanitizeForHtml } from '../../utils/sanitize';
 
 const router = express.Router();
 
@@ -14,6 +15,11 @@ router.post('/', validateContact, async (req: Request, res: Response) => {
     // Validate required fields
     if (!name || !email || !subject || !message) {
       return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    // Validate environment variables
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      return res.status(500).json({ message: 'Email service not configured' });
     }
 
     // Create transporter for Gmail
@@ -33,13 +39,13 @@ router.post('/', validateContact, async (req: Request, res: Response) => {
       subject: `Contact Form: ${subject}`,
       html: `
         <h3>New Contact Form Submission</h3>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Subject:</strong> ${subject}</p>
+        <p><strong>Name:</strong> ${sanitizeForHtml(name)}</p>
+        <p><strong>Email:</strong> ${sanitizeForHtml(email)}</p>
+        <p><strong>Subject:</strong> ${sanitizeForHtml(subject)}</p>
         <p><strong>Message:</strong></p>
-        <p>${message.replace(/\n/g, '<br>')}</p>
+        <p>${sanitizeForHtml(message).replace(/\n/g, '<br>')}</p>
         <hr>
-        <p><small>Sent from ${process.env.BUSINESS_NAME} website</small></p>
+        <p><small>Sent from ${sanitizeForHtml(process.env.BUSINESS_NAME || 'website')}</small></p>
       `,
     };
 

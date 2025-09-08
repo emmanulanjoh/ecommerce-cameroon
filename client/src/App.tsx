@@ -150,7 +150,7 @@ const App: React.FC = () => {
         <UserProvider>
           <CartProvider>
             <LanguageProvider>
-              <Router>
+              <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
                 <AppLayout />
               </Router>
             </LanguageProvider>

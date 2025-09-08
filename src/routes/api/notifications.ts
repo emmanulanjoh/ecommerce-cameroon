@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import webpush from 'web-push';
+const webpush = require('web-push');
 
 const router = express.Router();
 

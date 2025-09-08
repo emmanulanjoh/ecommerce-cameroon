@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { sanitizeForHtml } from '../utils/sanitize';
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
@@ -19,9 +20,9 @@ export class EmailService {
       html: `
         <h2>Order Confirmed!</h2>
         <p>Thank you for your order. We'll process it shortly.</p>
-        <p><strong>Order ID:</strong> #${orderData._id.slice(-8)}</p>
+        <p><strong>Order ID:</strong> #${sanitizeForHtml(orderData._id.slice(-8))}</p>
         <p><strong>Total:</strong> ${new Intl.NumberFormat('fr-CM', { style: 'currency', currency: 'XAF' }).format(orderData.totalAmount)}</p>
-        <p><strong>Status:</strong> ${orderData.status}</p>
+        <p><strong>Status:</strong> ${sanitizeForHtml(orderData.status)}</p>
       `,
     };
 
@@ -40,9 +41,9 @@ export class EmailService {
       subject: `Order Update #${orderData._id.slice(-8)}`,
       html: `
         <h2>Order Status Updated</h2>
-        <p><strong>Order ID:</strong> #${orderData._id.slice(-8)}</p>
-        <p><strong>New Status:</strong> ${orderData.status}</p>
-        ${orderData.trackingNumber ? `<p><strong>Tracking:</strong> ${orderData.trackingNumber}</p>` : ''}
+        <p><strong>Order ID:</strong> #${sanitizeForHtml(orderData._id.slice(-8))}</p>
+        <p><strong>New Status:</strong> ${sanitizeForHtml(orderData.status)}</p>
+        ${orderData.trackingNumber ? `<p><strong>Tracking:</strong> ${sanitizeForHtml(orderData.trackingNumber)}</p>` : ''}
       `,
     };
 

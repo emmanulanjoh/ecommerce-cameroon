@@ -63,11 +63,12 @@ app.use(compression());
 // Rate limiting with different limits per endpoint
 const createLimiter = (windowMs: number, max: number, message: string) => rateLimit({ windowMs, max, message });
 
-// General API rate limiting
-const generalLimiter = createLimiter(15 * 60 * 1000, 100, 'Too many requests, try again later');
-const authLimiter = createLimiter(15 * 60 * 1000, 5, 'Too many login attempts, try again later');
-const uploadLimiter = createLimiter(60 * 1000, 10, 'Too many uploads, try again later');
-const reviewLimiter = createLimiter(60 * 60 * 1000, 3, 'Too many reviews, try again later');
+// Relaxed rate limits for development
+const isDev = process.env.NODE_ENV === 'development';
+const generalLimiter = createLimiter(15 * 60 * 1000, isDev ? 1000 : 100, 'Too many requests, try again later');
+const authLimiter = createLimiter(15 * 60 * 1000, isDev ? 50 : 5, 'Too many login attempts, try again later');
+const uploadLimiter = createLimiter(60 * 1000, isDev ? 100 : 10, 'Too many uploads, try again later');
+const reviewLimiter = createLimiter(60 * 60 * 1000, isDev ? 100 : 3, 'Too many reviews, try again later');
 
 // Apply different rate limits
 app.use('/api/auth/login', authLimiter);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useCart } from '../../context/CartContext';
 import { useUser } from '../../features/auth';
 import {
@@ -39,12 +39,12 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
   
   const whatsappNumber = process.env.REACT_APP_BUSINESS_WHATSAPP_NUMBER || '237678830036';
   
-  const formatPrice = (price: number): string => {
+  const formatPrice = useCallback((price: number): string => {
     return new Intl.NumberFormat('fr-CM', {
       style: 'currency',
       currency: 'XAF'
     }).format(price);
-  };
+  }, []);
 
   const getProductName = (): string => {
     return product.nameFr || product.nameEn;
