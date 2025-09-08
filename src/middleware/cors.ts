@@ -4,8 +4,11 @@ export const corsMiddleware = (req: Request, res: Response, next: NextFunction) 
   // Allow requests from both development and production
   const allowedOrigins = [
     'http://localhost:3000',
-    'https://findallsourcin.up.railway.app'
-  ];
+    'https://findallsourcin.up.railway.app',
+    'https://d35ew0puu9c5cz.cloudfront.net',
+    process.env.FRONTEND_URL,
+    process.env.APP_URL
+  ].filter(Boolean);
   
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin as string)) {
