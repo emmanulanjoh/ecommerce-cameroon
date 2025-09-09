@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node dist/server.js",
+    "start:js": "node src/server.js",
     "start:prod": "NODE_ENV=production node dist/server.js",
     "build": "tsc",
     "build:ts": "tsc",
