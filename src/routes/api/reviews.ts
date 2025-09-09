@@ -7,43 +7,7 @@ import User from '../../models/User';
 
 const router = express.Router();
 
-// Auth middleware
-const authMiddleware = async (req: Request, res: Response, next: Function) => {
-  try {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
-    if (!token) {
-      return res.status(401).json({ message: 'No token provided' });
-    }
-
-    if (!process.env.JWT_SECRET) {
-      return res.status(500).json({ message: 'Server configuration error' });
-    }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET) as any;
-    console.log('Decoded token:', decoded);
-    
-    let user;
-    // Handle both admin and regular user tokens
-    if (decoded.admin) {
-      // Admin token structure
-      user = { _id: decoded.admin.id, name: decoded.admin.username, isAdmin: true };
-    } else if (decoded.userId) {
-      // Regular user token
-      user = await User.findById(decoded.userId);
-    } else {
-      return res.status(401).json({ message: 'Invalid token structure' });
-    }
-    
-    if (!user) {
-      return res.status(401).json({ message: 'User not found' });
-    }
-
-    (req as any).user = user;
-    next();
-  } catch (error) {
-    console.error('Auth middleware error:', error);
-    res.status(401).json({ message: 'Invalid token' });
-  }
-};
+import { flexibleAuth } from '../../middleware/auth';
 
 // Get reviews for a product
 router.get('/product/:productId', [param('productId').isMongoId().withMessage('Valid product ID required'), handleValidationErrors], async (req: Request, res: Response) => {
@@ -90,7 +54,7 @@ router.delete('/admin/:id', async (req: Request, res: Response) => {
 });
 
 // Create review
-router.post('/', authMiddleware, validateReview, async (req: Request, res: Response) => {
+router.post('/', flexibleAuth, validateReview, async (req: Request, res: Response) => {
   try {
     const { product, rating, comment } = req.body;
     const userId = (req as any).user._id;

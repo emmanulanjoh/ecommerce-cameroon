@@ -37,6 +37,11 @@ import { performanceMonitor } from './middleware/performance';
 // Create Express app
 const app = express();
 
+// Trust proxy for App Runner
+if (process.env.TRUST_PROXY === 'true') {
+  app.set('trust proxy', 1);
+}
+
 // Connect to MongoDB
 connectDB();
 
@@ -90,22 +95,28 @@ const xss = require('xss-clean');
 app.use(xss());
 app.use(mongoSanitize());
 
+// Custom XSS protection
+import { xssProtection } from './middleware/xss';
+app.use('/api', xssProtection);
+
 // Cookie parser
 app.use(cookieParser());
 
 // Session configuration
+const isProduction = process.env.NODE_ENV === 'production';
 app.use(session({
   secret: process.env.SESSION_SECRET || 'your-secret-key',
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   store: MongoStore.create({
     mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce_cameroon',
     touchAfter: 24 * 3600
   }),
   cookie: {
-    secure: false,
+    secure: isProduction,
     httpOnly: true,
-    maxAge: 1000 * 60 * 60 * 24 // 24 hours
+    maxAge: 1000 * 60 * 60 * 24, // 24 hours
+    sameSite: isProduction ? 'none' : 'lax'
   }
 }));
 
@@ -125,12 +136,9 @@ app.use(requestLogger);
 // Language middleware
 app.use(setLanguage);
 
-// CSRF protection - temporarily disabled
-app.use((req: Request, res: Response, next: NextFunction) => {
-  (req as any).csrfToken = () => '';
-  res.locals.csrfToken = '';
-  next();
-});
+// Secure CSRF protection (excludes API routes)
+import { setCSRFToken } from './middleware/csrf-secure';
+app.use(setCSRFToken);
 
 // Serve React static files in production
 if (process.env.NODE_ENV === 'production') {

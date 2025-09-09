@@ -19,9 +19,11 @@ run:
     - name: MONGODB_URI
       value: "mongodb+srv://emma:Emma2018@cluster0.jff9i.mongodb.net/ecommerce_cameroon?retryWrites=true&w=majority&appName=ecommerce-cameroon"
     - name: JWT_SECRET
-      value: "your_super_secure_jwt_secret_key_here_minimum_32_characters"
+      value: "klnjgdskj59e4kln94ejbwklbrbjkboi4h43hb34boh34909u6ikrnlsdnelnhgoh54b5nioerlkngoipjgpj95j34kjpe45je45jr65j9yokn5rin6lrnknr6"
     - name: SESSION_SECRET
       value: "gytfrdesawq34dcf6gty879tf@34iKojij"
+    - name: TRUST_PROXY
+      value: "true"
     - name: ADMIN_EMAIL
       value: "emmanuelanjoh2016@gmail.com"
     - name: ADMIN_PASSWORD

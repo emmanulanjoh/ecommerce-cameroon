@@ -34,7 +34,7 @@ const authMiddleware = async (req: Request, res: Response, next: Function) => {
 // @route   POST /api/auth/login
 // @desc    Authenticate admin & get token
 // @access  Public
-router.post('/login', csrfProtection, async (req: Request, res: Response) => {
+router.post('/login', async (req: Request, res: Response) => {
   try {
     const { username, password } = req.body;
 

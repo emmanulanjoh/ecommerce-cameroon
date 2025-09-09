@@ -136,7 +136,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 // Create a new product
 router.post('/', authMiddleware, async (req: Request, res: Response) => {
   try {
-    console.log('📝 Creating product:', sanitizeForLog(req.body.nameEn));
+    console.log('Creating product:', sanitizeForLog(req.body.nameEn));
     console.log('🖼️ Images received:', sanitizeForLog(JSON.stringify(req.body.images)));
     console.log('🖼️ Thumbnail received:', sanitizeForLog(req.body.thumbnailImage));
     

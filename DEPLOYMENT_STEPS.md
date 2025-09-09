@@ -36,8 +36,8 @@ EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
 EMAIL_USER=emmanuelanjoh2016@gmail.com
 EMAIL_PASS=rwgm vlvg nxgp yezv
-TWILIO_ACCOUNT_SID=AC1a0603b24dbefe8e69d5b7083e0593a2
-TWILIO_AUTH_TOKEN=929cf98175fedd798a7d0436b6bc9e82
+TWILIO_ACCOUNT_SID=your_twilio_account_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
 ```
 
 ## Step 2: Deploy Frontend to S3/CloudFront

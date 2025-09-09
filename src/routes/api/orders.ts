@@ -3,35 +3,12 @@ import jwt from 'jsonwebtoken';
 import Order from '../../models/Order';
 import User from '../../models/User';
 import { EmailService } from '../../services/email';
-import { sanitizeForLog, sanitizeForHtml } from '../../utils/sanitize';
+import { sanitizeForLog, sanitizeForHtml, sanitizeHtml, sanitizeMongoQuery } from '../../utils/sanitize';
 import { csrfProtection } from '../../middleware/csrf';
 
 const router = express.Router();
 
-// Auth middleware
-const authMiddleware = async (req: Request, res: Response, next: Function) => {
-  try {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
-    if (!token) {
-      return res.status(401).json({ message: 'No token provided' });
-    }
-
-    if (!process.env.JWT_SECRET) {
-      return res.status(500).json({ message: 'Server configuration error' });
-    }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET) as any;
-    const user = await User.findById(decoded.userId);
-    
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid token' });
-    }
-
-    (req as any).user = user;
-    next();
-  } catch (error) {
-    res.status(401).json({ message: 'Invalid token' });
-  }
-};
+import { userAuth } from '../../middleware/auth';
 
 // ADMIN ROUTES - Must come before parameterized routes
 // @route   GET /api/orders/admin/all
@@ -39,7 +16,7 @@ const authMiddleware = async (req: Request, res: Response, next: Function) => {
 // @access  Public (handled by admin route protection)
 router.get('/admin/all', async (req: Request, res: Response) => {
   try {
-    console.log('📦 Admin orders endpoint called');
+    console.log('Admin orders endpoint called');
 
     const { status, page = 1, limit = 10 } = req.query;
     const query: any = {};
@@ -57,7 +34,7 @@ router.get('/admin/all', async (req: Request, res: Response) => {
 
     const total = await Order.countDocuments(query);
 
-    console.log(`✅ Found ${orders.length} orders for admin`);
+    console.log(`Found ${sanitizeForLog(orders.length)} orders for admin`);
 
     res.json({
       orders,
@@ -77,7 +54,7 @@ router.get('/admin/all', async (req: Request, res: Response) => {
 // @route   PUT /api/orders/admin/:id/status
 // @desc    Update order status (Admin only)
 // @access  Public (handled by admin route protection)
-router.put('/admin/:id/status', csrfProtection, async (req: Request, res: Response) => {
+router.put('/admin/:id/status', async (req: Request, res: Response) => {
   try {
     const { status, trackingNumber, notes } = req.body;
     console.log(`📝 Updating order ${sanitizeForLog(req.params.id)} status to: ${sanitizeForLog(status)}`);
@@ -96,7 +73,7 @@ router.put('/admin/:id/status', csrfProtection, async (req: Request, res: Respon
     await order.populate('user', 'name email phone');
     await order.populate('items.product', 'nameEn nameFr images price');
 
-    console.log(`✅ Order ${req.params.id} updated successfully`);
+    console.log(`Order ${sanitizeForLog(req.params.id)} updated successfully`);
     res.json(order);
   } catch (error: any) {
     console.error('Update order status error:', error);
@@ -108,7 +85,7 @@ router.put('/admin/:id/status', csrfProtection, async (req: Request, res: Respon
 // @route   GET /api/orders
 // @desc    Get user orders
 // @access  Private
-router.get('/', authMiddleware, async (req: Request, res: Response) => {
+router.get('/', userAuth, async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user._id;
     const orders = await Order.find({ user: userId })
@@ -125,7 +102,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
 // @route   POST /api/orders
 // @desc    Create new order
 // @access  Private
-router.post('/', csrfProtection, authMiddleware, async (req: Request, res: Response) => {
+router.post('/', userAuth, async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user._id;
     const { items, shippingAddress, notes } = req.body;
@@ -163,7 +140,7 @@ router.post('/', csrfProtection, authMiddleware, async (req: Request, res: Respo
 // @route   GET /api/orders/:id
 // @desc    Get single order
 // @access  Private
-router.get('/:id', authMiddleware, async (req: Request, res: Response) => {
+router.get('/:id', userAuth, async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user._id;
     const order = await Order.findOne({ _id: req.params.id, user: userId })

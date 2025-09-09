@@ -47,7 +47,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         setUser(data);
       } catch (err) {
-        console.error('Error loading user:', err);
+        console.error('Error loading user:', (err as any)?.message || 'Unknown error');
         localStorage.removeItem('token');
         delete axios.defaults.headers.common['Authorization'];
       } finally {
@@ -75,7 +75,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       setUser(data);
     } catch (err) {
-      console.error('Login error:', err);
+      console.error('Login error:', (err as any)?.message || 'Unknown error');
       throw err;
     }
   };

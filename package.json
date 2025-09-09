@@ -59,6 +59,7 @@
     "@types/multer": "^2.0.0",
     "@types/node": "^18.15.11",
     "@types/nodemailer": "^6.4.17",
+    "@types/web-push": "^3.6.3",
     "bcryptjs": "^2.4.3",
     "compression": "^1.7.4",
     "connect-flash": "^0.1.1",
@@ -74,6 +75,7 @@
     "express-validator": "^7.2.1",
     "helmet": "^6.0.1",
     "i18n": "^0.15.1",
+    "isomorphic-dompurify": "^2.26.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.0.3",
     "multer": "^2.0.2",
@@ -81,7 +83,6 @@
     "sharp": "^0.34.3",
     "typescript": "^5.0.4",
     "web-push": "^3.6.7",
-    "@types/web-push": "^3.6.3",
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {
