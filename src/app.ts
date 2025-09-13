@@ -148,25 +148,36 @@ app.use('/uploads', express.static(path.join(__dirname, '../public/uploads'), {
   maxAge: process.env.NODE_ENV === 'production' ? '7d' : 0
 }));
 
-// Serve React static files in production (after API routes)
+// Serve React static files in production
 if (process.env.NODE_ENV === 'production') {
-  // Serve static files from React build
-  app.use('/static', express.static(path.join(__dirname, '../client/build/static'), {
-    maxAge: '1y',
-    setHeaders: (res, filePath) => {
-      if (filePath.endsWith('.js')) {
-        res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-      } else if (filePath.endsWith('.css')) {
-        res.setHeader('Content-Type', 'text/css; charset=utf-8');
-      }
-    }
-  }));
+  const buildPath = path.join(__dirname, '../client/build');
+  console.log('📁 Serving React build from:', buildPath);
   
-  // Serve other React build files
-  app.use(express.static(path.join(__dirname, '../client/build'), {
-    maxAge: '1d',
-    index: false // Don't serve index.html for static assets
-  }));
+  // Check if build directory exists
+  try {
+    const fs = require('fs');
+    if (fs.existsSync(buildPath)) {
+      console.log('✅ React build directory found');
+      
+      // Serve all static files with proper MIME types
+      app.use(express.static(buildPath, {
+        maxAge: '1d',
+        setHeaders: (res, filePath) => {
+          if (filePath.endsWith('.js')) {
+            res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+          } else if (filePath.endsWith('.css')) {
+            res.setHeader('Content-Type', 'text/css; charset=utf-8');
+          } else if (filePath.endsWith('.html')) {
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+          }
+        }
+      }));
+    } else {
+      console.log('❌ React build directory not found at:', buildPath);
+    }
+  } catch (error) {
+    console.error('❌ Error checking build directory:', error);
+  }
 }
 
 // Global variables for views
