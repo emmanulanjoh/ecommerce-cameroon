@@ -280,9 +280,13 @@ app.use('/api', errorLogger);
 // Serve React app for all other routes in production
 if (process.env.NODE_ENV === 'production') {
   app.get('*', (req: Request, res: Response) => {
-    // Don't serve React app for API routes or static files
-    if (req.path.startsWith('/api/') || req.path.startsWith('/uploads/') || req.path.startsWith('/static/')) {
+    // Don't serve React app for API routes
+    if (req.path.startsWith('/api/') || req.path.startsWith('/uploads/')) {
       return res.status(404).json({ success: false, message: 'Not found' });
+    }
+    // For static files, let them 404 naturally without JSON response
+    if (req.path.startsWith('/static/')) {
+      return res.status(404).end();
     }
     res.sendFile(path.resolve(__dirname, '../client', 'build', 'index.html'));
   });
