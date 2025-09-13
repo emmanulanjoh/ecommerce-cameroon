@@ -45,19 +45,41 @@ if (process.env.TRUST_PROXY === 'true') {
 // SERVE STATIC FILES FIRST - BEFORE ANY MIDDLEWARE
 if (process.env.NODE_ENV === 'production') {
   const buildPath = path.join(__dirname, '../client/build');
-  console.log('Static files path:', buildPath);
+  const fs = require('fs');
   
-  // Serve React build files with explicit MIME types
-  app.use(express.static(buildPath, {
-    maxAge: '1y',
-    setHeaders: (res, filePath) => {
-      if (filePath.endsWith('.js')) {
-        res.setHeader('Content-Type', 'application/javascript');
-      } else if (filePath.endsWith('.css')) {
-        res.setHeader('Content-Type', 'text/css');
+  console.log('🔍 Checking build path:', buildPath);
+  console.log('🔍 Build directory exists:', fs.existsSync(buildPath));
+  
+  if (fs.existsSync(buildPath)) {
+    try {
+      const staticPath = path.join(buildPath, 'static');
+      console.log('🔍 Static directory exists:', fs.existsSync(staticPath));
+      
+      if (fs.existsSync(staticPath)) {
+        const jsPath = path.join(staticPath, 'js');
+        const cssPath = path.join(staticPath, 'css');
+        console.log('🔍 JS files:', fs.existsSync(jsPath) ? fs.readdirSync(jsPath) : 'No JS directory');
+        console.log('🔍 CSS files:', fs.existsSync(cssPath) ? fs.readdirSync(cssPath) : 'No CSS directory');
       }
+    } catch (error) {
+      console.error('❌ Error checking build files:', error);
     }
-  }));
+    
+    // Serve React build files with explicit MIME types
+    app.use(express.static(buildPath, {
+      maxAge: '1y',
+      setHeaders: (res, filePath) => {
+        console.log('📁 Serving file:', filePath);
+        if (filePath.endsWith('.js')) {
+          res.setHeader('Content-Type', 'application/javascript');
+        } else if (filePath.endsWith('.css')) {
+          res.setHeader('Content-Type', 'text/css');
+        }
+      }
+    }));
+  } else {
+    console.error('❌ Build directory not found at:', buildPath);
+  }
 }
 
 // Connect to MongoDB
