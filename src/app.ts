@@ -64,6 +64,26 @@ if (process.env.NODE_ENV === 'production') {
   }
 }
 
+// Static files (before any middleware)
+app.use(express.static(path.join(__dirname, '../public'), {
+  maxAge: process.env.NODE_ENV === 'production' ? '1d' : 0
+}));
+app.use('/uploads', express.static(path.join(__dirname, '../public/uploads'), {
+  maxAge: process.env.NODE_ENV === 'production' ? '7d' : 0
+}));
+
+// Serve other React build files (favicon, manifest, etc.) in production
+if (process.env.NODE_ENV === 'production') {
+  const buildPath = path.join(__dirname, '../client/build');
+  const fs = require('fs');
+  if (fs.existsSync(buildPath)) {
+    app.use(express.static(buildPath, {
+      maxAge: '1d',
+      index: false
+    }));
+  }
+}
+
 // Configure i18n for multilingual support
 i18n.configure({
   locales: ['en', 'fr'],
@@ -94,7 +114,7 @@ const authLimiter = createLimiter(15 * 60 * 1000, isDev ? 50 : 5, 'Too many logi
 const uploadLimiter = createLimiter(60 * 1000, isDev ? 100 : 10, 'Too many uploads, try again later');
 const reviewLimiter = createLimiter(60 * 60 * 1000, isDev ? 100 : 3, 'Too many reviews, try again later');
 
-// Apply different rate limits
+// Apply different rate limits (after static files)
 app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
 app.use('/api/upload', uploadLimiter);
@@ -159,25 +179,7 @@ app.use(setLanguage);
 import { setCSRFToken } from './middleware/csrf-secure';
 app.use(setCSRFToken);
 
-// Static files (before React static files)
-app.use(express.static(path.join(__dirname, '../public'), {
-  maxAge: process.env.NODE_ENV === 'production' ? '1d' : 0
-}));
-app.use('/uploads', express.static(path.join(__dirname, '../public/uploads'), {
-  maxAge: process.env.NODE_ENV === 'production' ? '7d' : 0
-}));
 
-// Serve other React build files (favicon, manifest, etc.) in production
-if (process.env.NODE_ENV === 'production') {
-  const buildPath = path.join(__dirname, '../client/build');
-  const fs = require('fs');
-  if (fs.existsSync(buildPath)) {
-    app.use(express.static(buildPath, {
-      maxAge: '1d',
-      index: false
-    }));
-  }
-}
 
 // Global variables for views
 app.use((req: Request, res: Response, next: NextFunction) => {
