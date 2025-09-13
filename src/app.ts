@@ -140,27 +140,34 @@ app.use(setLanguage);
 import { setCSRFToken } from './middleware/csrf-secure';
 app.use(setCSRFToken);
 
-// Serve React static files in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../client/build'), {
-    maxAge: '1d',
-    setHeaders: (res, path) => {
-      if (path.endsWith('.js')) {
-        res.setHeader('Content-Type', 'application/javascript');
-      } else if (path.endsWith('.css')) {
-        res.setHeader('Content-Type', 'text/css');
-      }
-    }
-  }));
-}
-
-// Static files
+// Static files (before React static files)
 app.use(express.static(path.join(__dirname, '../public'), {
   maxAge: process.env.NODE_ENV === 'production' ? '1d' : 0
 }));
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads'), {
   maxAge: process.env.NODE_ENV === 'production' ? '7d' : 0
 }));
+
+// Serve React static files in production (after API routes)
+if (process.env.NODE_ENV === 'production') {
+  // Serve static files from React build
+  app.use('/static', express.static(path.join(__dirname, '../client/build/static'), {
+    maxAge: '1y',
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith('.js')) {
+        res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+      } else if (filePath.endsWith('.css')) {
+        res.setHeader('Content-Type', 'text/css; charset=utf-8');
+      }
+    }
+  }));
+  
+  // Serve other React build files
+  app.use(express.static(path.join(__dirname, '../client/build'), {
+    maxAge: '1d',
+    index: false // Don't serve index.html for static assets
+  }));
+}
 
 // Global variables for views
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -263,6 +270,10 @@ app.use('/api', errorLogger);
 // Serve React app for all other routes in production
 if (process.env.NODE_ENV === 'production') {
   app.get('*', (req: Request, res: Response) => {
+    // Don't serve React app for API routes
+    if (req.path.startsWith('/api/') || req.path.startsWith('/uploads/')) {
+      return res.status(404).json({ success: false, message: 'API endpoint not found' });
+    }
     res.sendFile(path.resolve(__dirname, '../client', 'build', 'index.html'));
   });
 } else {
