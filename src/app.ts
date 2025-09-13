@@ -45,6 +45,25 @@ if (process.env.TRUST_PROXY === 'true') {
 // Connect to MongoDB
 connectDB();
 
+// Serve React static files FIRST in production
+if (process.env.NODE_ENV === 'production') {
+  const buildPath = path.join(__dirname, '../client/build');
+  const fs = require('fs');
+  if (fs.existsSync(buildPath)) {
+    // Serve static assets with proper MIME types
+    app.use('/static', express.static(path.join(buildPath, 'static'), {
+      maxAge: '1y',
+      setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.js')) {
+          res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+        } else if (filePath.endsWith('.css')) {
+          res.setHeader('Content-Type', 'text/css; charset=utf-8');
+        }
+      }
+    }));
+  }
+}
+
 // Configure i18n for multilingual support
 i18n.configure({
   locales: ['en', 'fr'],
@@ -148,35 +167,15 @@ app.use('/uploads', express.static(path.join(__dirname, '../public/uploads'), {
   maxAge: process.env.NODE_ENV === 'production' ? '7d' : 0
 }));
 
-// Serve React static files in production
+// Serve other React build files (favicon, manifest, etc.) in production
 if (process.env.NODE_ENV === 'production') {
   const buildPath = path.join(__dirname, '../client/build');
-  console.log('📁 Serving React build from:', buildPath);
-  
-  // Check if build directory exists
   const fs = require('fs');
   if (fs.existsSync(buildPath)) {
-    console.log('✅ React build directory found');
-    
-    // Serve static assets with proper MIME types and caching
-    app.use('/static', express.static(path.join(buildPath, 'static'), {
-      maxAge: '1y',
-      setHeaders: (res, filePath) => {
-        if (filePath.endsWith('.js')) {
-          res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-        } else if (filePath.endsWith('.css')) {
-          res.setHeader('Content-Type', 'text/css; charset=utf-8');
-        }
-      }
-    }));
-    
-    // Serve other build files (favicon, manifest, etc.)
     app.use(express.static(buildPath, {
       maxAge: '1d',
-      index: false // Don't serve index.html here
+      index: false
     }));
-  } else {
-    console.log('❌ React build directory not found at:', buildPath);
   }
 }
 
