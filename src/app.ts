@@ -42,47 +42,26 @@ if (process.env.TRUST_PROXY === 'true') {
   app.set('trust proxy', 1);
 }
 
+// SERVE STATIC FILES FIRST - BEFORE ANY MIDDLEWARE
+if (process.env.NODE_ENV === 'production') {
+  const buildPath = path.join(__dirname, '../client/build');
+  console.log('Static files path:', buildPath);
+  
+  // Serve React build files with explicit MIME types
+  app.use(express.static(buildPath, {
+    maxAge: '1y',
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith('.js')) {
+        res.setHeader('Content-Type', 'application/javascript');
+      } else if (filePath.endsWith('.css')) {
+        res.setHeader('Content-Type', 'text/css');
+      }
+    }
+  }));
+}
+
 // Connect to MongoDB
 connectDB();
-
-// Serve React static files FIRST in production
-if (process.env.NODE_ENV === 'production') {
-  const buildPath = path.join(__dirname, '../client/build');
-  const fs = require('fs');
-  if (fs.existsSync(buildPath)) {
-    // Serve static assets with proper MIME types
-    app.use('/static', express.static(path.join(buildPath, 'static'), {
-      maxAge: '1y',
-      setHeaders: (res, filePath) => {
-        if (filePath.endsWith('.js')) {
-          res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-        } else if (filePath.endsWith('.css')) {
-          res.setHeader('Content-Type', 'text/css; charset=utf-8');
-        }
-      }
-    }));
-  }
-}
-
-// Static files (before any middleware)
-app.use(express.static(path.join(__dirname, '../public'), {
-  maxAge: process.env.NODE_ENV === 'production' ? '1d' : 0
-}));
-app.use('/uploads', express.static(path.join(__dirname, '../public/uploads'), {
-  maxAge: process.env.NODE_ENV === 'production' ? '7d' : 0
-}));
-
-// Serve other React build files (favicon, manifest, etc.) in production
-if (process.env.NODE_ENV === 'production') {
-  const buildPath = path.join(__dirname, '../client/build');
-  const fs = require('fs');
-  if (fs.existsSync(buildPath)) {
-    app.use(express.static(buildPath, {
-      maxAge: '1d',
-      index: false
-    }));
-  }
-}
 
 // Configure i18n for multilingual support
 i18n.configure({
@@ -282,13 +261,9 @@ app.use('/api', errorLogger);
 // Serve React app for all other routes in production
 if (process.env.NODE_ENV === 'production') {
   app.get('*', (req: Request, res: Response) => {
-    // Don't serve React app for API routes
-    if (req.path.startsWith('/api/') || req.path.startsWith('/uploads/')) {
-      return res.status(404).json({ success: false, message: 'Not found' });
-    }
-    // For static files, let them 404 naturally without JSON response
-    if (req.path.startsWith('/static/')) {
-      return res.status(404).end();
+    // Only serve React app for non-API routes
+    if (req.path.startsWith('/api/')) {
+      return res.status(404).json({ success: false, message: 'API endpoint not found' });
     }
     res.sendFile(path.resolve(__dirname, '../client', 'build', 'index.html'));
   });
