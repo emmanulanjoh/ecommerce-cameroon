@@ -4,6 +4,8 @@ build:
   commands:
     build:
       - npm install
+      - cd client && npm install
+      - cd client && npm run build
       - npm run build
 run:
   runtime-version: 18.20.8
