@@ -154,29 +154,29 @@ if (process.env.NODE_ENV === 'production') {
   console.log('📁 Serving React build from:', buildPath);
   
   // Check if build directory exists
-  try {
-    const fs = require('fs');
-    if (fs.existsSync(buildPath)) {
-      console.log('✅ React build directory found');
-      
-      // Serve all static files with proper MIME types
-      app.use(express.static(buildPath, {
-        maxAge: '1d',
-        setHeaders: (res, filePath) => {
-          if (filePath.endsWith('.js')) {
-            res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-          } else if (filePath.endsWith('.css')) {
-            res.setHeader('Content-Type', 'text/css; charset=utf-8');
-          } else if (filePath.endsWith('.html')) {
-            res.setHeader('Content-Type', 'text/html; charset=utf-8');
-          }
+  const fs = require('fs');
+  if (fs.existsSync(buildPath)) {
+    console.log('✅ React build directory found');
+    
+    // Serve static assets with proper MIME types and caching
+    app.use('/static', express.static(path.join(buildPath, 'static'), {
+      maxAge: '1y',
+      setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.js')) {
+          res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+        } else if (filePath.endsWith('.css')) {
+          res.setHeader('Content-Type', 'text/css; charset=utf-8');
         }
-      }));
-    } else {
-      console.log('❌ React build directory not found at:', buildPath);
-    }
-  } catch (error) {
-    console.error('❌ Error checking build directory:', error);
+      }
+    }));
+    
+    // Serve other build files (favicon, manifest, etc.)
+    app.use(express.static(buildPath, {
+      maxAge: '1d',
+      index: false // Don't serve index.html here
+    }));
+  } else {
+    console.log('❌ React build directory not found at:', buildPath);
   }
 }
 
