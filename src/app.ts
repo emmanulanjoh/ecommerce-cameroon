@@ -67,13 +67,16 @@ if (process.env.NODE_ENV === 'production') {
     
     // Serve React build files with explicit MIME types
     app.use(express.static(buildPath, {
-      maxAge: '1y',
+      maxAge: '1d',
       setHeaders: (res, filePath) => {
-        console.log('📁 Serving file:', filePath);
         if (filePath.endsWith('.js')) {
-          res.setHeader('Content-Type', 'application/javascript');
+          res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
         } else if (filePath.endsWith('.css')) {
-          res.setHeader('Content-Type', 'text/css');
+          res.setHeader('Content-Type', 'text/css; charset=utf-8');
+        } else if (filePath.endsWith('.json')) {
+          res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        } else if (filePath.endsWith('.html')) {
+          res.setHeader('Content-Type', 'text/html; charset=utf-8');
         }
       }
     }));
@@ -287,7 +290,10 @@ if (process.env.NODE_ENV === 'production') {
     if (req.path.startsWith('/api/')) {
       return res.status(404).json({ success: false, message: 'API endpoint not found' });
     }
-    res.sendFile(path.resolve(__dirname, '../client', 'build', 'index.html'));
+    
+    const indexPath = path.resolve(__dirname, '../client', 'build', 'index.html');
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.sendFile(indexPath);
   });
 } else {
   // 404 handler for development

@@ -47,7 +47,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         setUser(data);
       } catch (err) {
-        console.error('Error loading user:', (err as any)?.message || 'Unknown error');
+        // Silently handle auth errors - user just isn't logged in
         localStorage.removeItem('token');
         delete axios.defaults.headers.common['Authorization'];
       } finally {
@@ -75,7 +75,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       setUser(data);
     } catch (err) {
-      console.error('Login error:', (err as any)?.message || 'Unknown error');
+      // Only log actual login errors, not auth check failures
+      if ((err as any)?.response?.status !== 401) {
+        console.error('Login error:', (err as any)?.message || 'Unknown error');
+      }
       throw err;
     }
   };

@@ -74,7 +74,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
           const response = await axios.get('/api/users/profile');
           setUser(response.data);
         } catch (error) {
-          console.error('Failed to load user:', (error as any)?.message || 'Unknown error');
+          // Silently handle auth errors - user just isn't logged in
           logout();
         }
       }

@@ -20,7 +20,7 @@ if ('serviceWorker' in navigator) {
         console.log('SW registered: ', registration);
       })
       .catch(registrationError => {
-        console.error('SW registration failed: ', registrationError?.message || 'Unknown error');
+        console.error('SW registration failed: ', (registrationError as any)?.message || 'Unknown error');
       });
   });
 }
