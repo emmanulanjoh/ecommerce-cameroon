@@ -3,9 +3,8 @@ runtime: nodejs18
 build:
   commands:
     build:
-      - npm audit fix --force
-      - npm install --production
-      - cd client && npm audit fix --force && npm install --production && npm run build
+      - npm install
+      - cd client && npm install && npm run build
       - ls -la client/build/static/ || echo "No static files"
       - npm run build
 run:
