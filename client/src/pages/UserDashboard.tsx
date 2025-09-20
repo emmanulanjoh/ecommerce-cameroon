@@ -193,24 +193,42 @@ const UserDashboard: React.FC = () => {
                         </Card.Header>
                         <Card.Body>
                           <Row>
-                            {order.items.map((item, index) => (
-                              <Col md={6} key={index} className="mb-3">
-                                <div className="d-flex align-items-center">
-                                  <img
-                                    src={item.product.images[0] || '/placeholder.jpg'}
-                                    alt={item.product.nameEn}
-                                    style={{ width: '60px', height: '60px', objectFit: 'cover' }}
-                                    className="rounded me-3"
-                                  />
-                                  <div>
-                                    <h6 className="mb-1">{item.product.nameEn}</h6>
-                                    <small className="text-muted">
-                                      Qty: {item.quantity} × {formatPrice(item.price)}
-                                    </small>
+                            {order.items.map((item, index) => {
+                              // Handle deleted products gracefully
+                              const product = item.product;
+                              const productName = product?.nameEn || item.name || 'Product Unavailable';
+                              const productImage = product?.images?.[0] || item.image || '/placeholder.jpg';
+                              const productPrice = item.price || product?.price || 0;
+                              
+                              return (
+                                <Col md={6} key={index} className="mb-3">
+                                  <div className="d-flex align-items-center">
+                                    <img
+                                      src={productImage}
+                                      alt={productName}
+                                      style={{ width: '60px', height: '60px', objectFit: 'cover' }}
+                                      className="rounded me-3"
+                                      onError={(e) => {
+                                        (e.target as HTMLImageElement).src = '/placeholder.jpg';
+                                      }}
+                                    />
+                                    <div>
+                                      <h6 className="mb-1">
+                                        {productName}
+                                        {!product && (
+                                          <Badge bg="secondary" className="ms-2" style={{fontSize: '0.7em'}}>
+                                            Unavailable
+                                          </Badge>
+                                        )}
+                                      </h6>
+                                      <small className="text-muted">
+                                        Qty: {item.quantity} × {formatPrice(productPrice)}
+                                      </small>
+                                    </div>
                                   </div>
-                                </div>
-                              </Col>
-                            ))}
+                                </Col>
+                              );
+                            })}
                           </Row>
                           {order.trackingNumber && (
                             <div className="mt-2">

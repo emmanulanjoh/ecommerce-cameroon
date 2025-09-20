@@ -89,7 +89,11 @@ router.get('/', userAuth, async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user._id;
     const orders = await Order.find({ user: userId })
-      .populate('items.product', 'nameEn nameFr images price')
+      .populate({
+        path: 'items.product',
+        select: 'nameEn nameFr images price',
+        options: { strictPopulate: false }
+      })
       .sort({ createdAt: -1 });
 
     res.json(orders);
