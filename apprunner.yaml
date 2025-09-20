@@ -3,9 +3,8 @@ runtime: nodejs18
 build:
   commands:
     build:
-      - npm install
-      - cd client && npm install && npm run build
-      - ls -la client/build/static/ || echo "No static files"
+      - npm ci --only=production
+      - cd client && npm ci && npm run build
       - npm run build
 run:
   runtime-version: 18.20.8
