@@ -30,7 +30,7 @@ router.get('/google/callback', async (req: Request, res: Response) => {
   const { code } = req.query;
 
   if (!code) {
-    return res.redirect(`${process.env.CLIENT_URL}/?error=no_code&redirect=login`);
+    return res.redirect(`${process.env.CLIENT_URL}/login?error=no_code`);
   }
 
   try {
@@ -63,7 +63,7 @@ router.get('/google/callback', async (req: Request, res: Response) => {
 
     if (!tokenData.access_token) {
       console.error('No access token received:', tokenData);
-      return res.redirect(`${process.env.CLIENT_URL}/?error=token_failed&redirect=login`);
+      return res.redirect(`${process.env.CLIENT_URL}/login?error=token_failed`);
     }
 
     // Get user info from Google with timeout
@@ -109,9 +109,9 @@ router.get('/google/callback', async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error('Google OAuth error:', error);
     if (error?.name === 'AbortError') {
-      return res.redirect(`${process.env.CLIENT_URL}/?error=timeout&redirect=login`);
+      return res.redirect(`${process.env.CLIENT_URL}/login?error=timeout`);
     }
-    res.redirect(`${process.env.CLIENT_URL}/?error=oauth_failed&redirect=login`);
+    res.redirect(`${process.env.CLIENT_URL}/login?error=oauth_failed`);
   }
 });
 

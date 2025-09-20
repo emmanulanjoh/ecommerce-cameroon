@@ -36,7 +36,7 @@ run:
     - name: GOOGLE_REDIRECT_URI
       value: "https://mvpm3erbja.us-east-1.awsapprunner.com/api/auth/google/callback"
     - name: CLIENT_URL
-      value: "https://d35ew0puu9c5cz.cloudfront.net"
+      value: "https://mvpm3erbja.us-east-1.awsapprunner.com"
     - name: APP_URL
       value: "https://mvpm3erbja.us-east-1.awsapprunner.com"
     - name: MAX_FILE_SIZE
