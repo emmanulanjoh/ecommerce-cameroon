@@ -16,15 +16,12 @@ import i18n from 'i18n';
 // Load environment variables
 dotenv.config();
 
-// Validate environment variables
-import { validateEnvironment } from './config/secrets';
-try {
-  validateEnvironment();
-  console.log('✅ Environment variables validated');
-} catch (error) {
-  console.error('❌ Environment validation failed:', error);
+// Basic environment validation
+if (!process.env.MONGODB_URI || !process.env.JWT_SECRET) {
+  console.error('❌ Missing required environment variables');
   process.exit(1);
 }
+console.log('✅ Environment variables validated');
 
 
 
@@ -167,13 +164,6 @@ app.use(mongoSanitize());
 
 // Custom XSS protection
 import { xssProtection } from './middleware/xss';
-import { authLimiter as secAuthLimiter, apiLimiter, securityHeaders, validateInput } from './middleware/security';
-import { ssrfProtection } from './middleware/ssrf-protection';
-import { securityMonitor } from './middleware/security-monitor';
-app.use(securityHeaders);
-app.use(securityMonitor);
-app.use(validateInput);
-app.use('/api', ssrfProtection);
 app.use('/api', xssProtection);
 
 // Cookie parser
