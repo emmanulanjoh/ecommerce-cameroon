@@ -13,11 +13,25 @@ const upload = multer({
     fileSize: 10 * 1024 * 1024, // 10MB limit
   },
   fileFilter: (req, file, cb) => {
-    // Allow images and videos
-    if (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
+    // Strict MIME type validation
+    const allowedMimeTypes = [
+      'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
+      'video/mp4', 'video/webm', 'video/ogg'
+    ];
+    
+    // Check file extension
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.mp4', '.webm', '.ogg'];
+    const fileExtension = file.originalname.toLowerCase().substring(file.originalname.lastIndexOf('.'));
+    
+    if (allowedMimeTypes.includes(file.mimetype) && allowedExtensions.includes(fileExtension)) {
+      // Additional security: check for double extensions
+      const parts = file.originalname.toLowerCase().split('.');
+      if (parts.length > 2) {
+        return cb(new Error('Files with multiple extensions are not allowed'));
+      }
       cb(null, true);
     } else {
-      cb(new Error('Only image and video files are allowed'));
+      cb(new Error('Only specific image and video formats are allowed'));
     }
   },
 });

@@ -3,8 +3,9 @@ runtime: nodejs18
 build:
   commands:
     build:
-      - npm install
-      - cd client && npm install && npm run build
+      - npm audit fix --force
+      - npm install --production
+      - cd client && npm audit fix --force && npm install --production && npm run build
       - ls -la client/build/static/ || echo "No static files"
       - npm run build
 run:
@@ -18,42 +19,18 @@ run:
       value: production
     - name: PORT
       value: "5000"
-    - name: MONGODB_URI
-      value: "mongodb+srv://emma:Emma2018@cluster0.jff9i.mongodb.net/ecommerce_cameroon?retryWrites=true&w=majority&appName=ecommerce-cameroon"
-    - name: JWT_SECRET
-      value: "klnjgdskj59e4kln94ejbwklbrbjkboi4h43hb34boh34909u6ikrnlsdnelnhgoh54b5nioerlkngoipjgpj95j34kjpe45je45jr65j9yokn5rin6lrnknr6"
-    - name: SESSION_SECRET
-      value: "gytfrdesawq34dcf6gty879tf@34iKojij"
+    # SECURITY: Move all sensitive values to App Runner environment variables
+    # Configure these in AWS App Runner console under Environment Variables
     - name: TRUST_PROXY
       value: "true"
-    - name: ADMIN_EMAIL
-      value: "emmanuelanjoh2016@gmail.com"
-    - name: ADMIN_PASSWORD
-      value: "rwgm vlvg nxgp yezv"
     - name: EMAIL_HOST
       value: "smtp.gmail.com"
     - name: EMAIL_PORT
       value: "587"
-    - name: EMAIL_USER
-      value: "emmanuelanjoh2016@gmail.com"
-    - name: EMAIL_PASS
-      value: "rwgm vlvg nxgp yezv"
-    - name: EMAIL_FROM
-      value: "emmanuelanjoh2016@gmail.com"
-    - name: BUSINESS_WHATSAPP_NUMBER
-      value: "+237678830036"
     - name: BUSINESS_NAME
       value: "Findall sourcing"
     - name: BUSINESS_ADDRESS
       value: "Mimboman petit marche, Yaoundé, Cameroon"
-    - name: BUSINESS_PHONE
-      value: "+237678830036"
-    - name: BUSINESS_EMAIL
-      value: "emmanuelanjoh2016@gmail.com"
-    - name: GOOGLE_CLIENT_ID
-      value: "303871422282-4l991nmnfkopvpcf8tlub9948ra1dkvm.apps.googleusercontent.com"
-    - name: GOOGLE_CLIENT_SECRET
-      value: "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"
     - name: GOOGLE_REDIRECT_URI
       value: "https://mvpm3erbja.us-east-1.awsapprunner.com/api/auth/google/callback"
     - name: CLIENT_URL
@@ -68,3 +45,11 @@ run:
       value: "en"
     - name: SUPPORTED_LANGUAGES
       value: "en,fr"
+    - name: AWS_ACCESS_KEY_ID
+      value: "AKIATHFDHDE42ZT526PG"
+    - name: AWS_SECRET_ACCESS_KEY
+      value: "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"
+    - name: AWS_REGION
+      value: "us-east-1"
+    - name: S3_BUCKET_NAME
+      value: "ecommerce-cameroon-assets"

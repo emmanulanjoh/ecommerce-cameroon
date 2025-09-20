@@ -16,6 +16,16 @@ import i18n from 'i18n';
 // Load environment variables
 dotenv.config();
 
+// Validate environment variables
+import { validateEnvironment } from './config/secrets';
+try {
+  validateEnvironment();
+  console.log('✅ Environment variables validated');
+} catch (error) {
+  console.error('❌ Environment validation failed:', error);
+  process.exit(1);
+}
+
 
 
 // Import configuration
@@ -99,10 +109,27 @@ i18n.configure({
   cookie: 'language'
 });
 
-// Security middleware - Disable CSP temporarily for CloudFront
+// Security middleware with proper CSP
 app.use(helmet({
-  contentSecurityPolicy: false,
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://accounts.google.com", "https://apis.google.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "https:", "blob:"],
+      connectSrc: ["'self'", "https://api.whatsapp.com", "https://accounts.google.com"],
+      frameSrc: ["'self'", "https://accounts.google.com"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null,
+    },
+  },
   crossOriginEmbedderPolicy: false,
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+  }
 }));
 
 // Compression middleware
@@ -140,6 +167,13 @@ app.use(mongoSanitize());
 
 // Custom XSS protection
 import { xssProtection } from './middleware/xss';
+import { authLimiter as secAuthLimiter, apiLimiter, securityHeaders, validateInput } from './middleware/security';
+import { ssrfProtection } from './middleware/ssrf-protection';
+import { securityMonitor } from './middleware/security-monitor';
+app.use(securityHeaders);
+app.use(securityMonitor);
+app.use(validateInput);
+app.use('/api', ssrfProtection);
 app.use('/api', xssProtection);
 
 // Cookie parser
