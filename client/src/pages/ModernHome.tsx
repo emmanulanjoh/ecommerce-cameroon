@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useLanguage } from '../context/LanguageContext';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Box,
   Container,
@@ -35,6 +36,22 @@ const ModernHome: React.FC = () => {
   const { t } = useLanguage();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Handle OAuth error redirects
+  useEffect(() => {
+    const error = searchParams.get('error');
+    const redirect = searchParams.get('redirect');
+    
+    if (error && redirect === 'login') {
+      // Clear URL parameters and redirect to login with error
+      navigate('/login', { 
+        replace: true, 
+        state: { error } 
+      });
+    }
+  }, [searchParams, navigate]);
 
   const heroImages = useMemo(() => [
      '/images/hero/hero1.jpg',
