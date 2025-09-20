@@ -12,9 +12,11 @@ router.get('/google', (req: Request, res: Response) => {
   const redirectUri = process.env.GOOGLE_REDIRECT_URI || 
     `${req.protocol}://${req.get('host')}/api/auth/google/callback`;
   
+  console.log('Google OAuth redirect URI:', redirectUri);
+  
   const googleAuthURL = `https://accounts.google.com/o/oauth2/v2/auth?` +
     `client_id=${process.env.GOOGLE_CLIENT_ID}&` +
-    `redirect_uri=${redirectUri}&` +
+    `redirect_uri=${encodeURIComponent(redirectUri)}&` +
     `response_type=code&` +
     `scope=profile email`;
   
@@ -36,6 +38,9 @@ router.get('/google/callback', async (req: Request, res: Response) => {
     const redirectUri = process.env.GOOGLE_REDIRECT_URI || 
       `${req.protocol}://${req.get('host')}/api/auth/google/callback`;
     
+    console.log('Token exchange - redirect URI:', redirectUri);
+    console.log('Token exchange - code:', code);
+    
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
     
@@ -54,8 +59,10 @@ router.get('/google/callback', async (req: Request, res: Response) => {
     clearTimeout(timeoutId);
 
     const tokenData = await tokenResponse.json();
+    console.log('Google token response:', tokenData);
 
     if (!tokenData.access_token) {
+      console.error('No access token received:', tokenData);
       return res.redirect(`${process.env.CLIENT_URL}/login?error=token_failed`);
     }
 
