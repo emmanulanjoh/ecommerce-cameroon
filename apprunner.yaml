@@ -29,6 +29,10 @@ run:
       value: "Findall sourcing"
     - name: BUSINESS_ADDRESS
       value: "Mimboman petit marche, Yaoundé, Cameroon"
+    - name: GOOGLE_CLIENT_ID
+      value: "303871422282-4l991nmnfkopvpcf8tlub9948ra1dkvm.apps.googleusercontent.com"
+    - name: GOOGLE_CLIENT_SECRET
+      value: "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"
     - name: GOOGLE_REDIRECT_URI
       value: "https://mvpm3erbja.us-east-1.awsapprunner.com/api/auth/google/callback"
     - name: CLIENT_URL
