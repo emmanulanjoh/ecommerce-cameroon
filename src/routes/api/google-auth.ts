@@ -5,6 +5,17 @@ import User from '../../models/User';
 
 const router = express.Router();
 
+// Debug endpoint to check OAuth configuration
+router.get('/google/debug', (req: Request, res: Response) => {
+  res.json({
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID?.substring(0, 20) + '...',
+    GOOGLE_REDIRECT_URI: process.env.GOOGLE_REDIRECT_URI,
+    CLIENT_URL: process.env.CLIENT_URL,
+    APP_URL: process.env.APP_URL,
+    NODE_ENV: process.env.NODE_ENV
+  });
+});
+
 // @route   GET /api/auth/google
 // @desc    Redirect to Google OAuth
 // @access  Public
@@ -27,9 +38,23 @@ router.get('/google', (req: Request, res: Response) => {
 // @desc    Handle Google OAuth callback
 // @access  Public
 router.get('/google/callback', async (req: Request, res: Response) => {
-  const { code } = req.query;
+  const { code, error } = req.query;
+  
+  console.log('=== GOOGLE OAUTH CALLBACK DEBUG ===');
+  console.log('Code received:', !!code);
+  console.log('Error from Google:', error);
+  console.log('Full query:', req.query);
+  console.log('CLIENT_URL:', process.env.CLIENT_URL);
+  console.log('GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID?.substring(0, 20) + '...');
+  console.log('GOOGLE_REDIRECT_URI:', process.env.GOOGLE_REDIRECT_URI);
+
+  if (error) {
+    console.log('Google OAuth error:', error);
+    return res.redirect(`${process.env.CLIENT_URL}/login?error=google_${error}`);
+  }
 
   if (!code) {
+    console.log('No authorization code received');
     return res.redirect(`${process.env.CLIENT_URL}/login?error=no_code`);
   }
 
@@ -62,8 +87,11 @@ router.get('/google/callback', async (req: Request, res: Response) => {
     console.log('Google token response:', tokenData);
 
     if (!tokenData.access_token) {
-      console.error('No access token received:', tokenData);
-      return res.redirect(`${process.env.CLIENT_URL}/login?error=token_failed`);
+      console.error('=== TOKEN EXCHANGE FAILED ===');
+      console.error('Google response:', JSON.stringify(tokenData, null, 2));
+      console.error('Status:', tokenResponse.status);
+      console.error('Headers:', Object.fromEntries(tokenResponse.headers.entries()));
+      return res.redirect(`${process.env.CLIENT_URL}/login?error=token_failed&details=${encodeURIComponent(tokenData.error || 'unknown')}`);
     }
 
     // Get user info from Google with timeout
