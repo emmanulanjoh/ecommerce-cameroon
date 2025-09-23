@@ -23,13 +23,19 @@ router.get('/google', (req: Request, res: Response) => {
   const redirectUri = process.env.GOOGLE_REDIRECT_URI || 
     `${req.protocol}://${req.get('host')}/api/auth/google/callback`;
   
-  console.log('Google OAuth redirect URI:', redirectUri);
+  console.log('=== GOOGLE OAUTH INITIATION DEBUG ===');
+  console.log('GOOGLE_REDIRECT_URI env var:', process.env.GOOGLE_REDIRECT_URI);
+  console.log('Computed redirect URI:', redirectUri);
+  console.log('Request protocol:', req.protocol);
+  console.log('Request host:', req.get('host'));
   
   const googleAuthURL = `https://accounts.google.com/o/oauth2/v2/auth?` +
     `client_id=${process.env.GOOGLE_CLIENT_ID}&` +
     `redirect_uri=${encodeURIComponent(redirectUri)}&` +
     `response_type=code&` +
     `scope=profile email`;
+  
+  console.log('Full Google Auth URL:', googleAuthURL);
   
   res.redirect(googleAuthURL);
 });
@@ -69,17 +75,23 @@ router.get('/google/callback', async (req: Request, res: Response) => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
     
+    const tokenRequestBody = {
+      client_id: process.env.GOOGLE_CLIENT_ID,
+      client_secret: process.env.GOOGLE_CLIENT_SECRET,
+      code,
+      grant_type: 'authorization_code',
+      redirect_uri: redirectUri,
+    };
+    
+    console.log('=== TOKEN REQUEST DEBUG ===');
+    console.log('Request body:', JSON.stringify(tokenRequestBody, null, 2));
+    console.log('Redirect URI being sent:', redirectUri);
+    
     const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       signal: controller.signal,
-      body: JSON.stringify({
-        client_id: process.env.GOOGLE_CLIENT_ID,
-        client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        code,
-        grant_type: 'authorization_code',
-        redirect_uri: redirectUri,
-      }),
+      body: JSON.stringify(tokenRequestBody),
     });
     clearTimeout(timeoutId);
 
