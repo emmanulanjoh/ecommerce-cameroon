@@ -5,6 +5,8 @@ import User from '../../models/User';
 
 const router = express.Router();
 
+let lastOAuthAttempt: any = null;
+
 // Debug endpoint to check OAuth configuration
 router.get('/google/debug', (req: Request, res: Response) => {
   res.json({
@@ -12,7 +14,8 @@ router.get('/google/debug', (req: Request, res: Response) => {
     GOOGLE_REDIRECT_URI: process.env.GOOGLE_REDIRECT_URI,
     CLIENT_URL: process.env.CLIENT_URL,
     APP_URL: process.env.APP_URL,
-    NODE_ENV: process.env.NODE_ENV
+    NODE_ENV: process.env.NODE_ENV,
+    lastOAuthAttempt
   });
 });
 
@@ -45,6 +48,16 @@ router.get('/google', (req: Request, res: Response) => {
 // @access  Public
 router.get('/google/callback', async (req: Request, res: Response) => {
   const { code, error } = req.query;
+  
+  lastOAuthAttempt = {
+    timestamp: new Date().toISOString(),
+    codeReceived: !!code,
+    errorFromGoogle: error,
+    fullQuery: req.query,
+    clientUrl: process.env.CLIENT_URL,
+    googleClientId: process.env.GOOGLE_CLIENT_ID?.substring(0, 20) + '...',
+    googleRedirectUri: process.env.GOOGLE_REDIRECT_URI
+  };
   
   console.log('=== GOOGLE OAUTH CALLBACK DEBUG ===');
   console.log('Code received:', !!code);
