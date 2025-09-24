@@ -7,6 +7,11 @@ const router = express.Router();
 
 let lastOAuthAttempt: any = null;
 
+// Test callback endpoint
+router.get('/google/callback/test', (req: Request, res: Response) => {
+  res.json({ message: 'Callback route is working', timestamp: new Date().toISOString() });
+});
+
 // Debug endpoint to check OAuth configuration
 router.get('/google/debug', (req: Request, res: Response) => {
   res.json({
@@ -47,6 +52,9 @@ router.get('/google', (req: Request, res: Response) => {
 // @desc    Handle Google OAuth callback
 // @access  Public
 router.get('/google/callback', async (req: Request, res: Response) => {
+  console.log('🚨 CALLBACK ENDPOINT HIT!');
+  console.log('Request URL:', req.url);
+  console.log('Request method:', req.method);
   const { code, error } = req.query;
   
   lastOAuthAttempt = {
