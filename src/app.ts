@@ -278,6 +278,11 @@ app.get('/api/auth/direct-test', (req: Request, res: Response) => {
   res.json({ message: 'Direct auth route working' });
 });
 
+// Test Google auth route directly
+app.get('/api/auth/google/test-direct', (req: Request, res: Response) => {
+  res.json({ message: 'Google auth route working directly' });
+});
+
 // Debug route registration
 console.log('🔗 Registering API routes...');
 console.log('Environment:', process.env.NODE_ENV);

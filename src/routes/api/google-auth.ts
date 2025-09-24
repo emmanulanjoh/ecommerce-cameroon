@@ -177,3 +177,9 @@ router.get('/google/callback', async (req: Request, res: Response) => {
 });
 
 export { router };
+
+// Debug: Log all routes
+console.log('🔍 Google Auth routes registered:');
+router.stack.forEach((layer: any) => {
+  console.log(`  ${layer.route?.methods ? Object.keys(layer.route.methods).join(',').toUpperCase() : 'MIDDLEWARE'} ${layer.route?.path || layer.regexp}`);
+});
