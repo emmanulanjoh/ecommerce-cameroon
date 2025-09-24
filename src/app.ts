@@ -245,6 +245,10 @@ try {
   var apiUsersRoutes = require('./routes/api/users');
   var apiOrdersRoutes = require('./routes/api/orders');
   var googleAuthRoutes = require('./routes/api/google-auth');
+  console.log('🔍 Google Auth Routes object:', Object.keys(googleAuthRoutes));
+  console.log('🔍 Google Auth Router exists:', !!googleAuthRoutes.router);
+  console.log('🔍 Google Auth Routes object:', Object.keys(googleAuthRoutes));
+  console.log('🔍 Google Auth Router exists:', !!googleAuthRoutes.router);
   var apiReviewsRoutes = require('./routes/api/reviews');
   var apiNotificationsRoutes = require('./routes/api/notifications');
   console.log('✅ All route modules imported successfully');

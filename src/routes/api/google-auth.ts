@@ -74,6 +74,7 @@ router.get('/google/callback', async (req: Request, res: Response) => {
   console.log('CLIENT_URL:', process.env.CLIENT_URL);
   console.log('GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID?.substring(0, 20) + '...');
   console.log('GOOGLE_REDIRECT_URI:', process.env.GOOGLE_REDIRECT_URI);
+  console.log('🔄 About to check for errors...');
 
   if (error) {
     console.log('Google OAuth error:', error);
@@ -84,11 +85,17 @@ router.get('/google/callback', async (req: Request, res: Response) => {
     console.log('No authorization code received');
     return res.redirect(`${process.env.CLIENT_URL}/login?error=no_code`);
   }
+  
+  console.log('🚀 Starting token exchange process...');
+  
+  console.log('🚀 Starting token exchange process...');
 
   try {
+    console.log('🔄 Inside try block for token exchange');
     // Exchange code for access token with timeout
     const redirectUri = process.env.GOOGLE_REDIRECT_URI || 
       `${req.protocol}://${req.get('host')}/api/auth/google/callback`;
+    console.log('🔄 Redirect URI computed successfully');
     
     console.log('Token exchange - redirect URI:', redirectUri);
     console.log('Token exchange - code:', code);
@@ -168,7 +175,10 @@ router.get('/google/callback', async (req: Request, res: Response) => {
     // Redirect to frontend with token
     res.redirect(`${process.env.CLIENT_URL}/auth/success?token=${token}`);
   } catch (error: any) {
-    console.error('Google OAuth error:', error);
+    console.error('🚨 CAUGHT ERROR IN CALLBACK:');
+    console.error('Error name:', error?.name);
+    console.error('Error message:', error?.message);
+    console.error('Full error:', error);
     if (error?.name === 'AbortError') {
       return res.redirect(`${process.env.CLIENT_URL}/login?error=timeout`);
     }
