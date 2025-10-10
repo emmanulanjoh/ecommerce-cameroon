@@ -28,11 +28,7 @@ const ModernFAQ: React.FC = () => {
       question: 'Can I modify or cancel my order?',
       answer: 'You can modify or cancel your order within 30 minutes of placing it. After that, please contact our customer support team for assistance.',
     },
-    {
-      category: 'orders',
-      question: 'How do I track my order?',
-      answer: 'Once your order is confirmed, you will receive a tracking number via SMS and email. You can use this number to track your order status on our website.',
-    },
+    
     {
       category: 'shipping',
       question: 'What are your delivery areas?',
@@ -43,11 +39,7 @@ const ModernFAQ: React.FC = () => {
       question: 'How long does delivery take?',
       answer: 'Delivery typically takes 1-3 business days within major cities and 3-7 business days for other areas. Express delivery options are available for urgent orders.',
     },
-    {
-      category: 'shipping',
-      question: 'What are the delivery charges?',
-      answer: 'Delivery charges vary by location and order value. Orders above 50,000 XAF qualify for free delivery within major cities. Check our delivery policy for detailed pricing.',
-    },
+   
     {
       category: 'payment',
       question: 'What payment methods do you accept?',
@@ -56,7 +48,7 @@ const ModernFAQ: React.FC = () => {
     {
       category: 'payment',
       question: 'Is it safe to pay online?',
-      answer: 'Yes, all online payments are processed through secure, encrypted channels. We use industry-standard security measures to protect your financial information.',
+      answer: 'No, payment are done after verification of the product.',
     },
     {
       category: 'payment',
