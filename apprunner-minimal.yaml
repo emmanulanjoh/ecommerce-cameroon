@@ -1,0 +1,24 @@
+version: 1.0
+runtime: nodejs18
+build:
+  commands:
+    build:
+      - npm install
+      - cd client && npm install && npm run build
+run:
+  runtime-version: 18.20.8
+  command: node src/server.js
+  network:
+    port: 5000
+    env: PORT
+  env:
+    - name: NODE_ENV
+      value: production
+    - name: PORT
+      value: "5000"
+    - name: MONGODB_URI
+      value: "mongodb+srv://emma:Emma2018@cluster0.jff9i.mongodb.net/ecommerce_cameroon"
+    - name: JWT_SECRET
+      value: "klnjgdskj59e4kln94ejbwklbrbjkboi4h43hb34boh34909u6ikrnlsdnelnhgoh54b5nioerlkngoipjgpj95j34kjpe45je45jr65j9yokn5rin6lrnknr6"
+    - name: SESSION_SECRET
+      value: "gytfrdesawq34dcf6gty879tf@34iKojij"

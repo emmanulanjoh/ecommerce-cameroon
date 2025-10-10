@@ -3,13 +3,11 @@ runtime: nodejs18
 build:
   commands:
     build:
-      - npm install --production=false
-      - npm run build
+      - npm install
       - cd client && npm install && npm run build
-      - ls -la client/build || dir client\build
 run:
   runtime-version: 18.20.8
-  command: node server.js
+  command: node src/server.js
   network:
     port: 5000
     env: PORT
