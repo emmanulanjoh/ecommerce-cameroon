@@ -5,7 +5,7 @@ build:
     build:
       - npm install
       - npm run build
-      - cd client && npm install && npm run build
+      - cd client && npm install && npx cross-env CI=false npm run build
 run:
   runtime-version: 18.20.8
   command: node dist/server.js
