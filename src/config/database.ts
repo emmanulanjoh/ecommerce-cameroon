@@ -8,10 +8,10 @@ const connectDB = async (): Promise<void> => {
     console.log('MONGODB_URI exists:', !!process.env.MONGODB_URI);
     console.log('PORT:', process.env.PORT);
     
-    const mongoURI = `${process.env.MONGODB_URI}${process.env.DB_NAME}` || 'mongodb://localhost:27017/ecommerce_cameroon';
+    const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce_cameroon';
     
     if (process.env.NODE_ENV !== 'production') {
-      console.log('🔍 Connecting to database:', process.env.DB_NAME);
+      console.log('🔍 Connecting to database:', mongoURI.split('/').pop());
     }
     
     if (!process.env.MONGODB_URI) {
