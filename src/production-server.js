@@ -85,22 +85,40 @@ try {
   
   // Try to load each route
   const routes = [
+    { name: 'products', path: './routes/api/products-simple' }
+  ];
+  
+  // Add fallback routes if main routes don't exist
+  const fallbackRoutes = [
     { name: 'auth', path: './routes/api/auth' },
-    { name: 'products', path: './routes/api/products' },
+    { name: 'products-full', path: './routes/api/products' },
     { name: 'users', path: './routes/api/users' }
   ];
   
+  // Load primary routes
   routes.forEach(route => {
     try {
       const routeModule = require(route.path);
       if (routeModule.router) {
-        app.use(`/api/${route.name}`, routeModule.router);
+        const routeName = route.name === 'products' ? 'products' : route.name;
+        app.use(`/api/${routeName}`, routeModule.router);
         console.log(`✅ ${route.name} routes loaded`);
-      } else {
-        console.log(`⚠️ ${route.name} routes: no router export found`);
       }
     } catch (err) {
       console.error(`❌ Failed to load ${route.name} routes:`, err.message);
+    }
+  });
+  
+  // Try fallback routes
+  fallbackRoutes.forEach(route => {
+    try {
+      const routeModule = require(route.path);
+      if (routeModule.router) {
+        app.use(`/api/${route.name}`, routeModule.router);
+        console.log(`✅ ${route.name} fallback routes loaded`);
+      }
+    } catch (err) {
+      console.log(`⚠️ ${route.name} fallback not available`);
     }
   });
   
