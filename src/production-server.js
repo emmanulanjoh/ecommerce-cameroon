@@ -37,35 +37,92 @@ app.use('/api/', limiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('✅ MongoDB connected'))
-  .catch(err => console.error('❌ MongoDB connection failed:', err));
+// Connect to MongoDB with proper error handling
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    });
+    console.log('✅ MongoDB connected:', conn.connection.host);
+  } catch (error) {
+    console.error('❌ MongoDB connection failed:', error.message);
+    console.error('📋 MongoDB URI exists:', !!process.env.MONGODB_URI);
+    // Don't exit, let app run without DB for debugging
+  }
+};
+
+connectDB();
 
 // Serve static files
 app.use(express.static(path.join(__dirname, '../client/build')));
 
-// Import API routes
+// Test API endpoint
+app.get('/api/test', (req, res) => {
+  res.json({ 
+    message: 'API is working',
+    timestamp: new Date().toISOString(),
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    env: process.env.NODE_ENV
+  });
+});
+
+// Import API routes with detailed error handling
 try {
-  const authRoutes = require('./routes/api/auth');
-  const productRoutes = require('./routes/api/products');
-  const userRoutes = require('./routes/api/users');
+  console.log('🔍 Loading API routes...');
   
-  app.use('/api/auth', authRoutes.router);
-  app.use('/api/products', productRoutes.router);
-  app.use('/api/users', userRoutes.router);
+  // Check if route files exist
+  const fs = require('fs');
+  const routesPath = path.join(__dirname, 'routes', 'api');
+  console.log('📁 Routes directory exists:', fs.existsSync(routesPath));
   
-  console.log('✅ API routes loaded');
+  if (fs.existsSync(routesPath)) {
+    const files = fs.readdirSync(routesPath);
+    console.log('📄 Route files found:', files);
+  }
+  
+  // Try to load each route
+  const routes = [
+    { name: 'auth', path: './routes/api/auth' },
+    { name: 'products', path: './routes/api/products' },
+    { name: 'users', path: './routes/api/users' }
+  ];
+  
+  routes.forEach(route => {
+    try {
+      const routeModule = require(route.path);
+      if (routeModule.router) {
+        app.use(`/api/${route.name}`, routeModule.router);
+        console.log(`✅ ${route.name} routes loaded`);
+      } else {
+        console.log(`⚠️ ${route.name} routes: no router export found`);
+      }
+    } catch (err) {
+      console.error(`❌ Failed to load ${route.name} routes:`, err.message);
+    }
+  });
+  
 } catch (error) {
-  console.error('⚠️ Some API routes failed to load:', error.message);
+  console.error('❌ Error setting up API routes:', error.message);
 }
 
-// Health check
+// Health check with detailed info
 app.get('/health', (req, res) => {
   res.json({
     status: 'OK',
     timestamp: new Date().toISOString(),
-    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+    database: {
+      connected: mongoose.connection.readyState === 1,
+      state: mongoose.connection.readyState,
+      host: mongoose.connection.host || 'unknown'
+    },
+    environment: {
+      NODE_ENV: process.env.NODE_ENV,
+      PORT: process.env.PORT,
+      MONGODB_URI_EXISTS: !!process.env.MONGODB_URI
+    }
   });
 });
 
