@@ -50,15 +50,10 @@ router.get('/debug', async (req: Request, res: Response) => {
 // Database inspection endpoint
 router.get('/db-inspect', async (req: Request, res: Response) => {
   try {
-    const admin = mongoose.connection.db!.admin();
-    const databases = await admin.listDatabases();
-    
     res.json({
       currentDatabase: mongoose.connection.db?.databaseName,
-      allDatabases: databases.databases.map((db: any) => ({
-        name: db.name,
-        sizeOnDisk: db.sizeOnDisk
-      }))
+      connectionString: process.env.MONGODB_URI?.replace(/\/\/([^:]+):([^@]+)@/, '//***:***@'),
+      readyState: mongoose.connection.readyState
     });
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
