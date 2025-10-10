@@ -16,11 +16,41 @@ router.get('/test', (req: Request, res: Response) => {
   });
 });
 
+// Debug endpoint for production
+router.get('/debug', async (req: Request, res: Response) => {
+  try {
+    const dbName = mongoose.connection.db?.databaseName;
+    const connectionState = mongoose.connection.readyState;
+    const totalProducts = await Product.countDocuments({});
+    const activeProducts = await Product.countDocuments({ isActive: true });
+    const sampleProduct = await Product.findOne({}).lean();
+    
+    res.json({
+      database: dbName,
+      connectionState,
+      totalProducts,
+      activeProducts,
+      sampleProduct: sampleProduct ? {
+        id: sampleProduct._id,
+        name: sampleProduct.nameEn || sampleProduct.name,
+        category: sampleProduct.category,
+        isActive: sampleProduct.isActive
+      } : null
+    });
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
+  }
+});
+
 
 
 // Get all products with advanced search and filters
 router.get('/', async (req: Request, res: Response) => {
   try {
+    console.log('🔍 Products API called');
+    console.log('🗄️ Database:', mongoose.connection.db?.databaseName);
+    console.log('🔗 Connection state:', mongoose.connection.readyState);
+    
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 12;
     const skip = (page - 1) * limit;
@@ -35,8 +65,8 @@ router.get('/', async (req: Request, res: Response) => {
     const sortBy = req.query.sortBy as string || 'createdAt';
     const sortOrder = req.query.sortOrder === 'asc' ? 1 : -1;
 
-    // Build query
-    let query: any = { isActive: true };
+    // Build query - remove isActive filter to see all products
+    let query: any = {};
     
     // Text search with input validation
     if (search && typeof search === 'string') {
@@ -66,17 +96,22 @@ router.get('/', async (req: Request, res: Response) => {
     let sort: any = {};
     sort[sortBy] = sortOrder;
 
-    const products = await mongoose.connection.db!.collection('products')
-      .find(query)
+    console.log('🔍 Query:', JSON.stringify(query));
+    
+    // Use Product model instead of direct collection access
+    const products = await Product.find(query)
       .sort(sort)
       .skip(skip)
       .limit(limit)
-      .toArray();
+      .lean();
 
-    const total = await mongoose.connection.db!.collection('products').countDocuments(query);
+    const total = await Product.countDocuments(query);
+    
+    console.log('📊 Found products:', products.length);
+    console.log('📊 Total products:', total);
     
     // Convert S3 URLs to CloudFront URLs and handle legacy field names
-    const productsWithCloudFront = products.map(product => ({
+    const productsWithCloudFront = products.map((product: any) => ({
       ...product,
       // Handle legacy 'name' field
       nameEn: product.nameEn || product.name,
@@ -90,6 +125,8 @@ router.get('/', async (req: Request, res: Response) => {
         product.thumbnailImage.replace(/https:\/\/[^.]+\.s3\.amazonaws\.com/, 'https://d35ew0puu9c5cz.cloudfront.net') : 
         product.thumbnailImage
     }));
+    
+    console.log('🚀 Returning products:', productsWithCloudFront.length);
 
     res.json({
       products: productsWithCloudFront,
