@@ -3,11 +3,13 @@ runtime: nodejs18
 build:
   commands:
     build:
-      - npm install
-      - node deploy.js
+      - npm install --production=false
+      - npm run build
+      - cd client && npm install && npm run build
+      - ls -la client/build || dir client\build
 run:
   runtime-version: 18.20.8
-  command: npm start
+  command: node server.js
   network:
     port: 5000
     env: PORT
@@ -60,3 +62,9 @@ run:
       value: "klnjgdskj59e4kln94ejbwklbrbjkboi4h43hb34boh34909u6ikrnlsdnelnhgoh54b5nioerlkngoipjgpj95j34kjpe45je45jr65j9yokn5rin6lrnknr6"
     - name: SESSION_SECRET
       value: "gytfrdesawq34dcf6gty879tf@34iKojij"
+    - name: BUSINESS_PHONE
+      value: "+237678830036"
+    - name: BUSINESS_EMAIL
+      value: "emmanuelanjoh2016@gmail.com"
+    - name: BUSINESS_WHATSAPP_NUMBER
+      value: "+237678830036"
