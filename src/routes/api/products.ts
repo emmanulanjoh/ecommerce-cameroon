@@ -37,7 +37,7 @@ router.get('/debug', async (req: Request, res: Response) => {
       activeProducts,
       sampleProduct: sampleProduct ? {
         id: sampleProduct._id,
-        name: sampleProduct.nameEn || sampleProduct.name,
+        name: sampleProduct.nameEn,
         category: sampleProduct.category,
         isActive: sampleProduct.isActive
       } : null
