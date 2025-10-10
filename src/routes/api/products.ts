@@ -25,9 +25,14 @@ router.get('/debug', async (req: Request, res: Response) => {
     const activeProducts = await Product.countDocuments({ isActive: true });
     const sampleProduct = await Product.findOne({}).lean();
     
+    // List all collections in current database
+    const collections = await mongoose.connection.db!.listCollections().toArray();
+    const collectionNames = collections.map(c => c.name);
+    
     res.json({
       database: dbName,
       connectionState,
+      collections: collectionNames,
       totalProducts,
       activeProducts,
       sampleProduct: sampleProduct ? {
@@ -36,6 +41,24 @@ router.get('/debug', async (req: Request, res: Response) => {
         category: sampleProduct.category,
         isActive: sampleProduct.isActive
       } : null
+    });
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
+  }
+});
+
+// Database inspection endpoint
+router.get('/db-inspect', async (req: Request, res: Response) => {
+  try {
+    const admin = mongoose.connection.db!.admin();
+    const databases = await admin.listDatabases();
+    
+    res.json({
+      currentDatabase: mongoose.connection.db?.databaseName,
+      allDatabases: databases.databases.map((db: any) => ({
+        name: db.name,
+        sizeOnDisk: db.sizeOnDisk
+      }))
     });
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
