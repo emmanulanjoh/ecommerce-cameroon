@@ -57,7 +57,7 @@ run:
     - name: S3_BUCKET_NAME
       value: "ecommerce-cameroon-assets"
     - name: MONGODB_URI
-      value: "mongodb+srv://emma:Emma2018@cluster0.jff9i.mongodb.net/ecommerce_cameroon"
+      value: "mongodb+srv://emma:Emma2018@cluster0.jff9i.mongodb.net/ecommerce_cameroon_prod"
     - name: JWT_SECRET
       value: "klnjgdskj59e4kln94ejbwklbrbjkboi4h43hb34boh34909u6ikrnlsdnelnhgoh54b5nioerlkngoipjgpj95j34kjpe45je45jr65j9yokn5rin6lrnknr6"
     - name: SESSION_SECRET
