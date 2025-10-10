@@ -52,44 +52,19 @@ if (process.env.TRUST_PROXY === 'true') {
 // SERVE STATIC FILES FIRST - BEFORE ANY MIDDLEWARE
 if (process.env.NODE_ENV === 'production') {
   const buildPath = path.join(__dirname, '../client/build');
-  const fs = require('fs');
-  
   console.log('🔍 Checking build path:', buildPath);
-  console.log('🔍 Build directory exists:', fs.existsSync(buildPath));
   
-  if (fs.existsSync(buildPath)) {
-    try {
-      const staticPath = path.join(buildPath, 'static');
-      console.log('🔍 Static directory exists:', fs.existsSync(staticPath));
-      
-      if (fs.existsSync(staticPath)) {
-        const jsPath = path.join(staticPath, 'js');
-        const cssPath = path.join(staticPath, 'css');
-        console.log('🔍 JS files:', fs.existsSync(jsPath) ? fs.readdirSync(jsPath) : 'No JS directory');
-        console.log('🔍 CSS files:', fs.existsSync(cssPath) ? fs.readdirSync(cssPath) : 'No CSS directory');
+  // Serve React build files
+  app.use(express.static(buildPath, {
+    maxAge: '1d',
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith('.js')) {
+        res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+      } else if (filePath.endsWith('.css')) {
+        res.setHeader('Content-Type', 'text/css; charset=utf-8');
       }
-    } catch (error) {
-      console.error('❌ Error checking build files:', error);
     }
-    
-    // Serve React build files with explicit MIME types
-    app.use(express.static(buildPath, {
-      maxAge: '1d',
-      setHeaders: (res, filePath) => {
-        if (filePath.endsWith('.js')) {
-          res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-        } else if (filePath.endsWith('.css')) {
-          res.setHeader('Content-Type', 'text/css; charset=utf-8');
-        } else if (filePath.endsWith('.json')) {
-          res.setHeader('Content-Type', 'application/json; charset=utf-8');
-        } else if (filePath.endsWith('.html')) {
-          res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        }
-      }
-    }));
-  } else {
-    console.error('❌ Build directory not found at:', buildPath);
-  }
+  }));
 }
 
 // Connect to MongoDB
@@ -320,21 +295,16 @@ app.use('/api', errorLogger);
 // Serve React app for all other routes in production
 if (process.env.NODE_ENV === 'production') {
   app.get('*', (req: Request, res: Response) => {
-    // Only serve React app for non-API routes
     if (req.path.startsWith('/api/')) {
       return res.status(404).json({ success: false, message: 'API endpoint not found' });
     }
     
-    const indexPath = path.resolve(__dirname, '../client', 'build', 'index.html');
-    res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    res.sendFile(indexPath);
-  });
-} else {
-  // 404 handler for development
-  app.use((req: Request, res: Response) => {
-    res.status(404).json({
-      success: false,
-      message: 'API endpoint not found'
+    const indexPath = path.join(__dirname, '../client/build/index.html');
+    res.sendFile(indexPath, (err) => {
+      if (err) {
+        console.error('Error serving index.html:', err);
+        res.status(500).send('Server Error');
+      }
     });
   });
 }

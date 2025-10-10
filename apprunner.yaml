@@ -4,8 +4,7 @@ build:
   commands:
     build:
       - npm install
-      - npm run build
-      - cd client && npm install && npm run build
+      - node deploy.js
 run:
   runtime-version: 18.20.8
   command: npm start
@@ -42,7 +41,7 @@ run:
     - name: MAX_FILE_SIZE
       value: "5242880"
     - name: UPLOAD_PATH
-      value: "./public/uploads"
+      value: "./dist/public/uploads"
     - name: DEFAULT_LANGUAGE
       value: "en"
     - name: SUPPORTED_LANGUAGES
