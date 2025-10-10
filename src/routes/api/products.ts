@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import Product from '../../models/Product';
 import { authMiddleware } from './auth';
 import { sanitizeForLog, sanitizeForHtml } from '../../utils/sanitize';
-import { csrfProtection } from '../../middleware/csrf';
+
 import mongoose from 'mongoose';
 
 export const router = express.Router();
@@ -185,7 +185,7 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
 });
 
 // Update a product
-router.put('/:id', csrfProtection, authMiddleware, async (req: Request, res: Response) => {
+router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
   try {
     const product = await Product.findByIdAndUpdate(
       req.params.id, 
@@ -257,7 +257,7 @@ router.get('/:id/recommendations', async (req: Request, res: Response) => {
 });
 
 // Delete a product
-router.delete('/:id', csrfProtection, authMiddleware, async (req: Request, res: Response) => {
+router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
     

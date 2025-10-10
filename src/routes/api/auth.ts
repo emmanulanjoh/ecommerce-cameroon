@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import Admin from '../../models/Admin';
 import { sanitizeForHtml } from '../../utils/sanitize';
-import { csrfProtection } from '../../middleware/csrf';
+
 
 const router = express.Router();
 

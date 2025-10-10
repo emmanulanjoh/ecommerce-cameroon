@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import User from '../../models/User';
 import { validateUser } from '../../middleware/validation';
 import { sanitizeForLog, sanitizeForHtml } from '../../utils/sanitize';
-import { csrfProtection } from '../../middleware/csrf';
+
 
 const router = express.Router();
 
@@ -32,7 +32,7 @@ const generateToken = (userId: string): string => {
 // @route   POST /api/users/register
 // @desc    Register new user
 // @access  Public
-router.post('/register', csrfProtection, async (req: Request, res: Response) => {
+router.post('/register', async (req: Request, res: Response) => {
   try {
     console.log('🔍 Registration attempt:', { 
       body: req.body, 
@@ -96,7 +96,7 @@ router.post('/register', csrfProtection, async (req: Request, res: Response) => 
 // @route   POST /api/users/login
 // @desc    Login user
 // @access  Public
-router.post('/login', csrfProtection, async (req: Request, res: Response) => {
+router.post('/login', async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 

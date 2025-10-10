@@ -4,7 +4,7 @@ import Order from '../../models/Order';
 import User from '../../models/User';
 import { EmailService } from '../../services/email';
 import { sanitizeForLog, sanitizeForHtml, sanitizeHtml, sanitizeMongoQuery } from '../../utils/sanitize';
-import { csrfProtection } from '../../middleware/csrf';
+
 
 const router = express.Router();
 
