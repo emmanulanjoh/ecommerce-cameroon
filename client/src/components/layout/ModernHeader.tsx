@@ -14,13 +14,10 @@ import {
   Menu,
   MenuItem,
   Badge,
-  InputBase,
-  alpha,
   Avatar,
   Divider,
 } from '@mui/material';
 import {
-  Search,
   ShoppingCart,
   Menu as MenuIcon,
 } from '@mui/icons-material';
@@ -92,58 +89,7 @@ const ModernHeader: React.FC = () => {
               </Typography>
             </motion.div>
 
-            {/* Search Bar - Responsive */}
-            <Box
-              sx={{
-                position: 'relative',
-                borderRadius: { xs: 2, md: 3 },
-                backgroundColor: alpha('#000', 0.05),
-                '&:hover': {
-                  backgroundColor: alpha('#000', 0.08),
-                },
-                marginLeft: 0,
-                width: '100%',
-                maxWidth: { xs: 200, sm: 300, md: 400 },
-                mx: { xs: 1, md: 3 },
-                display: { xs: 'block', md: 'block' },
-              }}
-            >
-              <Box
-                sx={{
-                  padding: { xs: '0 8px', md: '0 16px' },
-                  height: '100%',
-                  position: 'absolute',
-                  pointerEvents: 'none',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Search sx={{ color: 'text.secondary', fontSize: { xs: 18, md: 24 } }} />
-              </Box>
-              <InputBase
-                placeholder="Search products..."
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    const query = (e.target as HTMLInputElement).value;
-                    if (query.trim()) {
-                      navigate(`/products?search=${encodeURIComponent(query.trim())}`);
-                    } else {
-                      navigate('/products');
-                    }
-                  }
-                }}
-                sx={{
-                  color: 'inherit',
-                  width: '100%',
-                  '& .MuiInputBase-input': {
-                    padding: { xs: '8px 8px 8px 32px', md: '12px 12px 12px 48px' },
-                    fontSize: { xs: '0.875rem', md: '1rem' },
-                    transition: 'width 0.3s',
-                  },
-                }}
-              />
-            </Box>
+
 
             {/* Desktop Navigation */}
             <Box sx={{ display: { xs: 'none', lg: 'flex' }, gap: 1, ml: 'auto' }}>

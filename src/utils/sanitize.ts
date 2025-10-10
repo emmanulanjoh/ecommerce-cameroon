@@ -1,12 +1,26 @@
-import DOMPurify from 'isomorphic-dompurify';
-
 // Sanitize HTML content to prevent XSS
 export const sanitizeHtml = (input: string): string => {
   if (!input || typeof input !== 'string') return '';
-  return DOMPurify.sanitize(input, { 
-    ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'p', 'br'],
-    ALLOWED_ATTR: []
-  });
+  return input
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/\//g, '&#x2F;')
+    .replace(/javascript:/gi, '')
+    .replace(/on\w+=/gi, '');
+};
+
+// Sanitize input to prevent injection attacks
+export const sanitizeInput = (input: any): string => {
+  if (input === null || input === undefined) return '';
+  const str = String(input).trim();
+  return str
+    .replace(/[<>"'&]/g, '')
+    .replace(/javascript:/gi, '')
+    .replace(/on\w+=/gi, '')
+    .substring(0, 1000);
 };
 
 // Sanitize for logging to prevent log injection

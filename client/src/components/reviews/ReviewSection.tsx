@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Rating, Button, TextField, Card, Avatar, Divider } from '@mui/material';
 import { Person } from '@mui/icons-material';
 import axios from 'axios';
+import { useUser } from '../../features/auth';
 
 interface Review {
   _id: string;
@@ -37,10 +38,11 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
     }
   };
 
+  const { isAuthenticated, token } = useUser();
+
   const submitReview = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
+      if (!isAuthenticated || !token) {
         alert('Please login to write a review');
         return;
       }
@@ -84,8 +86,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
       <Button 
         variant="contained" 
         onClick={() => {
-          const token = localStorage.getItem('token');
-          if (!token) {
+          if (!isAuthenticated) {
             alert('Please login to write a review');
             return;
           }

@@ -1,6 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { useCart } from '../../context/CartContext';
 import { useUser } from '../../features/auth';
+import { useRecentlyViewed } from '../../context/RecentlyViewedContext';
+import ProductQuickView from './ProductQuickView';
 import {
   Card,
   CardContent,
@@ -27,15 +29,19 @@ import { getCategoryBackground } from './CategoryColors';
 
 interface ModernProductCardProps {
   product: Product;
+  showQuickView?: boolean;
 }
 
 const ModernProductCard: React.FC<ModernProductCardProps> = ({ 
-  product
+  product,
+  showQuickView = true
 }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [quickViewOpen, setQuickViewOpen] = useState(false);
   const { addToCart } = useCart();
   const { user, isAuthenticated, token } = useUser();
+  const { addToRecentlyViewed } = useRecentlyViewed();
   
   const whatsappNumber = process.env.REACT_APP_BUSINESS_WHATSAPP_NUMBER || '237678830036';
   
@@ -112,7 +118,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
       <Card
         sx={{
           height: { xs: 280, sm: 380 },
-          borderRadius: { xs: 2, sm: 3 },
+          borderRadius: 1,
           overflow: 'hidden',
           position: 'relative',
           boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
@@ -177,8 +183,14 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
             >
               <Zoom in={isHovered}>
                 <IconButton
-                  component={Link}
-                  to={`/products/${product._id}`}
+                  onClick={() => {
+                    if (showQuickView) {
+                      addToRecentlyViewed(product);
+                      setQuickViewOpen(true);
+                    } else {
+                      window.location.href = `/products/${product._id}`;
+                    }
+                  }}
                   sx={{
                     bgcolor: 'white',
                     color: 'primary.main',
@@ -218,22 +230,42 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
           </Fade>
           
           {/* Badges */}
-          <Box sx={{ position: 'absolute', top: { xs: 6, sm: 12 }, left: { xs: 6, sm: 12 } }}>
-            <Chip
-              label={product.category}
-              size="small"
-              sx={{
-                background: getCategoryBackground(product.category),
-                color: 'white',
-                fontWeight: 600,
-                fontSize: { xs: '0.65rem', sm: '0.75rem' },
-                height: { xs: 20, sm: 24 },
-                '& .MuiChip-label': {
-                  px: { xs: 1, sm: 1.5 }
-                }
-              }}
-            />
-          </Box>
+          {product.warrantyMonths && (
+            <Box sx={{ position: 'absolute', top: { xs: 6, sm: 12 }, left: { xs: 6, sm: 12 } }}>
+              <Chip
+                label={`${product.warrantyMonths}mo warranty`}
+                size="small"
+                sx={{
+                  background: '#9c27b0',
+                  color: 'white',
+                  fontWeight: 600,
+                  fontSize: { xs: '0.65rem', sm: '0.75rem' },
+                  height: { xs: 20, sm: 24 },
+                  '& .MuiChip-label': {
+                    px: { xs: 1, sm: 1.5 }
+                  }
+                }}
+              />
+            </Box>
+          )}
+          {product.condition && (
+            <Box sx={{ position: 'absolute', top: { xs: 6, sm: 12 }, right: { xs: 6, sm: 12 } }}>
+              <Chip
+                label={product.condition.charAt(0).toUpperCase() + product.condition.slice(1)}
+                size="small"
+                sx={{
+                  background: product.condition === 'new' ? '#4caf50' : product.condition === 'used' ? '#ff9800' : '#2196f3',
+                  color: 'white',
+                  fontWeight: 600,
+                  fontSize: { xs: '0.65rem', sm: '0.75rem' },
+                  height: { xs: 20, sm: 24 },
+                  '& .MuiChip-label': {
+                    px: { xs: 1, sm: 1.5 }
+                  }
+                }}
+              />
+            </Box>
+          )}
           
           {/* Favorite Button */}
           <IconButton
@@ -291,7 +323,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
               variant="contained"
               onClick={() => addToCart(product)}
               sx={{ 
-                borderRadius: { xs: 1.5, sm: 2 }, 
+                borderRadius: 1, 
                 flex: 1,
                 py: { xs: 0.5, sm: 1.5 }, 
                 px: { xs: 1, sm: 2 },
@@ -312,7 +344,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
                   color: '#20B858',
                   backgroundColor: 'rgba(37, 211, 102, 0.1)'
                 },
-                borderRadius: { xs: 1.5, sm: 2 },
+                borderRadius: 1,
                 p: { xs: 0.5, sm: 1.5 },
                 minWidth: { xs: 32, sm: 48 },
                 width: { xs: 32, sm: 48 },
@@ -324,6 +356,14 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
           </Box>
         </CardContent>
       </Card>
+      
+      {showQuickView && (
+        <ProductQuickView
+          product={product}
+          open={quickViewOpen}
+          onClose={() => setQuickViewOpen(false)}
+        />
+      )}
     </motion.div>
   );
 };

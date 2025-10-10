@@ -17,8 +17,8 @@ async function testUploadRoute() {
     formData.append('file', fs.createReadStream(testImagePath));
     formData.append('folder', 'products');
     
-    // Get token (you'll need to replace this with actual admin token)
-    const token = 'your-admin-token-here'; // Replace with actual token
+    // Get token from environment or login first
+    const token = process.env.TEST_ADMIN_TOKEN || 'test-token-placeholder';
     
     console.log('📤 Uploading test file...');
     const response = await axios.post('http://localhost:5000/api/upload/single', formData, {
@@ -39,6 +39,6 @@ async function testUploadRoute() {
   }
 }
 
-console.log('Note: Replace "your-admin-token-here" with actual admin token');
+console.log('Note: Set TEST_ADMIN_TOKEN environment variable or login first');
 console.log('To get token: Login to admin panel and check localStorage');
-// testUploadRoute();
+// Uncomment to run: testUploadRoute();

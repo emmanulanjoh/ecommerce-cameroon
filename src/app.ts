@@ -34,7 +34,7 @@ import * as apiCategoryRoutes from './routes/api/categories';
 import * as apiReviewRoutes from './routes/api/reviews';
 import * as apiAuthRoutes from './routes/api/auth';
 import * as apiUploadRoutes from './routes/api/upload';
-// Removed unused import
+import * as adminSecureRoutes from './routes/api/admin-secure';
 
 // Import middleware
 import { setLanguage } from './middleware/language';
@@ -202,9 +202,11 @@ app.use(requestLogger);
 // Language middleware
 app.use(setLanguage);
 
-// Secure CSRF protection (excludes API routes)
-import { setCSRFToken } from './middleware/csrf-secure';
+// Secure CSRF protection
+import { setCSRFToken, secureCSRFProtection } from './middleware/csrf-secure';
 app.use(setCSRFToken);
+// Apply CSRF protection to admin routes only
+app.use('/api/admin', secureCSRFProtection);
 
 
 
@@ -294,13 +296,13 @@ console.log('Environment:', process.env.NODE_ENV);
 // API Routes for React frontend
 app.use('/api/auth', apiAuthRoutes.router);
 app.use('/api/auth', googleAuthRoutes.router);
+app.use('/api/admin', adminSecureRoutes.router);
 app.use('/api/products', apiProductRoutes.router);
 app.use('/api/categories', apiCategoryRoutes.router);
 app.use('/api/reviews', apiReviewsRoutes.router);
 app.use('/api/notifications', apiNotificationsRoutes.router);
 app.use('/api/upload', apiUploadRoutes.router);
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
-// Removed unused routes
 app.use('/api/contact', apiContactRoutes.router);
 app.use('/api/chat', apiChatRoutes.router);
 app.use('/api/users', apiUsersRoutes.router);

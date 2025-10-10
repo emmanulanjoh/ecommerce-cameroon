@@ -16,6 +16,8 @@ router.get('/test', (req: Request, res: Response) => {
   });
 });
 
+
+
 // Get all products with advanced search and filters
 router.get('/', async (req: Request, res: Response) => {
   try {
@@ -38,49 +40,47 @@ router.get('/', async (req: Request, res: Response) => {
     
     // Text search with input validation
     if (search && typeof search === 'string') {
-      // Escape regex special characters to prevent injection
       const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       query.$or = [
         { nameEn: { $regex: escapedSearch, $options: 'i' } },
         { nameFr: { $regex: escapedSearch, $options: 'i' } },
+        { name: { $regex: escapedSearch, $options: 'i' } },
         { descriptionEn: { $regex: escapedSearch, $options: 'i' } },
         { category: { $regex: escapedSearch, $options: 'i' } }
       ];
     }
     
-    // Category filter with validation
     if (category && typeof category === 'string') {
       query.category = category.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
     
-    // Price range filter
     if (!isNaN(minPrice) || !isNaN(maxPrice)) {
       query.price = {};
       if (!isNaN(minPrice)) query.price.$gte = minPrice;
       if (!isNaN(maxPrice)) query.price.$lte = maxPrice;
     }
     
-    // Stock filter
     if (inStock) query.inStock = true;
-    
-    // Featured filter
     if (featured) query.featured = true;
 
-    // Build sort object
     let sort: any = {};
     sort[sortBy] = sortOrder;
 
-    const products = await Product.find(query)
+    const products = await mongoose.connection.db.collection('products')
+      .find(query)
       .sort(sort)
       .skip(skip)
       .limit(limit)
-      .lean();
+      .toArray();
 
-    const total = await Product.countDocuments(query);
+    const total = await mongoose.connection.db.collection('products').countDocuments(query);
     
-    // Convert S3 URLs to CloudFront URLs
+    // Convert S3 URLs to CloudFront URLs and handle legacy field names
     const productsWithCloudFront = products.map(product => ({
       ...product,
+      // Handle legacy 'name' field
+      nameEn: product.nameEn || product.name,
+      descriptionEn: product.descriptionEn || product.description || 'No description available',
       images: product.images?.map((img: string) => 
         img.includes('s3.amazonaws.com') ? 
           img.replace(/https:\/\/[^.]+\.s3\.amazonaws\.com/, 'https://d35ew0puu9c5cz.cloudfront.net') : 

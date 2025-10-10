@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { sanitizeHtml, sanitizeForHtml } from '../utils/sanitize';
+import { sanitizeInput, sanitizeForHtml } from '../utils/sanitize';
 
 // XSS protection middleware
 export const xssProtection = (req: Request, res: Response, next: NextFunction) => {
@@ -26,7 +26,7 @@ const sanitizeObject = (obj: any): any => {
   if (obj === null || obj === undefined) return obj;
   
   if (typeof obj === 'string') {
-    return sanitizeForHtml(obj);
+    return sanitizeInput(obj);
   }
   
   if (Array.isArray(obj)) {

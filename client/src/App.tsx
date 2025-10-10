@@ -9,6 +9,7 @@ import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { LanguageProvider } from './context/LanguageContext';
 import { UserProvider } from './features/auth';
+import { RecentlyViewedProvider } from './context/RecentlyViewedContext';
 import ProtectedRoute from './shared/components/common/ProtectedRoute';
 import InstallPrompt from './components/pwa/InstallPrompt';
 import PushNotifications from './components/pwa/PushNotifications';
@@ -149,11 +150,13 @@ const App: React.FC = () => {
       <AuthProvider>
         <UserProvider>
           <CartProvider>
-            <LanguageProvider>
-              <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-                <AppLayout />
-              </Router>
-            </LanguageProvider>
+            <RecentlyViewedProvider>
+              <LanguageProvider>
+                <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+                  <AppLayout />
+                </Router>
+              </LanguageProvider>
+            </RecentlyViewedProvider>
           </CartProvider>
         </UserProvider>
       </AuthProvider>

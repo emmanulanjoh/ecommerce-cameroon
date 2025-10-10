@@ -27,12 +27,14 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Product, Category } from '../types';
 import ModernProductCard from '../components/products/ModernProductCard';
+import RecentlyViewed from '../components/products/RecentlyViewed';
 
 const ModernHome: React.FC = () => {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [currentSlide, setCurrentSlide] = useState<number>(0);
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const { t } = useLanguage();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -53,18 +55,20 @@ const ModernHome: React.FC = () => {
     }
   }, [searchParams, navigate]);
 
-  const heroImages = useMemo(() => [
-     '/images/hero/hero1.jpg',
-     '/images/hero/hero2.jpg',
-     '/images/hero/hero3.jpg'
-  ], []);
+  const productImages = useMemo(() => 
+    featuredProducts.map(product => 
+      product.thumbnailImage || product.images?.[0] || '/images/placeholder.jpg'
+    ), [featuredProducts]
+  );
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroImages.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [heroImages.length]);
+    if (productImages.length > 0) {
+      const interval = setInterval(() => {
+        setCurrentImageIndex((prev) => (prev + 1) % productImages.length);
+      }, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [productImages.length]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -125,82 +129,67 @@ const ModernHome: React.FC = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh' }}>
-        {/* Hero Section */}
-        <Box
-          sx={{
-            background: `url(${heroImages[currentSlide]})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundAttachment: 'fixed',
-            color: 'white',
-            py: { xs: 1, md: 4 },
-            position: 'relative',
-            overflow: 'hidden',
-            transition: 'background-image 1s ease-in-out',
-          }}
-        >
-          <Container maxWidth="xl">
-            <Box
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-                gap: 6,
-                alignItems: 'center',
-              }}
-            >
-              <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8 }}
-              >
-                <Chip
-                  label="🔥 Trending Now"
-                  sx={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                    color: 'white',
-                    mb: 3,
-                    fontWeight: 600,
-                  }}
-                />
-                <Typography
-                  variant="h2"
-                  sx={{
-                    fontWeight: 800,
-                    mb: 3,
-                    fontSize: { xs: '1.4rem', md: '2.4rem' },
-                    lineHeight: 1.1,
-                  }}
-                >
+    <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5' }}>
+        {/* Hero Section with Product Carousel */}
+        <Box sx={{ 
+          height: { xs: 250, md: 400 },
+          position: 'relative',
+          overflow: 'hidden',
+          mb: 3
+        }}>
+          {/* Product Images Carousel Background */}
+          {productImages.length > 0 && (
+            <Box sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundImage: `url(${productImages[currentImageIndex]})`,
+              backgroundSize: 'contain',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              backgroundColor: '#f5f5f5',
+              transition: 'background-image 1s ease-in-out'
+            }} />
+          )}
+          
+          {/* Overlay */}
+          <Box sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <Container maxWidth="xl">
+              <Box sx={{ textAlign: 'center', color: 'white' }}>
+                <Typography variant="h2" fontWeight="800" sx={{ mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>
                   {t('home.hero.title')}
                 </Typography>
-                <Typography
-                  variant="body1"
-                  sx={{ mb: 1, opacity: 0.9, lineHeight: 1.4, fontSize: { xs: '0.85rem', md: '1rem' } }}
-                >
-                  {t('home.hero.subtitle')}
+                <Typography variant="h6" sx={{ mb: 4, opacity: 0.9 }}>
+                  Discover {featuredProducts.length}+ Amazing Products
                 </Typography>
-                <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
                   <Button
                     component={Link}
                     to="/products"
                     variant="contained"
                     size="large"
-                    endIcon={<ArrowForward />}
                     sx={{
-                      backgroundColor: 'white',
+                      bgcolor: 'white',
                       color: 'primary.main',
                       fontWeight: 600,
                       px: 4,
                       py: 1.5,
-                      borderRadius: 3,
-                      '&:hover': {
-                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                        transform: 'translateY(-2px)',
-                      },
+                      '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' }
                     }}
                   >
-                    {t('home.hero.shopNow')}
+                    Shop Now
                   </Button>
                   <Button
                     href={`https://wa.me/${process.env.REACT_APP_BUSINESS_WHATSAPP_NUMBER?.replace('+', '') || '237678830036'}`}
@@ -213,52 +202,50 @@ const ModernHome: React.FC = () => {
                       fontWeight: 600,
                       px: 4,
                       py: 1.5,
-                      borderRadius: 3,
-                      '&:hover': {
-                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                        borderColor: 'white',
-                      },
+                      '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' }
                     }}
                   >
-                    {t('home.hero.whatsapp')}
+                    WhatsApp
                   </Button>
                 </Box>
-              </motion.div>
-              
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
-                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mt: 4 }}>
-                  {heroImages.map((_, index) => (
-                    <Box
-                      key={index}
-                      onClick={() => setCurrentSlide(index)}
-                      sx={{
-                        width: 12,
-                        height: 12,
-                        borderRadius: '50%',
-                        bgcolor: currentSlide === index ? 'white' : 'rgba(255,255,255,0.5)',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                          bgcolor: 'white',
-                          transform: 'scale(1.2)',
-                        },
-                      }}
-                    />
-                  ))}
-                </Box>
-              </motion.div>
+              </Box>
+            </Container>
+          </Box>
+          
+          {/* Carousel Indicators */}
+          {productImages.length > 1 && (
+            <Box sx={{ 
+              position: 'absolute', 
+              bottom: 20, 
+              left: '50%', 
+              transform: 'translateX(-50%)',
+              display: 'flex', 
+              gap: 1 
+            }}>
+              {productImages.map((_, index) => (
+                <Box
+                  key={index}
+                  onClick={() => setCurrentImageIndex(index)}
+                  sx={{
+                    width: 12,
+                    height: 12,
+                    borderRadius: '50%',
+                    bgcolor: currentImageIndex === index ? 'white' : 'rgba(255,255,255,0.5)',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      bgcolor: 'white',
+                      transform: 'scale(1.2)',
+                    },
+                  }}
+                />
+              ))}
             </Box>
-          </Container>
+          )}
         </Box>
 
-
-
         {/* Categories Section */}
-        <Box sx={{ py: { xs: 4, md: 8 }, background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)' }}>
+        <Box sx={{ py: 2, bgcolor: 'white', mb: 2 }}>
           <Container maxWidth="xl">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -493,8 +480,11 @@ const ModernHome: React.FC = () => {
           </Container>
         </Box>
 
-        {/* {t('home.featured.title')} */}
-        <Container maxWidth="xl" sx={{ py: { xs: 4, md: 8 } }}>
+        {/* Recently Viewed Products */}
+        <RecentlyViewed />
+
+        {/* Featured Products */}
+        <Container maxWidth="xl" sx={{ py: 2 }}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -521,15 +511,15 @@ const ModernHome: React.FC = () => {
           </motion.div>
 
           {loading ? (
-            <Typography textAlign="center" sx={{ py: 4 }}>
-              Loading products...
-            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+              <Typography>Loading products...</Typography>
+            </Box>
           ) : (
             <Box
               sx={{
                 display: 'grid',
-                gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' },
-                gap: 3,
+                gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)', md: 'repeat(5, 1fr)' },
+                gap: 1.5,
               }}
             >
               {featuredProducts.map((product, index) => (
@@ -537,7 +527,7 @@ const ModernHome: React.FC = () => {
                   key={product._id}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  transition={{ duration: 0.4, delay: index * 0.05 }}
                 >
                   <ModernProductCard product={product} />
                 </motion.div>
@@ -548,49 +538,18 @@ const ModernHome: React.FC = () => {
 
 
 
-        {/* CTA Section */}
-        <Box
-          sx={{
-            background: 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)',
-            color: 'white',
-            py: { xs: 4, md: 8 },
-          }}
-        >
-          <Container maxWidth="xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="h3" fontWeight="700" sx={{ mb: 2 }}>
-                  Ready to Start Shopping?
-                </Typography>
-                <Typography variant="h6" sx={{ mb: 4, opacity: 0.9 }}>
-                  Join thousands of satisfied customers across Cameroon
-                </Typography>
-                <Button
-                  component={Link}
-                  to="/products"
-                  variant="contained"
-                  size="large"
-                  endIcon={<ArrowForward />}
-                  sx={{
-                    backgroundColor: 'primary.main',
-                    fontWeight: 600,
-                    px: 4,
-                    py: 1.5,
-                    borderRadius: 3,
-                    '&:hover': {
-                      transform: 'translateY(-2px)',
-                    },
-                  }}
-                >
-                  Explore Products
-                </Button>
-              </Box>
-            </motion.div>
-          </Container>
+        {/* View All Products */}
+        <Box sx={{ textAlign: 'center', py: 3, bgcolor: 'white' }}>
+          <Button
+            component={Link}
+            to="/products"
+            variant="outlined"
+            size="large"
+            endIcon={<ArrowForward />}
+            sx={{ borderRadius: 2, px: 4 }}
+          >
+            View All Products
+          </Button>
         </Box>
         
         {/* AI Components */}

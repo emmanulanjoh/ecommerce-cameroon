@@ -60,19 +60,34 @@ export class S3Service {
     await s3Client.send(command);
   }
 
-  // Generate file key with folder prefix
+  // Generate secure file key with folder prefix
   static generateKey(folder: string, filename: string): string {
-    // Prevent path traversal by using only basename
-    const safeFilename = path.basename(filename);
-    // Check for path traversal sequences
-    if (safeFilename.includes('..') || folder.includes('..')) {
-      throw new Error('Invalid filename or folder path');
+    // Prevent path traversal by using only basename and strict validation
+    const safeFilename = path.basename(filename).replace(/[^a-zA-Z0-9.-]/g, '_');
+    
+    // Strict validation against path traversal
+    if (safeFilename.includes('..') || folder.includes('..') || 
+        safeFilename.includes('/') || safeFilename.includes('\\') ||
+        folder.includes('/') || folder.includes('\\')) {
+      throw new Error('Path traversal detected in filename or folder');
+    }
+    
+    // Validate folder name
+    const allowedFolders = ['products', 'users', 'categories', 'temp'];
+    const safeFolder = folder.replace(/[^a-zA-Z0-9-]/g, '_');
+    if (!allowedFolders.includes(safeFolder)) {
+      throw new Error('Invalid folder name');
     }
     
     const timestamp = Date.now();
-    const extension = safeFilename.split('.').pop();
-    const cleanName = safeFilename.replace(/[^a-zA-Z0-9.-]/g, '_').substring(0, 30);
-    const safeFolder = folder.replace(/[^a-zA-Z0-9-]/g, '_');
-    return `${safeFolder}/${timestamp}-${Math.random().toString(36).substring(7)}.${extension}`;
+    const extension = safeFilename.split('.').pop()?.toLowerCase();
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'webm', 'ogg'];
+    
+    if (!extension || !allowedExtensions.includes(extension)) {
+      throw new Error('Invalid file extension');
+    }
+    
+    const randomId = Math.random().toString(36).substring(7);
+    return `${safeFolder}/${timestamp}-${randomId}.${extension}`;
   }
 }

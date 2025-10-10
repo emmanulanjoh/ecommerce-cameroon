@@ -50,7 +50,11 @@ interface UserProviderProps {
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(localStorage.getItem('userToken'));
+  const [token, setToken] = useState<string | null>(() => {
+    const storedToken = localStorage.getItem('userToken');
+    // Only use token if it looks valid (JWT format)
+    return storedToken && storedToken.includes('.') && storedToken.length > 20 ? storedToken : null;
+  });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -64,19 +68,28 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   useEffect(() => {
     const loadUser = async () => {
       const currentToken = localStorage.getItem('userToken') || localStorage.getItem('token');
-      if (currentToken && currentToken !== token) {
+      // Validate token format before using it
+      const isValidToken = currentToken && currentToken.includes('.') && currentToken.length > 20;
+      
+      if (isValidToken && currentToken !== token) {
         setToken(currentToken);
         return;
       }
       
-      if (token) {
+      if (token && isValidToken) {
         try {
           const response = await axios.get('/api/users/profile');
           setUser(response.data);
-        } catch (error) {
-          // Silently handle auth errors - user just isn't logged in
-          logout();
+        } catch (error: any) {
+          // Clear invalid token
+          if (error.response?.status === 401 || error.response?.status === 403 || error.response?.status === 404) {
+            logout();
+          }
         }
+      } else if (!isValidToken && currentToken) {
+        // Clear invalid token from localStorage
+        localStorage.removeItem('userToken');
+        localStorage.removeItem('token');
       }
       setIsLoading(false);
     };

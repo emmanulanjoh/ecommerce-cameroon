@@ -7,6 +7,7 @@ export interface IAdmin extends Document {
   password: string;
   isActive: boolean;
   lastLogin?: Date;
+  sessionToken?: string;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -38,6 +39,10 @@ const AdminSchema: Schema = new Schema(
     },
     lastLogin: {
       type: Date
+    },
+    sessionToken: {
+      type: String,
+      default: null
     }
   },
   {

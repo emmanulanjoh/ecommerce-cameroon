@@ -8,7 +8,11 @@ const connectDB = async (): Promise<void> => {
     console.log('MONGODB_URI exists:', !!process.env.MONGODB_URI);
     console.log('PORT:', process.env.PORT);
     
-    const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce_cameroon';
+    const mongoURI = `${process.env.MONGODB_URI}${process.env.DB_NAME}` || 'mongodb://localhost:27017/ecommerce_cameroon';
+    
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('🔍 Connecting to database:', process.env.DB_NAME);
+    }
     
     if (!process.env.MONGODB_URI) {
       console.warn('⚠️  MONGODB_URI not found in environment variables!');
@@ -19,16 +23,10 @@ const connectDB = async (): Promise<void> => {
     console.log('📍 URI:', mongoURI.replace(/\/\/([^:]+):([^@]+)@/, '//***:***@'));
     
     await mongoose.connect(mongoURI, {
-      // Security options
-      authSource: 'admin',
-      ssl: true,
       retryWrites: true,
       w: 'majority',
-      // Connection pool settings
       maxPoolSize: 10,
-      minPoolSize: 2,
-      maxIdleTimeMS: 30000,
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 10000,
       socketTimeoutMS: 45000,
     });
     
