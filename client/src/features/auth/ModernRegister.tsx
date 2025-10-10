@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Container, Paper, TextField, Button, Typography, Divider, IconButton, InputAdornment } from '@mui/material';
-import { Google, Visibility, VisibilityOff, Email, Lock, Person } from '@mui/icons-material';
+import { Visibility, VisibilityOff, Email, Lock, Person } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useNavigate, Link } from 'react-router-dom';
 import { useUser } from './UserContext';

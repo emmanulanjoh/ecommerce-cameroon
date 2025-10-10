@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Snackbar, Alert } from '@mui/material';
-import { Notifications, NotificationsOff } from '@mui/icons-material';
+import { Notifications } from '@mui/icons-material';
 
 const PushNotifications: React.FC = () => {
   const [permission, setPermission] = useState<NotificationPermission>('default');

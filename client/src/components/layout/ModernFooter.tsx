@@ -47,15 +47,15 @@ const ModernFooter: React.FC = () => {
           <Col md={4}>
             <h6 className="fw-bold mb-3">Follow Us</h6>
             <div className="d-flex gap-3 mb-3">
-              <a href="#" className="text-primary">
+              <button className="btn btn-link text-primary p-0 border-0">
                 <FontAwesomeIcon icon={faFacebook} size="lg" />
-              </a>
-              <a href="#" className="text-info">
+              </button>
+              <button className="btn btn-link text-info p-0 border-0">
                 <FontAwesomeIcon icon={faTwitter} size="lg" />
-              </a>
-              <a href="#" className="text-danger">
+              </button>
+              <button className="btn btn-link text-danger p-0 border-0">
                 <FontAwesomeIcon icon={faInstagram} size="lg" />
-              </a>
+              </button>
               <a href="https://wa.me/237678830036" className="text-success">
                 <FontAwesomeIcon icon={faWhatsapp} size="lg" />
               </a>

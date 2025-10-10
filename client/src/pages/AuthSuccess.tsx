@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useUser } from '../features/auth/UserContext';
+
 
 const AuthSuccess: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { user } = useUser();
+
 
   useEffect(() => {
     const token = searchParams.get('token');

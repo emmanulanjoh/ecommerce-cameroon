@@ -53,7 +53,7 @@ router.post('/login', adminRateLimit(5, 15 * 60 * 1000), async (req, res) => {
     await admin.save();
 
     // Set session
-    req.session!.adminId = admin._id.toString();
+    req.session!.adminId = (admin._id as any).toString();
     req.session!.adminToken = sessionToken;
 
     // Generate JWT token

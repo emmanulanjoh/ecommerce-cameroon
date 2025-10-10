@@ -66,14 +66,14 @@ router.get('/', async (req: Request, res: Response) => {
     let sort: any = {};
     sort[sortBy] = sortOrder;
 
-    const products = await mongoose.connection.db.collection('products')
+    const products = await mongoose.connection.db!.collection('products')
       .find(query)
       .sort(sort)
       .skip(skip)
       .limit(limit)
       .toArray();
 
-    const total = await mongoose.connection.db.collection('products').countDocuments(query);
+    const total = await mongoose.connection.db!.collection('products').countDocuments(query);
     
     // Convert S3 URLs to CloudFront URLs and handle legacy field names
     const productsWithCloudFront = products.map(product => ({

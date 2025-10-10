@@ -31,8 +31,6 @@ import {
   Delete,
   WhatsApp,
   ShoppingCart,
-  LocalShipping,
-  Payment,
   CheckCircle,
 } from '@mui/icons-material';
 import { TransitionProps } from '@mui/material/transitions';
@@ -57,7 +55,7 @@ interface ModernCartModalProps {
 const ModernCartModal: React.FC<ModernCartModalProps> = ({ open, onClose }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
+
   
   const [activeStep, setActiveStep] = useState(0);
   const [shippingInfo, setShippingInfo] = useState({

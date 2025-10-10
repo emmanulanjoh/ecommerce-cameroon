@@ -150,7 +150,7 @@ ProductSchema.virtual('formattedPrice').get(function() {
   return new Intl.NumberFormat('fr-CM', {
     style: 'currency',
     currency: 'XAF'
-  }).format(this.price);
+  }).format(this.price as number);
 });
 
 // Database indexes for performance

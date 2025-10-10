@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography, Button } from '@mui/material';
-import { ArrowForward, History } from '@mui/icons-material';
+import { History } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useRecentlyViewed } from '../../context/RecentlyViewedContext';
 import ModernProductCard from './ModernProductCard';

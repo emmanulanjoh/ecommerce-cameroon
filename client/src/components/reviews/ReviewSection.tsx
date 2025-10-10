@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Rating, Button, TextField, Card, Avatar, Divider } from '@mui/material';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Box, Typography, Rating, Button, TextField, Card, Avatar } from '@mui/material';
 import { Person } from '@mui/icons-material';
 import axios from 'axios';
 import { useUser } from '../../features/auth';
@@ -23,11 +23,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
   const [showForm, setShowForm] = useState(false);
   const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
 
-  useEffect(() => {
-    fetchReviews();
-  }, [productId]);
-
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     try {
       const response = await axios.get(`/api/reviews/product/${productId}`);
       setReviews(response.data.reviews);
@@ -36,7 +32,11 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
     } catch (error) {
       console.error('Error fetching reviews:', error);
     }
-  };
+  }, [productId]);
+
+  useEffect(() => {
+    fetchReviews();
+  }, [fetchReviews]);
 
   const { isAuthenticated, token } = useUser();
 

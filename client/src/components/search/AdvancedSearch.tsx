@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   TextField,
@@ -9,7 +9,7 @@ import {
   Slider,
   Typography,
   Button,
-  Chip,
+
   FormControlLabel,
   Switch,
   Paper,
@@ -17,7 +17,7 @@ import {
   IconButton
 } from '@mui/material';
 import { Search, FilterList, Clear } from '@mui/icons-material';
-import axios from 'axios';
+
 
 interface SearchFilters {
   search: string;

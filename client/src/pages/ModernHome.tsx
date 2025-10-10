@@ -33,7 +33,7 @@ const ModernHome: React.FC = () => {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [currentSlide, setCurrentSlide] = useState<number>(0);
+
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const { t } = useLanguage();
   const theme = useTheme();

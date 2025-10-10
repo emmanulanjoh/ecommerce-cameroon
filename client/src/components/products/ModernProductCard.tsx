@@ -25,7 +25,7 @@ import {
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Product } from '../../types';
-import { getCategoryBackground } from './CategoryColors';
+
 
 interface ModernProductCardProps {
   product: Product;

@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { Close, ShoppingCart, WhatsApp, Visibility } from '@mui/icons-material';
 import { useCart } from '../../context/CartContext';
-import { useUser } from '../../features/auth';
+
 import { Product } from '../../types';
 import { Link } from 'react-router-dom';
 
@@ -25,7 +25,7 @@ interface ProductQuickViewProps {
 const ProductQuickView: React.FC<ProductQuickViewProps> = ({ product, open, onClose }) => {
   const [selectedImage, setSelectedImage] = useState(0);
   const { addToCart } = useCart();
-  const { isAuthenticated } = useUser();
+
 
   if (!product) return null;
 

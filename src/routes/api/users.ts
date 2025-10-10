@@ -70,7 +70,7 @@ router.post('/register', csrfProtection, async (req: Request, res: Response) => 
     console.log('✅ User created successfully:', user._id);
 
     // Generate token
-    const token = generateToken(user._id);
+    const token = generateToken((user._id as any).toString());
 
     res.status(201).json({
       success: true,
@@ -118,7 +118,7 @@ router.post('/login', csrfProtection, async (req: Request, res: Response) => {
     }
 
     // Generate token
-    const token = generateToken(user._id);
+    const token = generateToken((user._id as any).toString());
 
     res.json({
       success: true,

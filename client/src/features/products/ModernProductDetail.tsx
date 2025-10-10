@@ -12,7 +12,7 @@ import {
   CardContent,
   Grid,
   Fab,
-  Avatar,
+
   useMediaQuery,
   useTheme,
   Skeleton,
@@ -34,7 +34,7 @@ import {
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useCart } from '../../context/CartContext';
-import { useUser } from '../auth';
+
 import axios from 'axios';
 import { Product, Review } from '../../types';
 import ReviewSection from '../../components/reviews/ReviewSection';
@@ -46,7 +46,7 @@ const ModernProductDetail: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { addToCart } = useCart();
-  const { } = useUser();
+
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);

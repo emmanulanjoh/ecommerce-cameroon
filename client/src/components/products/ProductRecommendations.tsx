@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Box, Typography, Card, CardContent, Grid, Skeleton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -25,11 +25,7 @@ const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchRecommendations();
-  }, [productId]);
-
-  const fetchRecommendations = async () => {
+  const fetchRecommendations = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axios.get(`/api/products/${productId}/recommendations?limit=${limit}`);
@@ -39,7 +35,11 @@ const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [productId, limit]);
+
+  useEffect(() => {
+    fetchRecommendations();
+  }, [fetchRecommendations]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('fr-CM', {
