@@ -7,7 +7,7 @@
     "start": "node server.js",
     "start:js": "node src/server.js",
     "start:prod": "NODE_ENV=production node dist/server.js",
-    "build": "tsc --noEmitOnError false",
+    "build": "tsc --noEmitOnError",
     "build:ts": "tsc",
     "build:client": "cd client && npm install && npm run build",
     "postbuild": "cd client && npm install && cross-env CI=false npm run build",
