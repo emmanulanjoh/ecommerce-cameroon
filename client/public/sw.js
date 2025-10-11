@@ -21,35 +21,29 @@ self.addEventListener('install', event => {
 const ALLOWED_DOMAINS = [
   'localhost',
   '127.0.0.1',
-  'your-production-domain.com', // Update with actual production domain
+  'https://hpqe2tck8u.us-east-1.awsapprunner.com', // Replace with your actual domain
   'cloudfront.net',
   'amazonaws.com'
 ];
-
-// Cached regex for performance optimization
-const PRIVATE_IP_PATTERN = /^(10\.|172\.(1[6-9]|2[0-9]|3[01])\.|192\.168\.|169\.254\.|::1)/;
 
 // Function to validate URL against SSRF attacks
 function isAllowedUrl(url) {
   try {
     const urlObj = new URL(url);
+    
+    // Extract hostname for validation
     const hostname = urlObj.hostname;
     
-    // Block private IP ranges (cached regex for performance)
-    const privateIpPattern = PRIVATE_IP_PATTERN.test(hostname);
-    if (privateIpPattern || hostname === 'localhost' || hostname === '127.0.0.1') {
-      return hostname === 'localhost' || hostname === '127.0.0.1';
-    }
+    // Allow only HTTPS in production (except localhost for dev)
+    const isLocalhost = hostname.includes('localhost') || hostname === '127.0.0.1';
+    const isHttps = urlObj.protocol === 'https:';
     
-    // Allow only HTTPS in production
-    if (urlObj.protocol !== 'https:' && !hostname.match(/^(localhost|127\.0\.0\.1)$/)) {
+    if (!isHttps && !isLocalhost) {
       return false;
     }
     
-    // Exact domain matching to prevent subdomain attacks
-    return ALLOWED_DOMAINS.some(domain => {
-      return hostname === domain || hostname.endsWith('.' + domain.replace(/^https?:\/\//, ''));
-    });
+    // Check against allowed domains
+    return ALLOWED_DOMAINS.some(domain => hostname.includes(domain));
   } catch (e) {
     return false;
   }
@@ -72,17 +66,11 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
       .then(response => {
-        if (response) {
-          console.log('[ServiceWorker] Cache hit:', event.request.url);
-          return response;
-        }
-        console.log('[ServiceWorker] Cache miss, fetching:', event.request.url);
-        return fetch(event.request);
+        // Return cached version or fetch from network
+        return response || fetch(event.request);
       })
-      .catch(err => {
-        // Log network errors for debugging
-        console.error('[ServiceWorker] Network request failed:', event.request.url, err.message || 'Unknown error');
-        console.error('[ServiceWorker] Network request failed:', event.request.url);
+      .catch(() => {
+        // Fallback for failed requests
         return new Response('Network error', { status: 408 });
       })
   );
@@ -90,19 +78,15 @@ self.addEventListener('fetch', event => {
 
 // Activate event
 self.addEventListener('activate', event => {
-  console.log('[ServiceWorker] Activating service worker');
-  console.log('[ServiceWorker] Activating service worker');
   event.waitUntil(
     caches.keys().then(cacheNames => {
-      const deletePromises = cacheNames.map(cacheName => {
-        if (cacheName !== CACHE_NAME) {
-          console.log(`[ServiceWorker] Deleting old cache: ${cacheName}`);
-          return caches.delete(cacheName);
-        }
-      });
-      return Promise.all(deletePromises);
-    }).then(() => {
-      console.log('[ServiceWorker] Service worker activated successfully');
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
     })
   );
 });
@@ -157,22 +141,17 @@ self.addEventListener('notificationclick', event => {
   }
 });
 
-// Helper function to validate message origin
-function isValidMessageOrigin(origin) {
-  if (!origin) return false;
-  return ALLOWED_DOMAINS.some(domain => {
+// Message event with enhanced origin verification
+self.addEventListener('message', event => {
+  // Verify origin using the same domain validation as other functions
+  const isValidOrigin = event.origin && ALLOWED_DOMAINS.some(domain => {
     try {
-      const originUrl = new URL(origin);
+      const originUrl = new URL(event.origin);
       return originUrl.hostname.includes(domain);
     } catch (e) {
       return false;
     }
   });
-}
-
-// Message event with enhanced origin verification
-self.addEventListener('message', event => {
-  const isValidOrigin = isValidMessageOrigin(event.origin);
   
   if (!isValidOrigin) {
     console.warn('Message from unauthorized origin:', event.origin);
