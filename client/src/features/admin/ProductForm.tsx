@@ -79,7 +79,9 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onProductSaved }) =>
     
     console.log('Uploading file:', file.name, file.type);
     const response = await axios.post('/api/upload/single', formData, config);
-    console.log('Upload response:', response.data);
+    // Sanitize response data to prevent log injection
+    const sanitizedData = typeof response.data === 'object' ? JSON.stringify(response.data).replace(/[\r\n\t]/g, ' ').substring(0, 200) : 'Response received';
+    console.log('Upload response:', sanitizedData);
     if (!response.data.success) {
       throw new Error(response.data.message || 'Upload failed');
     }

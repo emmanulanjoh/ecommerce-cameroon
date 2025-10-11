@@ -21,7 +21,12 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Error caught by boundary:', error, errorInfo);
+    // Sanitize error data to prevent log injection
+    const sanitizedError = error.message?.replace(/[\r\n\t]/g, ' ').substring(0, 200) || 'Unknown error';
+    const sanitizedStack = errorInfo.componentStack?.replace(/[\r\n\t]/g, ' ').substring(0, 300) || 'No stack trace';
+    console.error(`[ErrorBoundary] React error caught - Error: ${sanitizedError}, Component: ${sanitizedStack}, Timestamp: ${new Date().toISOString()}`);
+    const sanitizedErrorName = error.name?.replace(/[\r\n\t]/g, ' ').substring(0, 50) || 'Unknown';
+    console.error(`[ErrorBoundary] Error name: ${sanitizedErrorName}, URL: ${window.location.href}`);
   }
 
   private handleReload = () => {

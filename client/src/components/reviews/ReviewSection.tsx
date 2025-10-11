@@ -65,7 +65,11 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
       setNewReview({ rating: 5, comment: '' });
       fetchReviews();
     } catch (error: any) {
-      console.error('Review submission error:', error.response?.data || error.message);
+      // Sanitize error message to prevent log injection
+      const rawError = error.response?.data || error.message || 'Unknown error';
+      const isString = typeof rawError === 'string';
+      const cleanError = isString ? rawError.replace(/[\r\n\t]/g, ' ').substring(0, 200) : 'Error object';
+      console.error('[ReviewSection] Review submission failed for product:', productId, 'Error:', cleanError);
       alert(error.response?.data?.message || 'Failed to submit review. Please try logging in again.');
     }
   };

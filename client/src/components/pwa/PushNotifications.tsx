@@ -28,8 +28,10 @@ const PushNotifications: React.FC = () => {
         const permission = await Notification.requestPermission();
         setPermission(permission);
         
+        console.log(`[PushNotifications] Permission result: ${permission}`);
+        
         if (permission === 'granted') {
-          // Register for push notifications
+          console.log('[PushNotifications] Registering for push notifications');
           const registration = await navigator.serviceWorker.ready;
           
           // Subscribe to push notifications (would need VAPID keys in production)
@@ -40,20 +42,30 @@ const PushNotifications: React.FC = () => {
             )
           });
           
-          // Send subscription to server
-          await fetch('/api/notifications/subscribe', {
+          console.log('[PushNotifications] Sending subscription to server');
+          const response = await fetch('/api/notifications/subscribe', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(subscription)
           });
           
-          console.log('Push notification subscription successful');
+          if (response.ok) {
+            console.log('[PushNotifications] Push notification subscription successful');
+          } else {
+            console.warn(`[PushNotifications] Server subscription failed with status: ${response.status}`);
+          }
+        } else {
+          console.log(`[PushNotifications] Permission denied or dismissed: ${permission}`);
         }
         
         localStorage.setItem('notificationPromptShown', Date.now().toString());
         setShowPrompt(false);
       } catch (error) {
-        console.error('Error requesting notification permission:', error);
+        // Sanitize error message to prevent XSS
+        const sanitizedError = error instanceof Error ? error.message.replace(/[<>"'&]/g, '') : 'Unknown error';
+        const errorName = error instanceof Error ? error.name : 'UnknownError';
+        console.error(`[PushNotifications] Failed to request permission - ${errorName}: ${sanitizedError}`);
+        console.error(`[PushNotifications] Error occurred during permission request at ${new Date().toISOString()}`);
       }
     }
   };

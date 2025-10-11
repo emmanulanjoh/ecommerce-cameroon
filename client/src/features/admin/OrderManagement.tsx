@@ -35,10 +35,16 @@ const OrderManagement: React.FC = () => {
 
   const fetchOrders = async () => {
     try {
+      console.log('[OrderManagement] Fetching orders...');
       const response = await axios.get('/api/orders/admin/all?limit=50');
-      setOrders(response.data.orders || []);
+      const orders = response.data.orders || [];
+      setOrders(orders);
+      console.log(`[OrderManagement] Successfully loaded ${Number(orders.length) || 0} orders`);
     } catch (error: any) {
-      console.error('❌ Error fetching orders:', error.response?.data || error.message);
+      // Sanitize error message to prevent log injection
+      const sanitizedError = error.response?.data || error.message || 'Unknown error';
+      const cleanError = typeof sanitizedError === 'string' ? sanitizedError.replace(/[\r\n\t]/g, ' ').substring(0, 200) : 'Error object';
+      console.error('❌ Error fetching orders:', cleanError);
     } finally {
       setLoading(false);
     }
@@ -47,15 +53,19 @@ const OrderManagement: React.FC = () => {
   const handleStatusUpdate = async (values: any) => {
     if (!selectedOrder) return;
     try {
-      console.log('Updating order:', selectedOrder._id, 'with values:', values);
+      console.log(`[OrderManagement] Updating order ${selectedOrder._id.slice(-8)} from ${selectedOrder.status?.replace(/[\r\n\t]/g, ' ').substring(0, 50) || 'Unknown'} to ${values.status?.replace(/[\r\n\t]/g, ' ').substring(0, 50) || 'Unknown'}`);
       const response = await axios.put(`/api/orders/admin/${selectedOrder._id}/status`, values);
-      console.log('Update response:', response.data);
+      const sanitizedStatus = values.status?.replace(/[\r\n\t]/g, ' ').replace(/[&<>"']/g, (char: string) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;' }[char] || char)).substring(0, 50) || 'Unknown';
+      const sanitizedTracking = values.trackingNumber?.replace(/[\r\n\t]/g, ' ').replace(/[&<>"']/g, (char: string) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;' }[char] || char)).substring(0, 100) || 'N/A';
+      console.log(`[OrderManagement] Order ${selectedOrder._id.slice(-8)} updated successfully - Status: ${sanitizedStatus}, Tracking: ${sanitizedTracking}, HTTP: ${Number(response.status) || 0}`);
       message.success('Order updated successfully!');
       fetchOrders();
       setModalVisible(false);
     } catch (error: any) {
-      console.error('Error updating order:', error.response?.data || error.message);
-      message.error('Failed to update order: ' + (error.response?.data?.message || error.message));
+      const errorMsg = error.response?.data?.message || error.message || 'Unknown error';
+      const sanitizedError = typeof errorMsg === 'string' ? errorMsg.replace(/[\r\n\t]/g, ' ').substring(0, 200) : 'Error object';
+      console.error(`[OrderManagement] Failed to update order ${selectedOrder._id.slice(-8)}:`, sanitizedError);
+      message.error('Failed to update order: ' + sanitizedError);
     }
   };
 

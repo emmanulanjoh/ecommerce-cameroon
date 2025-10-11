@@ -29,18 +29,18 @@
 ### 1. AWS App Runner Environment Variables
 Configure these sensitive variables in AWS Console:
 ```
-MONGODB_URI=mongodb+srv://emma:Emma2018@cluster0.jff9i.mongodb.net/ecommerce_cameroon
-JWT_SECRET=klnjgdskj59e4kln94ejbwklbrbjkboi4h43hb34boh34909u6ikrnlsdnelnhgoh54b5nioerlkngoipjgpj95j34kjpe45je45jr65j9yokn5rin6lrnknr6
-SESSION_SECRET=gytfrdesawq34dcf6gty879tf@34iKojij
-ADMIN_EMAIL=emmanuelanjoh2016@gmail.com
-ADMIN_PASSWORD=rwgm vlvg nxgp yezv
-EMAIL_USER=emmanuelanjoh2016@gmail.com
-EMAIL_PASS=rwgm vlvg nxgp yezv
-BUSINESS_WHATSAPP_NUMBER=+237678830036
-BUSINESS_PHONE=+237678830036
-BUSINESS_EMAIL=emmanuelanjoh2016@gmail.com
-GOOGLE_CLIENT_ID=303871422282-4l991nmnfkopvpcf8tlub9948ra1dkvm.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=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
+MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<database>
+JWT_SECRET=<generate-strong-random-secret-64-chars>
+SESSION_SECRET=<generate-strong-random-secret-32-chars>
+ADMIN_EMAIL=<your-admin-email>
+ADMIN_PASSWORD=<your-secure-admin-password>
+EMAIL_USER=<your-smtp-email>
+EMAIL_PASS=<your-smtp-app-password>
+BUSINESS_WHATSAPP_NUMBER=<your-whatsapp-number>
+BUSINESS_PHONE=<your-business-phone>
+BUSINESS_EMAIL=<your-business-email>
+GOOGLE_CLIENT_ID=<your-google-oauth-client-id>
+GOOGLE_CLIENT_SECRET=<your-google-oauth-client-secret>
 ```
 
 ### 2. Package Updates

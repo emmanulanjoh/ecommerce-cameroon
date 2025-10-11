@@ -175,6 +175,12 @@ router.get('/profile', async (req: Request, res: Response) => {
 // @access  Private
 router.put('/profile', async (req: Request, res: Response) => {
   try {
+    // CSRF protection
+    const csrfToken = req.header('X-CSRF-Token') || req.body._csrf;
+    if (!csrfToken) {
+      return res.status(403).json({ message: 'CSRF token required' });
+    }
+    
     const token = req.header('Authorization')?.replace('Bearer ', '');
     if (!token) {
       return res.status(401).json({ message: 'No token provided' });

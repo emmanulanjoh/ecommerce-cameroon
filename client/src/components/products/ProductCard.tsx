@@ -26,9 +26,26 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, language = 'en' }) =
     }).format(price);
   };
 
-  // Get product name based on language
+  // Get product name based on language with XSS protection
   const getProductName = (): string => {
-    return language === 'fr' && product.nameFr ? product.nameFr : product.nameEn;
+    const name = language === 'fr' && product.nameFr ? product.nameFr : product.nameEn;
+    return name ? name.replace(/[<>"'&]/g, '') : '';
+  };
+
+  // Get condition badge text with proper formatting
+  const getConditionText = (): string => {
+    const conditionTexts = {
+      new: '✨ New',
+      refurbished: '🔄 Refurbished',
+      used: '📦 Used'
+    };
+    
+    const baseText = conditionTexts[product.condition as keyof typeof conditionTexts] || conditionTexts.used;
+    const grade = product.conditionGrade && product.condition !== 'new' 
+      ? ` (${product.conditionGrade.replace(/[<>"'&]/g, '')})` 
+      : '';
+    
+    return baseText + grade;
   };
 
   return (
@@ -86,9 +103,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, language = 'en' }) =
               product.condition === 'refurbished' ? 'bg-warning text-dark' : 'bg-secondary'
             }`}
           >
-            {product.condition === 'new' ? '✨ New' :
-             product.condition === 'refurbished' ? '🔄 Refurbished' : '📦 Used'}
-            {product.conditionGrade && product.condition !== 'new' ? ` (${product.conditionGrade})` : ''}
+            {getConditionText()}
           </span>
           
           {/* Category badge with gradient */}
@@ -99,7 +114,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, language = 'en' }) =
               boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
             }}
           >
-            {product.category}
+            {product.category?.replace(/[<>"'&]/g, '') || 'Unknown'}
           </span>
         </div>
       </Link>
@@ -115,7 +130,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, language = 'en' }) =
           <span className="h5 mb-0 text-primary d-block">{formatPrice(product.price)}</span>
           {product.warrantyMonths && (
             <small className="text-muted d-block">
-              🛡️ {product.warrantyMonths} month{product.warrantyMonths > 1 ? 's' : ''} warranty
+              🛡️ {(() => { 
+                const months = Math.max(0, parseInt(String(product.warrantyMonths || 0).replace(/[^0-9]/g, ''), 10)) || 0;
+                if (product.warrantyMonths && months === 0) console.warn('[ProductCard] Invalid warranty months:', product.warrantyMonths);
+                return months;
+              })()} month{(() => { const months = Math.max(0, parseInt(String(product.warrantyMonths || 0).replace(/[^0-9]/g, ''), 10)) || 0; return months > 1 ? 's' : ''; })()} warranty
             </small>
           )}
         </div>
@@ -128,15 +147,22 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, language = 'en' }) =
           <button 
             className="btn btn-primary btn-sm flex-grow-1"
             onClick={() => {
-              console.log('Adding to cart:', product.nameEn);
-              addToCart(product);
+              try {
+                // Sanitize product name to prevent log injection
+                const sanitizedName = product.nameEn?.replace(/[\r\n\t]/g, ' ').substring(0, 100) || 'Unknown Product';
+                console.log('[ProductCard] Adding to cart:', sanitizedName, 'ID:', product._id);
+                addToCart(product);
+                console.log('[ProductCard] Successfully added to cart:', sanitizedName);
+              } catch (error) {
+                console.error('[ProductCard] Failed to add to cart:', error);
+              }
             }}
           >
             <FontAwesomeIcon icon={faShoppingCart} className="me-1" /> Add to Cart
           </button>
           
           <a 
-            href={`https://wa.me/${whatsappNumber}?text=I'm interested in ${getProductName()}`} 
+            href={`https://wa.me/${whatsappNumber}?text=I'm interested in ${encodeURIComponent(getProductName())}`} 
             className="btn btn-success d-flex align-items-center justify-content-center whatsapp-btn" 
             target="_blank"
             rel="noopener noreferrer"
