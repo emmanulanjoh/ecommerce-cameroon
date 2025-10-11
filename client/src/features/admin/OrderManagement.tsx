@@ -37,6 +37,7 @@ const OrderManagement: React.FC = () => {
     try {
       console.log('[OrderManagement] Fetching orders...');
       const response = await axios.get('/api/orders/admin/all?limit=50');
+      console.log(`[OrderManagement] API response status: ${Number(response.status) || 0}`);
       const orders = response.data.orders || [];
       setOrders(orders);
       console.log(`[OrderManagement] Successfully loaded ${Number(orders.length) || 0} orders`);

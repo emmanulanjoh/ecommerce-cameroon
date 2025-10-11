@@ -4,9 +4,9 @@ build:
   commands:
     build:
       - npm install
-      - npm run build || echo "TypeScript build failed, continuing..."
+      - npm run build
       - cd client && npm install
-      - cd client && set GENERATE_SOURCEMAP=false && npm run build
+      - cd client && GENERATE_SOURCEMAP=false npm run build
 run:
   runtime-version: 18.20.8
   command: node dist/server.js || node src/server.ts
@@ -32,8 +32,8 @@ run:
       value: "Mimboman petit marche, Yaoundé, Cameroon"
     - name: GOOGLE_CLIENT_ID
       value: "303871422282-an28g8uthos88jir2blpdd9gti62msn8.apps.googleusercontent.com"
-    # Configure in AWS App Runner Environment Variables
-    # - name: GOOGLE_CLIENT_SECRET
+    - name: GOOGLE_CLIENT_SECRET
+      value: "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"
     - name: GOOGLE_REDIRECT_URI
       value: "https://hpqe2tck8u.us-east-1.awsapprunner.com/api/auth/google/callback"
     - name: CLIENT_URL
@@ -48,19 +48,20 @@ run:
       value: "en"
     - name: SUPPORTED_LANGUAGES
       value: "en,fr"
-    # Configure in AWS App Runner Environment Variables
-    # - name: AWS_ACCESS_KEY_ID
-    # - name: AWS_SECRET_ACCESS_KEY
+    - name: AWS_ACCESS_KEY_ID
+      value: "AKIATHFDHDE4SKGJL652"
+    - name: AWS_SECRET_ACCESS_KEY
+      value: "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"
     - name: AWS_REGION
       value: "us-east-1"
     - name: S3_BUCKET_NAME
       value: "ecommerce-cameroon-assets"
-    # Configure in AWS App Runner Environment Variables
-    # - name: MONGODB_URI
-    # Configure in AWS App Runner Environment Variables
-    # - name: JWT_SECRET
-    # Configure in AWS App Runner Environment Variables
-    # - name: SESSION_SECRET
+    - name: MONGODB_URI
+      value: "mongodb+srv://emma:Emma2018@cluster0.jff9i.mongodb.net/ecommerce_cameroon"
+    - name: JWT_SECRET
+      value: "klnjgdskj59e4kln94ejbwklbrbjkboi4h43hb34boh34909u6ikrnlsdnelnhgoh54b5nioerlkngoipjgpj95j34kjpe45je45jr65j9yokn5rin6lrnknr6"
+    - name: SESSION_SECRET
+      value: "gytfrdesawq34dcf6gty879tf@34iKojij"
     - name: BUSINESS_PHONE
       value: "+237678830036"
     - name: BUSINESS_EMAIL
