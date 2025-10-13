@@ -95,7 +95,6 @@ UserSchema.methods.comparePassword = async function (password: string): Promise<
 };
 
 // Index for performance
-UserSchema.index({ email: 1 });
 UserSchema.index({ phone: 1 });
 
 export default mongoose.model<IUser>('User', UserSchema);

@@ -1,64 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
+import React from 'react';
+import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPhone, faEnvelope, faMapMarkerAlt, faClock, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { faPhone, faEnvelope, faMapMarkerAlt, faClock, faBuilding } from '@fortawesome/free-solid-svg-icons';
 import { faWhatsapp, faFacebook, faTwitter, faInstagram } from '@fortawesome/free-brands-svg-icons';
 import { motion } from 'framer-motion';
 
 const ModernContact: React.FC = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
-  });
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('');
-  const [alertVariant, setAlertVariant] = useState<'success' | 'danger'>('success');
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-      
-      if (response.ok) {
-        setAlertMessage('Message sent successfully! We will get back to you soon.');
-        setAlertVariant('success');
-        setFormData({ name: '', email: '', subject: '', message: '' });
-      } else {
-        setAlertMessage('Failed to send message. Please try again.');
-        setAlertVariant('danger');
-      }
-    } catch (error) {
-      setAlertMessage('Failed to send message. Please try again.');
-      setAlertVariant('danger');
-    }
-    
-    setShowAlert(true);
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => setShowAlert(false), 5000);
-  };
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, []);
 
   const contactInfo = [
     {
@@ -98,8 +45,8 @@ const ModernContact: React.FC = () => {
             transition={{ duration: 0.8 }}
             className="text-center"
           >
-            <h1 className="display-4 fw-bold mb-3">Contact Us</h1>
-            <p className="lead">We're here to help! Get in touch with us for any questions or support.</p>
+            <h1 className="display-4 fw-bold mb-3">Contact Information</h1>
+            <p className="lead">Professional e-commerce solutions for Cameroon. Reach out to us through any of the channels below.</p>
           </motion.div>
         </Container>
       </div>
@@ -107,7 +54,7 @@ const ModernContact: React.FC = () => {
       {/* Main Content */}
       <Container className="py-5">
         <Row className="g-4">
-          {/* Contact Form */}
+          {/* Company Information */}
           <Col lg={8}>
             <motion.div
               initial={{ opacity: 0, x: -30 }}
@@ -117,83 +64,48 @@ const ModernContact: React.FC = () => {
               <Card className="shadow-lg border-0 h-100">
                 <Card.Header className="bg-primary text-white">
                   <h3 className="mb-0">
-                    <FontAwesomeIcon icon={faPaperPlane} className="me-2" />
-                    Send us a Message
+                    <FontAwesomeIcon icon={faBuilding} className="me-2" />
+                    About Our Business
                   </h3>
                 </Card.Header>
                 <Card.Body className="p-4">
-                  {showAlert && (
-                    <Alert variant={alertVariant} dismissible onClose={() => setShowAlert(false)}>
-                      {alertMessage}
-                    </Alert>
-                  )}
+                  <div className="mb-4">
+                    <h5 className="text-primary fw-bold mb-3">E-commerce Cameroon</h5>
+                    <p className="text-muted mb-3">
+                      We are a leading e-commerce platform serving customers across Cameroon with quality products 
+                      and exceptional service. Our commitment to excellence has made us a trusted name in online retail.
+                    </p>
+                  </div>
                   
-                  <Form onSubmit={handleSubmit}>
-                    <Row className="g-3">
-                      <Col md={6}>
-                        <Form.Group>
-                          <Form.Label>Full Name</Form.Label>
-                          <Form.Control
-                            type="text"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleInputChange}
-                            placeholder="Enter your full name"
-                            required
-                            size="lg"
-                          />
-                        </Form.Group>
-                      </Col>
-                      <Col md={6}>
-                        <Form.Group>
-                          <Form.Label>Email Address</Form.Label>
-                          <Form.Control
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            placeholder="Enter your email address"
-                            required
-                            size="lg"
-                          />
-                        </Form.Group>
-                      </Col>
-                      <Col xs={12}>
-                        <Form.Group>
-                          <Form.Label>Subject</Form.Label>
-                          <Form.Control
-                            type="text"
-                            name="subject"
-                            value={formData.subject}
-                            onChange={handleInputChange}
-                            placeholder="What's this about?"
-                            required
-                            size="lg"
-                          />
-                        </Form.Group>
-                      </Col>
-                      <Col xs={12}>
-                        <Form.Group>
-                          <Form.Label>Message</Form.Label>
-                          <Form.Control
-                            as="textarea"
-                            rows={6}
-                            name="message"
-                            value={formData.message}
-                            onChange={handleInputChange}
-                            placeholder="Tell us more about your inquiry..."
-                            required
-                          />
-                        </Form.Group>
-                      </Col>
-                      <Col xs={12}>
-                        <Button type="submit" variant="primary" size="lg" className="w-100">
-                          <FontAwesomeIcon icon={faPaperPlane} className="me-2" />
-                          Send Message
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Form>
+                  <div className="mb-4">
+                    <h6 className="fw-bold mb-2">Our Services</h6>
+                    <ul className="text-muted">
+                      <li>Wide range of quality products</li>
+                      <li>Fast and reliable delivery</li>
+                      <li>Secure payment processing</li>
+                      <li>Customer support in English and French</li>
+                      <li>WhatsApp ordering for convenience</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="mb-4">
+                    <h6 className="fw-bold mb-2">Why Choose Us</h6>
+                    <ul className="text-muted">
+                      <li>Local expertise with international standards</li>
+                      <li>Competitive pricing and regular promotions</li>
+                      <li>Warranty support on all products</li>
+                      <li>Easy returns and exchanges</li>
+                      <li>Multilingual customer service</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="bg-light rounded p-3">
+                    <h6 className="fw-bold mb-2">Get in Touch</h6>
+                    <p className="text-muted mb-0">
+                      For inquiries, orders, or support, please use any of the contact methods listed on this page. 
+                      We're here to serve you better.
+                    </p>
+                  </div>
                 </Card.Body>
               </Card>
             </motion.div>

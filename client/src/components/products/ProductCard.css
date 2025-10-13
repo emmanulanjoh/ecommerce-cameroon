@@ -1,0 +1,80 @@
+/* Mobile-first responsive design */
+.product-card-wrapper {
+  width: 100%;
+}
+
+.product-card {
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  transition: box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.card-img-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-img-top {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.category-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .card-img-top {
+    height: 180px;
+  }
+  
+  .product-card .card-body {
+    padding: 1rem;
+  }
+  
+  .product-card .btn {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .whatsapp-btn {
+    min-width: 40px;
+    width: 40px;
+    height: 38px;
+  }
+  
+  .category-badge {
+    font-size: 0.7rem;
+    padding: 3px 6px;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 576px) {
+  .card-img-top {
+    height: 160px;
+  }
+  
+  .product-card .card-title {
+    font-size: 1rem;
+    line-height: 1.3;
+  }
+  
+  .product-card .btn-sm {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.6rem;
+  }
+}

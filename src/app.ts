@@ -36,6 +36,7 @@ import * as apiAuthRoutes from './routes/api/auth';
 import * as apiUploadRoutes from './routes/api/upload';
 import * as adminSecureRoutes from './routes/api/admin-secure';
 import * as apiUsersRoutes from './routes/api/users';
+import * as googleAuthRoutes from './routes/api/google-auth';
 
 // Import middleware
 import { setLanguage } from './middleware/language';
@@ -260,16 +261,15 @@ app.use('/api', ssrfProtection);
 // Lazy load route modules
 const loadRoutes = async () => {
   console.log('📥 Importing route modules...');
-  const [apiContactRoutes, apiChatRoutes, apiOrdersRoutes, googleAuthRoutes, apiReviewsRoutes, apiNotificationsRoutes] = await Promise.all([
+  const [apiContactRoutes, apiChatRoutes, apiOrdersRoutes, apiReviewsRoutes, apiNotificationsRoutes] = await Promise.all([
     import('./routes/api/contact'),
     import('./routes/api/chat'),
     import('./routes/api/orders'),
-    import('./routes/api/google-auth'),
     import('./routes/api/reviews'),
     import('./routes/api/notifications')
   ]);
   console.log('✅ All route modules imported successfully');
-  return { apiContactRoutes, apiChatRoutes, apiOrdersRoutes, googleAuthRoutes, apiReviewsRoutes, apiNotificationsRoutes };
+  return { apiContactRoutes, apiChatRoutes, apiOrdersRoutes, apiReviewsRoutes, apiNotificationsRoutes };
 };
 
 let routeModules: any = {};
@@ -340,6 +340,7 @@ app.get('/api/profile', (req: Request, res: Response) => {
 
 // API Routes for React frontend
 app.use('/api/auth', apiAuthRoutes.router);
+app.use('/api/auth', googleAuthRoutes.router);
 app.use('/api/admin', adminSecureRoutes.router);
 app.use('/api/products', apiProductRoutes.router);
 app.use('/api/categories', apiCategoryRoutes.router);
@@ -350,7 +351,6 @@ app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
 // Register async routes when they're loaded
 loadRoutes().then(modules => {
-  app.use('/api/auth', modules.googleAuthRoutes.router);
   app.use('/api/reviews', modules.apiReviewsRoutes.router);
   app.use('/api/notifications', modules.apiNotificationsRoutes.router);
   app.use('/api/contact', modules.apiContactRoutes.router);

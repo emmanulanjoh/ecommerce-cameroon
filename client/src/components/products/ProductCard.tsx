@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { Product } from '../../types';
-import { motion } from 'framer-motion';
+
 
 interface ProductCardProps {
   product: Product;
@@ -49,11 +49,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, language = 'en' }) =
   };
 
   return (
-    <motion.div
-      whileHover={{ y: -5 }}
-      transition={{ type: "spring", stiffness: 300 }}
-    >
-      <Card className="product-card h-100 shadow-sm" style={{ transition: 'all 0.3s ease' }}>
+    <div className="product-card-wrapper">
+      <Card className="product-card h-100 shadow-sm">
       <Link to={`/products/${product._id}`} className="text-decoration-none">
         <div className="card-img-wrapper">
           {product.videoUrl ? (
@@ -172,7 +169,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, language = 'en' }) =
         </div>
       </Card.Body>
     </Card>
-    </motion.div>
+    </div>
   );
 };
 

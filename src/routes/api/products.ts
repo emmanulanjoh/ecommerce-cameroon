@@ -19,7 +19,11 @@ router.get('/test', (req: Request, res: Response) => {
 // Get all products
 router.get('/', async (req: Request, res: Response) => {
   try {
-    const products = await Product.find({}).lean();
+    const products = await Product.find({ isActive: { $ne: false } })
+      .select('nameEn nameFr price category thumbnailImage images inStock featured condition warrantyMonths')
+      .lean();
+    
+    res.set('Cache-Control', 'public, max-age=300');
     res.json({ products });
   } catch (err) {
     console.error('API Error:', sanitizeForLog((err as Error).message));
@@ -33,12 +37,13 @@ router.get('/:id', async (req: Request, res: Response) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ message: 'Invalid product ID' });
     }
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.id).lean();
     
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
     
+    res.set('Cache-Control', 'public, max-age=600');
     res.json(product);
   } catch (err) {
     console.error('API Error:', sanitizeForLog((err as Error).message));

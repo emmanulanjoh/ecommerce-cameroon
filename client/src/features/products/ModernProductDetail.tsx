@@ -32,7 +32,7 @@ import {
   Security,
   Assignment,
 } from '@mui/icons-material';
-import { motion } from 'framer-motion';
+
 import { useCart } from '../../context/CartContext';
 
 import axios from 'axios';
@@ -163,15 +163,11 @@ const ModernProductDetail: React.FC = () => {
         </Box>
       </Box>
 
-      <Container maxWidth="lg" sx={{ px: { xs: 1, md: 2 }, pb: 10 }}>
+      <Container maxWidth="lg" sx={{ px: { xs: 1, md: 2 }, pb: { xs: 10, md: 2 } }}>
         {/* Image Gallery */}
         <Card sx={{ mb: 2, overflow: 'hidden' }}>
           <Box sx={{ position: 'relative' }}>
-            <motion.img
-              key={selectedImage}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3 }}
+            <img
               src={product.images?.[selectedImage] || '/images/placeholder.jpg'}
               alt={product.nameEn}
               style={{
@@ -425,23 +421,23 @@ const ModernProductDetail: React.FC = () => {
       {/* Floating Action Buttons */}
       <Box sx={{
         position: 'fixed',
-        bottom: 16,
-        left: 16,
-        right: 16,
+        bottom: { xs: 8, md: 16 },
+        left: { xs: 8, md: 16 },
+        right: { xs: 8, md: 16 },
         display: 'flex',
-        gap: 2,
+        gap: { xs: 1, md: 2 },
         zIndex: 10
       }}>
         <Button
           variant="contained"
           fullWidth
-          size="large"
+          size={isMobile ? 'medium' : 'large'}
           startIcon={<ShoppingCart />}
           onClick={() => addToCart(product)}
           disabled={!product.inStock}
           sx={{
-            py: 1.5,
-            borderRadius: 3,
+            py: { xs: 1, md: 1.5 },
+            borderRadius: { xs: 2, md: 3 },
             fontWeight: 600,
             fontSize: { xs: '0.875rem', md: '1rem' }
           }}

@@ -11,8 +11,7 @@ import { LanguageProvider } from './context/LanguageContext';
 import { UserProvider } from './features/auth';
 import { RecentlyViewedProvider } from './context/RecentlyViewedContext';
 import ProtectedRoute from './shared/components/common/ProtectedRoute';
-import InstallPrompt from './components/pwa/InstallPrompt';
-import PushNotifications from './components/pwa/PushNotifications';
+
 
 // Layout Components
 import ModernHeader from './components/layout/ModernHeader';
@@ -185,8 +184,6 @@ const AppLayout: React.FC = () => {
         <AnimatedRoutes />
       </main>
       <ModernFooter />
-      <InstallPrompt />
-      <PushNotifications />
     </>
   );
 };
