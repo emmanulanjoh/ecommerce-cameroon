@@ -57,8 +57,7 @@ const ProductSchema: Schema = new Schema(
     },
     category: {
       type: String,
-      required: [true, 'Product category is required'],
-      lowercase: true
+      required: [true, 'Product category is required']
     },
     images: {
       type: [String],

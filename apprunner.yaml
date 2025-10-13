@@ -3,13 +3,13 @@ runtime: nodejs18
 build:
   commands:
     build:
-      - npm install
-      - npm run build
-      - cd client && npm install
-      - cd client && GENERATE_SOURCEMAP=false npm run build
+      - npm install || (echo "Backend npm install failed" && exit 1)
+      - npm run build || (echo "Backend build failed" && exit 1)
+      - cd client && npm install || (echo "Frontend npm install failed" && exit 1)
+      - cd client && GENERATE_SOURCEMAP=false npm run build || (echo "Frontend build failed" && exit 1)
 run:
   runtime-version: 18.20.8
-  command: node dist/server.js || node src/server.ts
+  command: node dist/server.js || (echo "Compiled server not found, trying source" && node src/server.ts) || (echo "Server startup failed" && exit 1)
   network:
     port: 5000
     env: PORT

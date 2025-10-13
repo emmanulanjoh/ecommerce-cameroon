@@ -34,13 +34,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, language = 'en' }) =
 
   // Get condition badge text with proper formatting
   const getConditionText = (): string => {
-    const conditionTexts = {
-      new: '✨ New',
-      refurbished: '🔄 Refurbished',
-      used: '📦 Used'
+    const conditionMap = {
+      'new': '✨ New',
+      'refurbished': '🔄 Refurbished',
+      'used': '📦 Used'
     };
     
-    const baseText = conditionTexts[product.condition as keyof typeof conditionTexts] || conditionTexts.used;
+    const baseText = conditionMap[product.condition as keyof typeof conditionMap] || conditionMap.used;
     const grade = product.conditionGrade && product.condition !== 'new' 
       ? ` (${product.conditionGrade.replace(/[<>"'&]/g, '')})` 
       : '';

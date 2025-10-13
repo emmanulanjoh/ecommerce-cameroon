@@ -62,15 +62,21 @@ export class S3Service {
 
   // Generate secure file key with folder prefix
   static generateKey(folder: string, filename: string): string {
-    // Prevent path traversal by using only basename and strict validation
-    const safeFilename = path.basename(filename).replace(/[^a-zA-Z0-9.-]/g, '_');
+    // Prevent path traversal by using only basename
+    const baseFilename = path.basename(filename);
     
     // Strict validation against path traversal
-    if (safeFilename.includes('..') || folder.includes('..') || 
-        safeFilename.includes('/') || safeFilename.includes('\\') ||
+    if (baseFilename.includes('..') || folder.includes('..') || 
+        baseFilename.includes('/') || baseFilename.includes('\\') ||
         folder.includes('/') || folder.includes('\\')) {
       throw new Error('Path traversal detected in filename or folder');
     }
+    
+    // Sanitize filename for S3 compatibility (allow international chars, spaces)
+    const safeFilename = baseFilename
+      .replace(/[<>:"|?*\\]/g, '_')  // Remove Windows forbidden chars
+      .replace(/\s+/g, '_')          // Replace spaces with underscores
+      .replace(/_{2,}/g, '_');       // Replace multiple underscores with single
     
     // Validate folder name
     const allowedFolders = ['products', 'users', 'categories', 'temp'];

@@ -8,25 +8,30 @@ const router = express.Router();
 
 // Authentication middleware
 const authMiddleware = async (req: Request, res: Response, next: Function) => {
-  // Get token from header
+  console.log('🔐 Auth middleware called');
+  
   const token = req.header('Authorization')?.replace('Bearer ', '');
+  console.log('🎫 Token present:', !!token);
 
-  // Check if no token
   if (!token) {
+    console.log('❌ No token provided');
     return res.status(401).json({ message: 'No token, authorization denied' });
   }
 
   try {
-    // Verify token
     if (!process.env.JWT_SECRET) {
+      console.log('❌ JWT_SECRET not configured');
       return res.status(500).json({ message: 'Server configuration error' });
     }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET) as any;
     
-    // Add admin from payload to request
+    console.log('🔍 Verifying token...');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as any;
+    console.log('✅ Token verified for admin:', decoded.admin?.id);
+    
     (req as any).admin = decoded.admin;
     next();
   } catch (err) {
+    console.log('❌ Token verification failed:', (err as Error).message);
     res.status(401).json({ message: 'Token is not valid' });
   }
 };
@@ -82,6 +87,28 @@ router.post('/login', async (req: Request, res: Response) => {
     );
   } catch (err) {
     console.error('Login error:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// @route   GET /api/auth/profile
+// @desc    Get current admin profile
+// @access  Private
+router.get('/profile', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const admin = await Admin.findById((req as any).admin.id).select('-password');
+    if (!admin) {
+      return res.status(404).json({ message: 'Admin not found' });
+    }
+    
+    res.json({
+      _id: admin.id,
+      username: admin.username,
+      email: admin.email,
+      isAdmin: true
+    });
+  } catch (err) {
+    console.error('Get profile error:', err);
     res.status(500).json({ message: 'Server error' });
   }
 });

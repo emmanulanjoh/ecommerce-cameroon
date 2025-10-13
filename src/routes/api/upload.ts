@@ -19,15 +19,14 @@ const upload = multer({
       'video/mp4', 'video/webm', 'video/ogg'
     ];
     
-    // Sanitize filename to prevent path traversal
-    const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_').replace(/\.{2,}/g, '.');
-    if (sanitizedName !== file.originalname) {
-      return cb(new Error('Invalid filename characters'));
-    }
-    
-    // Check for path traversal attempts
+    // Check for path traversal attempts (security critical)
     if (file.originalname.includes('..') || file.originalname.includes('/') || file.originalname.includes('\\')) {
       return cb(new Error('Path traversal detected'));
+    }
+    
+    // Check filename length
+    if (file.originalname.length > 255) {
+      return cb(new Error('Filename too long'));
     }
     
     // Check file extension

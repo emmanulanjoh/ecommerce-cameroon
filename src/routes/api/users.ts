@@ -144,18 +144,31 @@ router.post('/login', async (req: Request, res: Response) => {
 // @access  Private
 router.get('/profile', async (req: Request, res: Response) => {
   try {
+    console.log('👤 Profile request received');
     const token = req.header('Authorization')?.replace('Bearer ', '');
+    
     if (!token) {
+      console.log('❌ No token provided');
       return res.status(401).json({ message: 'No token provided' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret') as any;
+    if (!process.env.JWT_SECRET) {
+      console.error('❌ JWT_SECRET not configured');
+      return res.status(500).json({ message: 'Server configuration error' });
+    }
+
+    console.log('🔍 Verifying token...');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as any;
+    console.log('✅ Token verified, userId:', sanitizeForLog(decoded.userId));
+    
     const user = await User.findById(decoded.userId);
 
     if (!user) {
+      console.log('❌ User not found for ID:', sanitizeForLog(decoded.userId));
       return res.status(404).json({ message: 'User not found' });
     }
 
+    console.log('✅ User profile retrieved:', sanitizeForLog(user.email));
     res.json({
       id: user._id,
       name: user.name,
@@ -165,8 +178,17 @@ router.get('/profile', async (req: Request, res: Response) => {
       isAdmin: user.isAdmin
     });
   } catch (error: any) {
-    console.error('Profile error:', error);
-    res.status(401).json({ message: 'Invalid token' });
+    console.error('❌ Profile error:', sanitizeForLog(error.message));
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({ message: 'Invalid token format' });
+    }
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ message: 'Token expired' });
+    }
+    if (error.name === 'MongoServerSelectionError' || error.code === 'ENOTFOUND') {
+      return res.status(503).json({ message: 'Database temporarily unavailable' });
+    }
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
@@ -175,18 +197,20 @@ router.get('/profile', async (req: Request, res: Response) => {
 // @access  Private
 router.put('/profile', async (req: Request, res: Response) => {
   try {
-    // CSRF protection
-    const csrfToken = req.header('X-CSRF-Token') || req.body._csrf;
-    if (!csrfToken) {
-      return res.status(403).json({ message: 'CSRF token required' });
-    }
+    console.log('👤 Profile update request received');
     
     const token = req.header('Authorization')?.replace('Bearer ', '');
     if (!token) {
+      console.log('❌ No token provided for profile update');
       return res.status(401).json({ message: 'No token provided' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret') as any;
+    if (!process.env.JWT_SECRET) {
+      console.error('❌ JWT_SECRET not configured');
+      return res.status(500).json({ message: 'Server configuration error' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as any;
     const user = await User.findById(decoded.userId);
 
     if (!user) {

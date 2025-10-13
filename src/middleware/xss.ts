@@ -21,22 +21,34 @@ export const xssProtection = (req: Request, res: Response, next: NextFunction) =
   next();
 };
 
+// Fields that should not be sanitized (URLs, etc.)
+const SKIP_SANITIZE_FIELDS = ['images', 'thumbnailImage', 'videoUrl', 'url', 'imageUrl', 'avatar', 'profilePicture'];
+
 // Recursively sanitize object properties
-const sanitizeObject = (obj: any): any => {
+const sanitizeObject = (obj: any, parentKey?: string): any => {
   if (obj === null || obj === undefined) return obj;
   
+  // Skip sanitization for URL fields
+  if (parentKey && SKIP_SANITIZE_FIELDS.includes(parentKey)) {
+    return obj;
+  }
+  
   if (typeof obj === 'string') {
+    // Don't sanitize if it looks like a URL
+    if (obj.startsWith('http://') || obj.startsWith('https://')) {
+      return obj;
+    }
     return sanitizeInput(obj);
   }
   
   if (Array.isArray(obj)) {
-    return obj.map(item => sanitizeObject(item));
+    return obj.map(item => sanitizeObject(item, parentKey));
   }
   
   if (typeof obj === 'object') {
     const sanitized: any = {};
     for (const [key, value] of Object.entries(obj)) {
-      sanitized[key] = sanitizeObject(value);
+      sanitized[key] = sanitizeObject(value, key);
     }
     return sanitized;
   }

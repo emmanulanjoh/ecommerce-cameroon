@@ -51,6 +51,11 @@ function isAllowedUrl(url) {
 
 // Fetch event with SSRF protection
 self.addEventListener('fetch', event => {
+  // Skip browser extension requests
+  if (event.request.url.startsWith('chrome-extension://') || event.request.url.startsWith('moz-extension://')) {
+    return;
+  }
+  
   // Validate URL to prevent SSRF attacks
   if (!isAllowedUrl(event.request.url)) {
     console.warn('Blocked potentially malicious request:', event.request.url);
@@ -60,17 +65,22 @@ self.addEventListener('fetch', event => {
   
   // Skip caching for CloudFront images to avoid CSP issues
   if (event.request.url.includes('cloudfront.net')) {
+    console.log('[ServiceWorker] Skipping cache for CloudFront URL:', event.request.url);
     return;
   }
   
   event.respondWith(
     caches.match(event.request)
       .then(response => {
-        // Return cached version or fetch from network
-        return response || fetch(event.request);
+        if (response) {
+          console.log('[ServiceWorker] Cache hit:', event.request.url);
+          return response;
+        }
+        console.log('[ServiceWorker] Cache miss, fetching:', event.request.url);
+        return fetch(event.request);
       })
-      .catch(() => {
-        // Fallback for failed requests
+      .catch(err => {
+        console.error('[ServiceWorker] Network request failed:', event.request.url, err.message || 'Unknown error');
         return new Response('Network error', { status: 408 });
       })
   );
@@ -78,15 +88,20 @@ self.addEventListener('fetch', event => {
 
 // Activate event
 self.addEventListener('activate', event => {
+  console.log('[ServiceWorker] Activating service worker');
   event.waitUntil(
     caches.keys().then(cacheNames => {
+      console.log('[ServiceWorker] Found caches:', cacheNames);
       return Promise.all(
         cacheNames.map(cacheName => {
           if (cacheName !== CACHE_NAME) {
+            console.log('[ServiceWorker] Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
+    }).then(() => {
+      console.log('[ServiceWorker] Service worker activated successfully');
     })
   );
 });
