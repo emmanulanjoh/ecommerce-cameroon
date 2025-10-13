@@ -1,4 +1,5 @@
-<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
-  <rect width="400" height="400" fill="#f0f0f0"/>
-  <text x="50%" y="50%" font-family="Arial" font-size="24" text-anchor="middle" dominant-baseline="middle" fill="#999">Placeholder Image</text>
+<svg width="300" height="200" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="300" height="200" fill="#F3F4F6"/>
+<path d="M150 80C156.627 80 162 85.373 162 92C162 98.627 156.627 104 150 104C143.373 104 138 98.627 138 92C138 85.373 143.373 80 150 80Z" fill="#9CA3AF"/>
+<path d="M105 120L135 90L165 120H195L225 90L255 120V140H105V120Z" fill="#9CA3AF"/>
 </svg>
