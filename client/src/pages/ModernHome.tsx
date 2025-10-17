@@ -29,9 +29,9 @@ const ModernHome: React.FC = () => {
           }
         });
         
-        // Limit products per category to 5
+        // Limit products per category to 6
         Object.keys(grouped).forEach(category => {
-          grouped[category] = grouped[category].slice(0, 5);
+          grouped[category] = grouped[category].slice(0, 6);
         });
         
         setProductsByCategory(grouped);
@@ -146,7 +146,14 @@ const ModernHome: React.FC = () => {
       </div>
 
       {/* Product Categories */}
-      <Container style={{ padding: '40px 0' }}>
+      <div style={{ 
+        padding: '40px 20px', 
+        maxWidth: '1200px', 
+        margin: '0 auto',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+        gap: '20px'
+      }}>
         {loading ? (
           <div className="text-center py-4">
             <div className="spinner-border" role="status">
@@ -154,49 +161,64 @@ const ModernHome: React.FC = () => {
             </div>
           </div>
         ) : (
-          Object.entries(productsByCategory).map(([category, products]) => (
-            <div key={category} style={{ marginBottom: '40px' }}>
-              {/* Category Header */}
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
+          Object.entries(productsByCategory).map(([category, products], index) => {
+            const isHorizontal = index % 3 === 1;
+            
+            return (
+              <div key={category} style={{ 
                 marginBottom: '20px',
-                paddingBottom: '10px',
-                borderBottom: '1px solid #ddd'
+                gridColumn: isHorizontal ? '1 / -1' : 'auto'
               }}>
-                <h2 style={{
-                  fontSize: '1.5rem',
-                  fontWeight: 400,
-                  color: '#0F1111',
-                  margin: 0
+                
+                {/* Amazon-Style Product Box */}
+                <div style={{
+                  backgroundColor: 'white',
+                  border: '1px solid #ddd',
+                  borderRadius: '8px',
+                  padding: '20px',
+                  marginBottom: '20px'
                 }}>
-                  {category}
-                </h2>
-                <Link
-                  to={`/products?category=${category}`}
-                  style={{
-                    color: '#007185',
-                    textDecoration: 'none',
-                    fontSize: '0.9rem'
-                  }}
-                >
-                  See all
-                </Link>
+                  <h3 style={{
+                    fontSize: '1.2rem',
+                    fontWeight: 700,
+                    color: '#0F1111',
+                    marginBottom: '16px'
+                  }}>
+                    {category}
+                  </h3>
+                  
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: isHorizontal 
+                      ? 'repeat(auto-fit, minmax(150px, 1fr))' 
+                      : 'repeat(2, 1fr)',
+                    gap: '12px',
+                    overflowX: isHorizontal ? 'auto' : 'visible'
+                  }}>
+                    {products.slice(0, isHorizontal ? 6 : 4).map((product) => (
+                      <SimpleProductCard key={product._id} product={product} />
+                    ))}
+                  </div>
+                  
+                  <Link
+                    to={`/products?category=${category}`}
+                    style={{
+                      display: 'inline-block',
+                      marginTop: '16px',
+                      color: '#007185',
+                      textDecoration: 'none',
+                      fontSize: '0.875rem',
+                      fontWeight: 500
+                    }}
+                  >
+                    See more
+                  </Link>
+                </div>
               </div>
-              
-              {/* Products Grid */}
-              <Row>
-                {products.map((product) => (
-                  <Col key={product._id} xs={6} sm={4} md={3} lg={2} className="mb-3">
-                    <SimpleProductCard product={product} />
-                  </Col>
-                ))}
-              </Row>
-            </div>
-          ))
+            );
+          })
         )}
-      </Container>
+      </div>
     </div>
   );
 };

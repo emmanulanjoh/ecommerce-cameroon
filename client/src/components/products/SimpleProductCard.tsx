@@ -4,9 +4,10 @@ import { Product } from '../../types';
 
 interface SimpleProductCardProps {
   product: Product;
+  isLarge?: boolean;
 }
 
-const SimpleProductCard: React.FC<SimpleProductCardProps> = ({ product }) => {
+const SimpleProductCard: React.FC<SimpleProductCardProps> = ({ product, isLarge = false }) => {
   const getProductName = (): string => {
     return product.nameEn || product.nameFr || 'Product';
   };
@@ -36,7 +37,7 @@ const SimpleProductCard: React.FC<SimpleProductCardProps> = ({ product }) => {
         {/* Image */}
         <div style={{ 
           width: '100%', 
-          aspectRatio: '1',
+          aspectRatio: isLarge ? '16/9' : '1',
           overflow: 'hidden',
           backgroundColor: '#f8f9fa'
         }}>
@@ -56,17 +57,17 @@ const SimpleProductCard: React.FC<SimpleProductCardProps> = ({ product }) => {
         </div>
         
         {/* Product Name */}
-        <div style={{ padding: '12px 8px' }}>
+        <div style={{ padding: isLarge ? '16px 12px' : '12px 8px' }}>
           <h6 style={{
             margin: 0,
-            fontSize: '0.875rem',
+            fontSize: isLarge ? '1rem' : '0.875rem',
             fontWeight: 500,
             lineHeight: 1.3,
             color: '#333',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             display: '-webkit-box',
-            WebkitLineClamp: 2,
+            WebkitLineClamp: isLarge ? 3 : 2,
             WebkitBoxOrient: 'vertical'
           }}>
             {getProductName()}
