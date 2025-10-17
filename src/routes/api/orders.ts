@@ -88,14 +88,18 @@ router.put('/admin/:id/status', async (req: Request, res: Response) => {
 router.get('/', userAuth, async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user._id;
+    console.log('Fetching orders for user:', userId);
+    
     const orders = await Order.find({ user: userId })
       .populate({
         path: 'items.product',
         select: 'nameEn nameFr images price',
         options: { strictPopulate: false }
       })
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
+    console.log(`Found ${orders.length} orders for user ${userId}`);
     res.json(orders);
   } catch (error: any) {
     console.error('Get orders error:', error);

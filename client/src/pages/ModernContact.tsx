@@ -37,7 +37,7 @@ const ModernContact: React.FC = () => {
   return (
     <div className="bg-light min-vh-100">
       {/* Hero Section */}
-      <div className="bg-primary text-white py-5">
+      <div style={{ backgroundColor: '#232F3E', color: 'white', padding: '60px 0' }}>
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -45,8 +45,8 @@ const ModernContact: React.FC = () => {
             transition={{ duration: 0.8 }}
             className="text-center"
           >
-            <h1 className="display-4 fw-bold mb-3">Contact Information</h1>
-            <p className="lead">Professional e-commerce solutions for Cameroon. Reach out to us through any of the channels below.</p>
+            <h1 style={{ fontSize: '3rem', fontWeight: 400, marginBottom: '1rem' }}>Contact Information</h1>
+            <p style={{ fontSize: '1.2rem', opacity: 0.9 }}>Professional e-commerce solutions for Cameroon. Reach out to us through any of the channels below.</p>
           </motion.div>
         </Container>
       </div>
@@ -62,15 +62,15 @@ const ModernContact: React.FC = () => {
               transition={{ duration: 0.8 }}
             >
               <Card className="shadow-lg border-0 h-100">
-                <Card.Header className="bg-primary text-white">
-                  <h3 className="mb-0">
-                    <FontAwesomeIcon icon={faBuilding} className="me-2" />
+                <Card.Header style={{ backgroundColor: '#232F3E', color: 'white' }}>
+                  <h3 style={{ margin: 0 }}>
+                    <FontAwesomeIcon icon={faBuilding} style={{ marginRight: '0.5rem' }} />
                     About Our Business
                   </h3>
                 </Card.Header>
                 <Card.Body className="p-4">
                   <div className="mb-4">
-                    <h5 className="text-primary fw-bold mb-3">E-commerce Cameroon</h5>
+                    <h5 style={{ color: '#0F1111', fontWeight: 'bold', marginBottom: '1rem' }}>E-commerce Cameroon</h5>
                     <p className="text-muted mb-3">
                       We are a leading e-commerce platform serving customers across Cameroon with quality products 
                       and exceptional service. Our commitment to excellence has made us a trusted name in online retail.
@@ -120,13 +120,20 @@ const ModernContact: React.FC = () => {
               className="h-100"
             >
               <div className="d-flex flex-column gap-3 h-100">
-                <h3 className="text-primary fw-bold mb-3">Get in Touch</h3>
+                <h3 style={{ color: '#0F1111', fontWeight: 'bold', marginBottom: '1rem' }}>Get in Touch</h3>
                 
                 {contactInfo.map((info, index) => (
                   <Card key={index} className="border-0 shadow-sm">
                     <Card.Body className="p-3">
                       <div className="d-flex align-items-start">
-                        <div className={`bg-${info.color} text-white rounded-circle p-3 me-3 flex-shrink-0`}>
+                        <div style={{ 
+                          backgroundColor: '#FF9900', 
+                          color: '#0F1111', 
+                          borderRadius: '50%', 
+                          padding: '12px', 
+                          marginRight: '1rem', 
+                          flexShrink: 0 
+                        }}>
                           <FontAwesomeIcon icon={info.icon} size="lg" />
                         </div>
                         <div>
@@ -144,7 +151,14 @@ const ModernContact: React.FC = () => {
                 <Card className="border-0 shadow-sm">
                   <Card.Body className="p-3">
                     <div className="d-flex align-items-start">
-                      <div className="bg-info text-white rounded-circle p-3 me-3 flex-shrink-0">
+                      <div style={{ 
+                        backgroundColor: '#FF9900', 
+                        color: '#0F1111', 
+                        borderRadius: '50%', 
+                        padding: '12px', 
+                        marginRight: '1rem', 
+                        flexShrink: 0 
+                      }}>
                         <FontAwesomeIcon icon={faClock} size="lg" />
                       </div>
                       <div>
@@ -192,7 +206,17 @@ const ModernContact: React.FC = () => {
             >
               <Card className="border-0 shadow-lg">
                 <Card.Body className="p-4 text-center">
-                  <div className="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style={{ width: '80px', height: '80px' }}>
+                  <div style={{ 
+                    backgroundColor: '#FF9900', 
+                    color: '#0F1111', 
+                    borderRadius: '50%', 
+                    width: '80px', 
+                    height: '80px', 
+                    display: 'inline-flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    marginBottom: '1rem' 
+                  }}>
                     <FontAwesomeIcon icon={faMapMarkerAlt} size="2x" />
                   </div>
                   <h3 className="fw-bold mb-3">Find Us</h3>

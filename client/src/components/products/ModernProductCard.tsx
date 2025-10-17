@@ -15,11 +15,9 @@ import {
   Zoom,
 } from '@mui/material';
 import {
-  WhatsApp,
   Visibility,
   Favorite,
   FavoriteBorder,
-
   ShoppingCart,
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
@@ -43,8 +41,6 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
   const { user, isAuthenticated, token } = useUser();
   const { addToRecentlyViewed } = useRecentlyViewed();
   
-  const whatsappNumber = process.env.REACT_APP_BUSINESS_WHATSAPP_NUMBER || '237678830036';
-  
   const formatPrice = useCallback((price: number): string => {
     return new Intl.NumberFormat('fr-CM', {
       style: 'currency',
@@ -54,56 +50,6 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
 
   const getProductName = (): string => {
     return product.nameFr || product.nameEn;
-  };
-
-  const handleWhatsAppClick = async () => {
-    if (!isAuthenticated) {
-      alert('Please login to order via WhatsApp');
-      window.location.href = '/login';
-      return;
-    }
-
-    try {
-      // Create order for logged-in users
-      const shippingAddress = {
-        name: user?.name || '',
-        phone: user?.phone || '',
-        street: user?.address?.street || '',
-        city: user?.address?.city || '',
-        region: user?.address?.region || '',
-        country: user?.address?.country || 'Cameroon'
-      };
-
-      const orderData = {
-        items: [{
-          product: product._id,
-          name: product.nameEn,
-          price: product.price,
-          quantity: 1,
-          image: product.images?.[0]
-        }],
-        shippingAddress,
-        notes: 'Single product order via WhatsApp'
-      };
-
-      const response = await fetch('/api/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(orderData)
-      });
-
-      const order = await response.json();
-      const orderId = order._id;
-
-      const message = `I'm interested in ${getProductName()} - ${formatPrice(product.price)}%0A%0AOrder ID: ${orderId}%0ACustomer: ${user?.name}%0AEmail: ${user?.email}`;
-      window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
-    } catch (error) {
-      console.error('Error creating order:', error);
-      alert('Failed to create order. Please try again.');
-    }
   };
 
 
@@ -214,18 +160,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
                 </IconButton>
               </Zoom>
               
-              <Zoom in={isHovered} style={{ transitionDelay: '200ms' }}>
-                <IconButton
-                  onClick={handleWhatsAppClick}
-                  sx={{
-                    bgcolor: '#25D366',
-                    color: 'white',
-                    '&:hover': { bgcolor: '#20B858' },
-                  }}
-                >
-                  <WhatsApp />
-                </IconButton>
-              </Zoom>
+
             </Box>
           </Fade>
           
@@ -318,42 +253,21 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
             {formatPrice(product.price)}
           </Typography>
           
-          <Box sx={{ display: 'flex', gap: { xs: 0.5, sm: 1 } }}>
-            <Button
-              variant="contained"
-              onClick={() => addToCart(product)}
-              sx={{ 
-                borderRadius: 1, 
-                flex: 1,
-                py: { xs: 0.5, sm: 1.5 }, 
-                px: { xs: 1, sm: 2 },
-                fontSize: { xs: '0.65rem', sm: '0.8rem' },
-                minHeight: { xs: 32, sm: 40 }
-              }}
-            >
-              <ShoppingCart sx={{ mr: { xs: 0.5, sm: 1 }, fontSize: { xs: 12, sm: 16 } }} /> 
-              {/* Hide text on very small screens */}
-              <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Add</Box>
-            </Button>
-            
-            <IconButton
-              onClick={handleWhatsAppClick}
-              sx={{
-                color: '#25D366',
-                '&:hover': { 
-                  color: '#20B858',
-                  backgroundColor: 'rgba(37, 211, 102, 0.1)'
-                },
-                borderRadius: 1,
-                p: { xs: 0.5, sm: 1.5 },
-                minWidth: { xs: 32, sm: 48 },
-                width: { xs: 32, sm: 48 },
-                height: { xs: 32, sm: 48 }
-              }}
-            >
-              <WhatsApp sx={{ fontSize: { xs: 16, sm: 24 } }} />
-            </IconButton>
-          </Box>
+          <Button
+            variant="contained"
+            fullWidth
+            onClick={() => addToCart(product)}
+            sx={{ 
+              borderRadius: 1,
+              py: { xs: 0.5, sm: 1.5 }, 
+              px: { xs: 1, sm: 2 },
+              fontSize: { xs: '0.65rem', sm: '0.8rem' },
+              minHeight: { xs: 32, sm: 40 }
+            }}
+          >
+            <ShoppingCart sx={{ mr: { xs: 0.5, sm: 1 }, fontSize: { xs: 12, sm: 16 } }} /> 
+            Add to Cart
+          </Button>
         </CardContent>
       </Card>
       

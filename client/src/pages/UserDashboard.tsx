@@ -31,7 +31,7 @@ interface Order {
 }
 
 const UserDashboard: React.FC = () => {
-  const { user, logout, updateProfile, isAuthenticated } = useUser();
+  const { user, logout, updateProfile, isAuthenticated, isLoading } = useUser();
   const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,12 +51,14 @@ const UserDashboard: React.FC = () => {
   });
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/auth');
+    if (!isLoading && !isAuthenticated) {
+      navigate('/login');
       return;
     }
-    fetchOrders();
-  }, [isAuthenticated, navigate]);
+    if (isAuthenticated) {
+      fetchOrders();
+    }
+  }, [isAuthenticated, isLoading, navigate]);
 
   const fetchOrders = async () => {
     try {
@@ -113,6 +115,16 @@ const UserDashboard: React.FC = () => {
       currency: 'XAF'
     }).format(price);
   };
+
+  if (isLoading) {
+    return (
+      <Container className="py-4 text-center">
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </Container>
+    );
+  }
 
   if (!isAuthenticated) {
     return null;

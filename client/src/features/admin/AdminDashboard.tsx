@@ -1,15 +1,17 @@
 import React from 'react';
-import { Row, Col, Card, Statistic, Progress, List, Avatar, Typography } from 'antd';
+import { Row, Col, Card, Statistic, Progress, List, Avatar, Typography, Tabs } from 'antd';
 import {
   ShoppingCartOutlined,
   AppstoreOutlined,
   StarOutlined,
   CheckCircleOutlined,
   ExclamationCircleOutlined,
+  VideoCameraOutlined,
 } from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import VideoManager from './VideoManager';
 
 const { Text } = Typography;
 
@@ -76,7 +78,15 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div>
-      <Row gutter={[16, 16]}>
+      <Tabs
+        defaultActiveKey="1"
+        items={[
+          {
+            key: '1',
+            label: 'Dashboard Overview',
+            children: (
+              <div>
+                <Row gutter={[16, 16]}>
         {[
           {
             title: 'Total Products',
@@ -179,6 +189,21 @@ const AdminDashboard: React.FC = () => {
           </motion.div>
         </Col>
       </Row>
+              </div>
+            ),
+          },
+          {
+            key: '2',
+            label: (
+              <span>
+                <VideoCameraOutlined />
+                Video Management
+              </span>
+            ),
+            children: <VideoManager />,
+          },
+        ]}
+      />
     </div>
   );
 };

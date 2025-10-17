@@ -328,7 +328,7 @@ const ModernCartModal: React.FC<ModernCartModalProps> = ({ open, onClose }) => {
 
   if (cartItems.length === 0) {
     return (
-      <Dialog open={open} onClose={onClose} TransitionComponent={Transition} maxWidth="sm" fullWidth>
+      <Dialog open={open} onClose={onClose} TransitionComponent={Transition} maxWidth="sm" fullWidth aria-hidden={false}>
         <DialogContent sx={{ textAlign: 'center', py: 6 }}>
           <motion.div
             initial={{ scale: 0 }}
@@ -359,6 +359,7 @@ const ModernCartModal: React.FC<ModernCartModalProps> = ({ open, onClose }) => {
       maxWidth="md"
       fullWidth
       fullScreen={isMobile}
+      aria-hidden={false}
       PaperProps={{
         sx: { 
           borderRadius: { xs: 0, md: 3 }, 

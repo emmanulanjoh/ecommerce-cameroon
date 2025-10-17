@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { CssBaseline, Typography, Box, IconButton, Drawer, useMediaQuery, useTheme as useMuiTheme } from '@mui/material';
-import { FilterList } from '@mui/icons-material';
+import { CssBaseline, Typography, Box, useMediaQuery, useTheme as useMuiTheme } from '@mui/material';
 import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 
-import ProductFilters from '../../components/products/ProductFilters';
+
 import ProductGrid from '../../components/products/ProductGrid';
 import AdvancedSearch from '../../components/search/AdvancedSearch';
 import { Product } from '../../shared/types';
@@ -13,17 +12,17 @@ import { Product } from '../../shared/types';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#667eea',
-      light: '#8fa4f3',
-      dark: '#4c63d2',
+      main: '#FF9900',
+      light: '#FFB84D',
+      dark: '#E68A00',
     },
     secondary: {
-      main: '#764ba2',
-      light: '#9575cd',
-      dark: '#512da8',
+      main: '#232F3E',
+      light: '#37475A',
+      dark: '#131A22',
     },
     background: {
-      default: '#f5f7fa',
+      default: '#ffffff',
       paper: '#ffffff',
     },
   },
@@ -63,7 +62,7 @@ const PublicProductList: React.FC = () => {
 
   const [categories, setCategories] = useState<string[]>([]);
   const [searchParams] = useSearchParams();
-  const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
+
   const muiTheme = useMuiTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down('md'));
 
@@ -154,25 +153,35 @@ const PublicProductList: React.FC = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Box sx={{ minHeight: '100vh', backgroundColor: 'background.default' }}>
-        {/* Compact Header */}
+        {/* Amazon-style Category Hero */}
         <Box sx={{ 
-          textAlign: 'center',
-          backgroundImage: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          borderRadius: { xs: 0, md: 3 },
-          p: { xs: 2, md: 3 },
-          mx: { xs: 0, md: 2 },
-          mt: { xs: 0, md: 2 },
-          mb: 3
+          backgroundColor: '#232F3E',
+          color: 'white',
+          p: { xs: 0.5, md: 1.5 },
+          mb: 1
         }}>
-          <Typography variant="h4" fontWeight="700" sx={{ mb: 1, color: 'white' }}>
-            Discover Amazing Products
-          </Typography>
-          <Typography variant="body1" sx={{ opacity: 0.9, color: 'white' }}>
-            Find the perfect products for your needs
-          </Typography>
+          {selectedCategory ? (
+            <Box>
+              <Typography variant="h6" fontWeight="400" sx={{ mb: 0.5, fontSize: { xs: '1rem', md: '1.25rem' } }}>
+                {selectedCategory}
+              </Typography>
+              <Typography variant="body2" sx={{ opacity: 0.9, fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
+                {filteredProducts.length} products
+              </Typography>
+            </Box>
+          ) : (
+            <Box>
+              <Typography variant="h6" fontWeight="400" sx={{ mb: 0.5, fontSize: { xs: '1rem', md: '1.25rem' } }}>
+                All Products
+              </Typography>
+              <Typography variant="body2" sx={{ opacity: 0.9, fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
+                {products.length} products
+              </Typography>
+            </Box>
+          )}
         </Box>
+
+
 
         {/* Advanced Search */}
         <Box sx={{ px: { xs: 1, md: 3 }, mb: 2 }}>
@@ -190,58 +199,7 @@ const PublicProductList: React.FC = () => {
         {/* Main Content Container */}
         <Box sx={{ px: { xs: 1, md: 3 }, pb: 4 }}>
 
-        {/* Filter Button */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h6" color="text.secondary">
-            {filteredProducts.length} products found
-          </Typography>
-          <IconButton
-            onClick={() => setFilterDrawerOpen(true)}
-            sx={{
-              backgroundColor: 'primary.main',
-              color: 'white',
-              '&:hover': {
-                backgroundColor: 'primary.dark',
-              },
-            }}
-          >
-            <FilterList />
-          </IconButton>
-        </Box>
 
-        {/* Filter Drawer */}
-        <Drawer
-          anchor="right"
-          open={filterDrawerOpen}
-          onClose={() => setFilterDrawerOpen(false)}
-          PaperProps={{
-            sx: {
-              width: isMobile ? '100%' : 400,
-              p: 3,
-            },
-          }}
-        >
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-            <Typography variant="h6" fontWeight="600">
-              Filter Products
-            </Typography>
-            <IconButton onClick={() => setFilterDrawerOpen(false)}>
-              ×
-            </IconButton>
-          </Box>
-          <ProductFilters
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-            categories={categories}
-            priceRange={priceRange}
-            setPriceRange={setPriceRange}
-            inStockOnly={inStockOnly}
-            setInStockOnly={setInStockOnly}
-            onClearFilters={handleClearFilters}
-          />
-        </Drawer>
 
           {/* Full Width Product Grid */}
           <ProductGrid

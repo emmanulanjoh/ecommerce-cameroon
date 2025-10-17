@@ -34,11 +34,12 @@ import {
 } from '@mui/icons-material';
 
 import { useCart } from '../../context/CartContext';
+import { useActivityTracker } from '../../hooks/useActivityTracker';
 
 import axios from 'axios';
 import { Product, Review } from '../../types';
 import ReviewSection from '../../components/reviews/ReviewSection';
-import ProductRecommendations from '../../components/products/ProductRecommendations';
+import ProductRecommendations from '../../components/recommendations/ProductRecommendations';
 
 const ModernProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -46,6 +47,7 @@ const ModernProductDetail: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { addToCart } = useCart();
+  const { trackActivity } = useActivityTracker();
 
 
   const [product, setProduct] = useState<Product | null>(null);
@@ -63,6 +65,9 @@ const ModernProductDetail: React.FC = () => {
         setLoading(true);
         const { data } = await axios.get(`/api/products/${id}`);
         setProduct(data);
+        
+        // Track product view
+        trackActivity(data._id, 'view');
         
         // Fetch related products
         const relatedRes = await axios.get(`/api/products?category=${data.category}&limit=4`);
@@ -130,15 +135,14 @@ const ModernProductDetail: React.FC = () => {
 
 
   return (
-    <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
+    <Box sx={{ bgcolor: '#ffffff', minHeight: '100vh' }}>
       {/* Header */}
       <Box sx={{ 
         position: 'sticky', 
         top: 0, 
-        bgcolor: 'background.paper', 
+        bgcolor: '#ffffff', 
         zIndex: 10,
-        borderBottom: 1,
-        borderColor: 'divider',
+        borderBottom: '1px solid #ddd',
         px: 2,
         py: 1
       }}>
@@ -153,7 +157,8 @@ const ModernProductDetail: React.FC = () => {
             fontSize: { xs: '1rem', md: '1.25rem' },
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap'
+            whiteSpace: 'nowrap',
+            color: '#0F1111'
           }}>
             {product.nameEn}
           </Typography>
@@ -165,7 +170,7 @@ const ModernProductDetail: React.FC = () => {
 
       <Container maxWidth="lg" sx={{ px: { xs: 1, md: 2 }, pb: { xs: 10, md: 2 } }}>
         {/* Image Gallery */}
-        <Card sx={{ mb: 2, overflow: 'hidden' }}>
+        <Card sx={{ mb: 2, overflow: 'hidden', border: '1px solid #ddd', boxShadow: 'none' }}>
           <Box sx={{ position: 'relative' }}>
             <img
               src={product.images?.[selectedImage] || '/images/placeholder.jpg'}
@@ -248,11 +253,12 @@ const ModernProductDetail: React.FC = () => {
         </Card>
 
         {/* Product Info */}
-        <Card sx={{ mb: 2 }}>
+        <Card sx={{ mb: 2, border: '1px solid #ddd', boxShadow: 'none' }}>
           <CardContent sx={{ p: { xs: 2, md: 3 } }}>
-            <Typography variant="h5" fontWeight="700" sx={{ 
+            <Typography variant="h5" fontWeight="400" sx={{ 
               mb: 1,
-              fontSize: { xs: '1.25rem', md: '1.5rem' }
+              fontSize: { xs: '1.25rem', md: '1.5rem' },
+              color: '#0F1111'
             }}>
               {product.nameEn}
             </Typography>
@@ -268,9 +274,10 @@ const ModernProductDetail: React.FC = () => {
 
 
             {/* Price */}
-            <Typography variant="h4" color="primary.main" fontWeight="700" sx={{ 
+            <Typography variant="h4" fontWeight="400" sx={{ 
               mb: 2,
-              fontSize: { xs: '1.5rem', md: '2rem' }
+              fontSize: { xs: '1.5rem', md: '2rem' },
+              color: '#B12704'
             }}>
               {formatPrice(product.price)}
             </Typography>
@@ -309,7 +316,7 @@ const ModernProductDetail: React.FC = () => {
         </Card>
 
         {/* Features */}
-        <Card sx={{ mb: 2 }}>
+        <Card sx={{ mb: 2, border: '1px solid #ddd', boxShadow: 'none' }}>
           <CardContent>
             <Typography variant="h6" fontWeight="600" sx={{ mb: 2 }}>
               Product Features
@@ -359,7 +366,16 @@ const ModernProductDetail: React.FC = () => {
         {/* Product Recommendations */}
         <Card sx={{ mb: 2 }}>
           <CardContent>
-            <ProductRecommendations productId={product._id} />
+            <ProductRecommendations 
+              productId={product._id} 
+              title="Customers who viewed this item also viewed"
+              type="viewedTogether"
+            />
+            <ProductRecommendations 
+              productId={product._id} 
+              title="Frequently bought together"
+              type="boughtTogether"
+            />
           </CardContent>
         </Card>
 
@@ -433,29 +449,48 @@ const ModernProductDetail: React.FC = () => {
           fullWidth
           size={isMobile ? 'medium' : 'large'}
           startIcon={<ShoppingCart />}
-          onClick={() => addToCart(product)}
+          onClick={() => {
+            addToCart(product);
+            trackActivity(product._id, 'cart');
+          }}
           disabled={!product.inStock}
           sx={{
             py: { xs: 1, md: 1.5 },
-            borderRadius: { xs: 2, md: 3 },
-            fontWeight: 600,
-            fontSize: { xs: '0.875rem', md: '1rem' }
+            borderRadius: '8px',
+            fontWeight: 400,
+            fontSize: { xs: '0.875rem', md: '1rem' },
+            bgcolor: '#FF9900',
+            color: '#0F1111',
+            textTransform: 'none',
+            '&:hover': {
+              bgcolor: '#FA8900'
+            },
+            '&:disabled': {
+              bgcolor: '#cccccc',
+              color: '#666666'
+            }
           }}
         >
           Add to Cart
         </Button>
         
-        <Fab
-          color="success"
+        <Button
+          variant="outlined"
           onClick={handleWhatsAppOrder}
           sx={{
-            bgcolor: '#25D366',
-            '&:hover': { bgcolor: '#20B858' },
-            minWidth: 56
+            minWidth: 56,
+            borderRadius: '8px',
+            borderColor: '#D5D9D9',
+            color: '#0F1111',
+            bgcolor: '#ffffff',
+            '&:hover': {
+              bgcolor: '#F7FAFA',
+              borderColor: '#D5D9D9'
+            }
           }}
         >
-          <WhatsApp />
-        </Fab>
+          <WhatsApp sx={{ color: '#25D366' }} />
+        </Button>
       </Box>
     </Box>
   );

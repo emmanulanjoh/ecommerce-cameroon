@@ -86,7 +86,7 @@ main {
 
 /* Hero Section */
 .hero-section {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #232F3E;
   min-height: 50vh;
   display: flex;
   align-items: center;
@@ -206,11 +206,11 @@ main {
 }
 
 .thumbnail-container:hover {
-  border-color: #007bff;
+  border-color: #FF9900;
 }
 
 .thumbnail-container.active {
-  border-color: #007bff;
+  border-color: #FF9900;
 }
 
 /* Review Stars */
@@ -228,7 +228,7 @@ footer a {
 }
 
 footer a:hover {
-  color: #007bff !important;
+  color: #FF9900 !important;
 }
 
 @media (max-width: 576px) {

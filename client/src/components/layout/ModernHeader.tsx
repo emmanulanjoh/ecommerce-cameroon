@@ -51,14 +51,12 @@ const ModernHeader: React.FC = () => {
         position="sticky"
         elevation={0}
         sx={{
-          background: 'rgba(255, 255, 255, 0.95)',
-          backdropFilter: 'blur(10px)',
-          borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
-          color: 'text.primary',
+          background: '#232F3E',
+          color: 'white',
         }}
       >
         <Container maxWidth="xl">
-          <Toolbar sx={{ py: { xs: 0.5, md: 1 }, minHeight: { xs: 56, md: 64 } }}>
+          <Toolbar sx={{ py: { xs: 0.1, md: 0.5 }, minHeight: { xs: 40, md: 56 } }}>
             {/* Logo */}
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -70,13 +68,10 @@ const ModernHeader: React.FC = () => {
                 to="/"
                 sx={{
                   fontWeight: 800,
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
+                  color: 'white',
                   textDecoration: 'none',
                   mr: { xs: 1, md: 4 },
-                  fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' },
+                  fontSize: { xs: '0.8rem', sm: '1rem', md: '1.1rem' },
                 }}
               >
                 {/* Show short name on mobile */}
@@ -98,15 +93,15 @@ const ModernHeader: React.FC = () => {
                 component={Link}
                 to="/products"
                 sx={{
-                  color: 'text.primary',
+                  color: 'white',
                   fontWeight: 600,
                   px: 2,
                   '&:hover': {
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    color: 'white',
+                    backgroundColor: '#FF9900',
+                    color: '#0F1111',
                   },
                   borderRadius: 2,
-                  transition: 'all 0.5s ease',
+                  transition: 'all 0.3s ease',
                 }}
               >
                 {t('header.products')}
@@ -115,12 +110,12 @@ const ModernHeader: React.FC = () => {
                 component={Link}
                 to="/about"
                 sx={{
-                  color: 'text.primary',
+                  color: 'white',
                   fontWeight: 600,
                   px: 2,
                   '&:hover': {
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    color: 'white',
+                    backgroundColor: '#FF9900',
+                    color: '#0F1111',
                   },
                   borderRadius: 2,
                   transition: 'all 0.3s ease',
@@ -132,12 +127,12 @@ const ModernHeader: React.FC = () => {
                 component={Link}
                 to="/contact"
                 sx={{
-                  color: 'text.primary',
+                  color: 'white',
                   fontWeight: 600,
                   px: 2,
                   '&:hover': {
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    color: 'white',
+                    backgroundColor: '#FF9900',
+                    color: '#0F1111',
                   },
                   borderRadius: 2,
                   transition: 'all 0.3s ease',
@@ -149,12 +144,12 @@ const ModernHeader: React.FC = () => {
                 component={Link}
                 to="/faq"
                 sx={{
-                  color: 'text.primary',
+                  color: 'white',
                   fontWeight: 600,
                   px: 2,
                   '&:hover': {
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    color: 'white',
+                    backgroundColor: '#FF9900',
+                    color: '#0F1111',
                   },
                   borderRadius: 2,
                   transition: 'all 0.3s ease',
@@ -172,14 +167,14 @@ const ModernHeader: React.FC = () => {
                   <Button
                     onClick={(e) => setUserMenuAnchor(e.currentTarget)}
                     sx={{
-                      color: 'text.primary',
+                      color: 'white',
                       fontWeight: 600,
                       px: { xs: 1, md: 2 },
                       py: { xs: 0.5, md: 1 },
                       textTransform: 'none',
                       '&:hover': {
-                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                        color: 'white',
+                        backgroundColor: '#FF9900',
+                        color: '#0F1111',
                       },
                       borderRadius: 2,
                       fontSize: { xs: '0.75rem', md: '0.875rem' },
@@ -217,13 +212,13 @@ const ModernHeader: React.FC = () => {
                   component={Link}
                   to="/login"
                   sx={{
-                    color: 'text.primary',
+                    color: 'white',
                     fontWeight: 600,
                     px: { xs: 1.5, md: 2 },
                     py: { xs: 0.5, md: 1 },
                     '&:hover': {
-                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                      color: 'white',
+                      backgroundColor: '#FF9900',
+                      color: '#0F1111',
                     },
                     borderRadius: 2,
                     fontSize: { xs: '0.75rem', md: '0.875rem' },
@@ -238,11 +233,11 @@ const ModernHeader: React.FC = () => {
               <IconButton
                 onClick={() => setShowCartModal(true)}
                 sx={{
-                  color: 'text.primary',
+                  color: 'white',
                   p: { xs: 1, md: 1.5 },
                   '&:hover': {
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    color: 'white',
+                    backgroundColor: '#FF9900',
+                    color: '#0F1111',
                   },
                 }}
               >

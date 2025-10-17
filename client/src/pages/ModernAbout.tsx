@@ -42,7 +42,7 @@ const ModernAbout: React.FC = () => {
   return (
     <div className="bg-light min-vh-100">
       {/* Hero Section */}
-      <div className="bg-primary text-white py-5">
+      <div style={{ backgroundColor: '#232F3E', color: 'white', padding: '60px 0' }}>
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -50,8 +50,8 @@ const ModernAbout: React.FC = () => {
             transition={{ duration: 0.8 }}
             className="text-center"
           >
-            <h1 className="display-4 fw-bold mb-3">About FindAll Sourcing</h1>
-            <p className="lead">Your trusted partner for online shopping in Cameroon, connecting you with quality products and exceptional service.</p>
+            <h1 style={{ fontSize: '3rem', fontWeight: 400, marginBottom: '1rem' }}>About FindAll Sourcing</h1>
+            <p style={{ fontSize: '1.2rem', opacity: 0.9 }}>Your trusted partner for online shopping in Cameroon, connecting you with quality products and exceptional service.</p>
           </motion.div>
         </Container>
       </div>
@@ -69,10 +69,20 @@ const ModernAbout: React.FC = () => {
               >
                 <Card className="text-center border-0 shadow-sm h-100">
                   <Card.Body className="p-4">
-                    <div className={`bg-${stat.color} text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3`} style={{ width: '60px', height: '60px' }}>
+                    <div style={{ 
+                      backgroundColor: '#FF9900', 
+                      color: '#0F1111', 
+                      borderRadius: '50%', 
+                      width: '60px', 
+                      height: '60px', 
+                      display: 'inline-flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center', 
+                      marginBottom: '1rem' 
+                    }}>
                       <FontAwesomeIcon icon={stat.icon} size="lg" />
                     </div>
-                    <h3 className="fw-bold text-primary mb-2">{stat.number}</h3>
+                    <h3 style={{ fontWeight: 'bold', color: '#0F1111', marginBottom: '0.5rem' }}>{stat.number}</h3>
                     <p className="text-muted mb-0 small">{stat.label}</p>
                   </Card.Body>
                 </Card>
@@ -92,10 +102,20 @@ const ModernAbout: React.FC = () => {
               transition={{ duration: 0.8 }}
             >
               <div className="d-flex align-items-center mb-4">
-                <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style={{ width: '50px', height: '50px' }}>
+                <div style={{ 
+                  backgroundColor: '#FF9900', 
+                  color: '#0F1111', 
+                  borderRadius: '50%', 
+                  width: '50px', 
+                  height: '50px', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  marginRight: '1rem' 
+                }}>
                   <FontAwesomeIcon icon={faClock} />
                 </div>
-                <h2 className="fw-bold mb-0">Our Story</h2>
+                <h2 style={{ fontWeight: 'bold', color: '#0F1111', margin: 0 }}>Our Story</h2>
               </div>
               
               <div className="d-flex flex-column gap-3">
@@ -118,11 +138,19 @@ const ModernAbout: React.FC = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <div className="bg-primary rounded-4 d-flex align-items-center justify-content-center text-white" style={{ height: '300px' }}>
+              <div style={{ 
+                backgroundColor: '#232F3E', 
+                borderRadius: '16px', 
+                height: '300px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                color: 'white' 
+              }}>
                 <div className="text-center">
-                  <FontAwesomeIcon icon={faBuilding} size="4x" className="mb-3" />
+                  <FontAwesomeIcon icon={faBuilding} size="4x" style={{ marginBottom: '1rem' }} />
                   <h4>Our Journey</h4>
-                  <p className="mb-0">Building Cameroon's Future</p>
+                  <p style={{ margin: 0 }}>Building Cameroon's Future</p>
                 </div>
               </div>
             </motion.div>
@@ -153,7 +181,17 @@ const ModernAbout: React.FC = () => {
               >
                 <Card className="border-0 shadow-sm h-100">
                   <Card.Body className="p-4 text-center">
-                    <div className="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style={{ width: '60px', height: '60px' }}>
+                    <div style={{ 
+                      backgroundColor: '#FF9900', 
+                      color: '#0F1111', 
+                      borderRadius: '50%', 
+                      width: '60px', 
+                      height: '60px', 
+                      display: 'inline-flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center', 
+                      marginBottom: '1rem' 
+                    }}>
                       <FontAwesomeIcon icon={faShieldAlt} size="lg" />
                     </div>
                     <h5 className="fw-bold mb-3">100% Authentic</h5>
@@ -171,7 +209,17 @@ const ModernAbout: React.FC = () => {
               >
                 <Card className="border-0 shadow-sm h-100">
                   <Card.Body className="p-4 text-center">
-                    <div className="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style={{ width: '60px', height: '60px' }}>
+                    <div style={{ 
+                      backgroundColor: '#FF9900', 
+                      color: '#0F1111', 
+                      borderRadius: '50%', 
+                      width: '60px', 
+                      height: '60px', 
+                      display: 'inline-flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center', 
+                      marginBottom: '1rem' 
+                    }}>
                       <FontAwesomeIcon icon={faShippingFast} size="lg" />
                     </div>
                     <h5 className="fw-bold mb-3">Fast Delivery</h5>
@@ -189,7 +237,17 @@ const ModernAbout: React.FC = () => {
               >
                 <Card className="border-0 shadow-sm h-100">
                   <Card.Body className="p-4 text-center">
-                    <div className="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style={{ width: '60px', height: '60px' }}>
+                    <div style={{ 
+                      backgroundColor: '#FF9900', 
+                      color: '#0F1111', 
+                      borderRadius: '50%', 
+                      width: '60px', 
+                      height: '60px', 
+                      display: 'inline-flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center', 
+                      marginBottom: '1rem' 
+                    }}>
                       <FontAwesomeIcon icon={faShieldAlt} size="lg" />
                     </div>
                     <h5 className="fw-bold mb-3">Secure Payment</h5>
@@ -207,7 +265,17 @@ const ModernAbout: React.FC = () => {
               >
                 <Card className="border-0 shadow-sm h-100">
                   <Card.Body className="p-4 text-center">
-                    <div className="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style={{ width: '60px', height: '60px' }}>
+                    <div style={{ 
+                      backgroundColor: '#FF9900', 
+                      color: '#0F1111', 
+                      borderRadius: '50%', 
+                      width: '60px', 
+                      height: '60px', 
+                      display: 'inline-flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center', 
+                      marginBottom: '1rem' 
+                    }}>
                       <FontAwesomeIcon icon={faUsers} size="lg" />
                     </div>
                     <h5 className="fw-bold mb-3">24/7 Support</h5>
@@ -244,7 +312,17 @@ const ModernAbout: React.FC = () => {
                 >
                   <Card className="border-0 shadow-sm h-100">
                     <Card.Body className="p-4 text-center">
-                      <div className={`bg-${value.color} text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3`} style={{ width: '60px', height: '60px' }}>
+                      <div style={{ 
+                        backgroundColor: '#FF9900', 
+                        color: '#0F1111', 
+                        borderRadius: '50%', 
+                        width: '60px', 
+                        height: '60px', 
+                        display: 'inline-flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        marginBottom: '1rem' 
+                      }}>
                         <FontAwesomeIcon icon={value.icon} size="lg" />
                       </div>
                       <h5 className="fw-bold mb-3">{value.title}</h5>
@@ -259,7 +337,7 @@ const ModernAbout: React.FC = () => {
       </div>
 
       {/* Mission Statement */}
-      <div className="bg-primary text-white py-5">
+      <div style={{ backgroundColor: '#232F3E', color: 'white', padding: '60px 0' }}>
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -267,11 +345,9 @@ const ModernAbout: React.FC = () => {
             transition={{ duration: 0.8 }}
             className="text-center"
           >
-            <h2 className="fw-bold mb-4">Our Mission</h2>
-            <blockquote className="blockquote">
-              <p className="lead fst-italic">
-                "To revolutionize e-commerce in Cameroon by providing a seamless, secure, and delightful shopping experience that connects customers with quality products and exceptional service."
-              </p>
+            <h2 style={{ fontWeight: 'bold', marginBottom: '2rem' }}>Our Mission</h2>
+            <blockquote style={{ fontSize: '1.25rem', fontStyle: 'italic', margin: 0 }}>
+              "To revolutionize e-commerce in Cameroon by providing a seamless, secure, and delightful shopping experience that connects customers with quality products and exceptional service."
             </blockquote>
           </motion.div>
         </Container>

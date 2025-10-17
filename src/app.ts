@@ -37,6 +37,9 @@ import * as apiUploadRoutes from './routes/api/upload';
 import * as adminSecureRoutes from './routes/api/admin-secure';
 import * as apiUsersRoutes from './routes/api/users';
 import * as googleAuthRoutes from './routes/api/google-auth';
+import videosRouter from './routes/api/videos';
+import searchRouter from './routes/api/search';
+import recommendationsRouter from './routes/api/recommendations';
 
 // Import middleware
 import { setLanguage } from './middleware/language';
@@ -347,6 +350,9 @@ app.use('/api/categories', apiCategoryRoutes.router);
 app.use('/api/reviews', apiReviewRoutes.router);
 app.use('/api/upload', apiUploadRoutes.router);
 app.use('/api/users', apiUsersRoutes.router);
+app.use('/api/admin/videos', videosRouter);
+app.use('/api/search', searchRouter);
+app.use('/api/recommendations', recommendationsRouter);
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
 // Register async routes when they're loaded

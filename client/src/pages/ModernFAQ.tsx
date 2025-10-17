@@ -87,7 +87,7 @@ const ModernFAQ: React.FC = () => {
   return (
     <div className="bg-light min-vh-100">
       {/* Hero Section */}
-      <div className="bg-primary text-white py-5">
+      <div style={{ backgroundColor: '#232F3E', color: 'white', padding: '60px 0' }}>
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -95,8 +95,8 @@ const ModernFAQ: React.FC = () => {
             transition={{ duration: 0.8 }}
             className="text-center"
           >
-            <h1 className="display-4 fw-bold mb-3">Frequently Asked Questions</h1>
-            <p className="lead">Find answers to common questions about our services, orders, and policies.</p>
+            <h1 style={{ fontSize: '3rem', fontWeight: 400, marginBottom: '1rem' }}>Frequently Asked Questions</h1>
+            <p style={{ fontSize: '1.2rem', opacity: 0.9 }}>Find answers to common questions about our services, orders, and policies.</p>
           </motion.div>
         </Container>
       </div>
@@ -189,10 +189,20 @@ const ModernFAQ: React.FC = () => {
             >
               <Card className="border-0 shadow-sm">
                 <Card.Body className="text-center p-4">
-                  <div className="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style={{ width: '60px', height: '60px' }}>
+                  <div style={{ 
+                    backgroundColor: '#FF9900', 
+                    color: '#0F1111', 
+                    borderRadius: '50%', 
+                    width: '60px', 
+                    height: '60px', 
+                    display: 'inline-flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    marginBottom: '1rem' 
+                  }}>
                     <FontAwesomeIcon icon={faHeadset} size="lg" />
                   </div>
-                  <h5 className="fw-bold mb-3">Still Need Help?</h5>
+                  <h5 style={{ fontWeight: 'bold', color: '#0F1111', marginBottom: '1rem' }}>Still Need Help?</h5>
                   <p className="text-muted mb-4">Can't find what you're looking for? Our support team is here to help!</p>
                   
                   <div className="text-start mb-3">
