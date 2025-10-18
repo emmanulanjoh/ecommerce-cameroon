@@ -54,10 +54,22 @@ router.delete('/admin/:id', async (req: Request, res: Response) => {
 });
 
 // Create review
-router.post('/', flexibleAuth, validateReview, async (req: Request, res: Response) => {
+router.post('/', flexibleAuth, async (req: Request, res: Response) => {
   try {
     const { product, rating, comment } = req.body;
-    const userId = (req as any).user._id;
+    const userId = (req as any).user?._id;
+
+    if (!userId) {
+      return res.status(401).json({ message: 'User not authenticated' });
+    }
+
+    if (!product) {
+      return res.status(400).json({ message: 'Product ID required' });
+    }
+
+    if (!rating || rating < 1 || rating > 5) {
+      return res.status(400).json({ message: 'Rating must be 1-5' });
+    }
 
     // Check if user already reviewed this product
     const existingReview = await Review.findOne({ product, user: userId });
@@ -75,8 +87,10 @@ router.post('/', flexibleAuth, validateReview, async (req: Request, res: Respons
     await review.save();
     await review.populate('user', 'name');
 
+
     res.status(201).json(review);
   } catch (error: any) {
+    console.error('Review creation error:', error);
     res.status(500).json({ message: error.message });
   }
 });

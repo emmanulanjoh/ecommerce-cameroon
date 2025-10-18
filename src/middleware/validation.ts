@@ -49,7 +49,7 @@ export const validateOrder = [
 export const validateReview = [
   body('product').isMongoId().withMessage('Valid product ID required'),
   body('rating').isInt({ min: 1, max: 5 }).withMessage('Rating must be 1-5'),
-  body('comment').trim().isLength({ min: 10, max: 500 }).withMessage('Comment must be 10-500 characters'),
+  body('comment').optional().trim().isLength({ min: 1, max: 500 }).withMessage('Comment must be 1-500 characters'),
   handleValidationErrors
 ];
 

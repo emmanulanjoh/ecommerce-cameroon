@@ -10,8 +10,7 @@ import {
   Rating,
   Card,
   CardContent,
-  Grid,
-  Fab,
+
 
   useMediaQuery,
   useTheme,
@@ -27,10 +26,6 @@ import {
   Share,
   ExpandMore,
   ExpandLess,
-  Verified,
-  LocalShipping,
-  Security,
-  Assignment,
 } from '@mui/icons-material';
 
 import { useCart } from '../../context/CartContext';
@@ -66,8 +61,12 @@ const ModernProductDetail: React.FC = () => {
         const { data } = await axios.get(`/api/products/${id}`);
         setProduct(data);
         
-        // Track product view
-        trackActivity(data._id, 'view');
+        // Track product view (with error handling)
+        try {
+          trackActivity(data._id, 'view');
+        } catch (trackError) {
+          console.warn('Activity tracking failed:', trackError);
+        }
         
         // Fetch related products
         const relatedRes = await axios.get(`/api/products?category=${data.category}&limit=4`);
@@ -85,7 +84,7 @@ const ModernProductDetail: React.FC = () => {
     };
 
     if (id) fetchProduct();
-  }, [id]);
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const formatPrice = (price: number): string => {
     return new Intl.NumberFormat('fr-CM', {
@@ -168,7 +167,7 @@ const ModernProductDetail: React.FC = () => {
         </Box>
       </Box>
 
-      <Container maxWidth="lg" sx={{ px: { xs: 1, md: 2 }, pb: { xs: 10, md: 2 } }}>
+      <Container maxWidth="lg" sx={{ px: { xs: 1, md: 2 }, pb: { xs: 8, md: 2 } }}>
         {/* Image Gallery */}
         <Card sx={{ mb: 2, overflow: 'hidden', border: '1px solid #ddd', boxShadow: 'none' }}>
           <Box sx={{ position: 'relative' }}>
@@ -315,44 +314,7 @@ const ModernProductDetail: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* Features */}
-        <Card sx={{ mb: 2, border: '1px solid #ddd', boxShadow: 'none' }}>
-          <CardContent>
-            <Typography variant="h6" fontWeight="600" sx={{ mb: 2 }}>
-              Product Features
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <LocalShipping color="primary" fontSize="small" />
-                  <Typography variant="body2">Free Delivery</Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={6}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Security color="primary" fontSize="small" />
-                  <Typography variant="body2">Secure Payment</Typography>
-                </Box>
-              </Grid>
-              {product.warrantyMonths && (
-                <Grid item xs={6}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Verified color="primary" fontSize="small" />
-                    <Typography variant="body2">
-                      {product.warrantyMonths} Month Warranty
-                    </Typography>
-                  </Box>
-                </Grid>
-              )}
-              <Grid item xs={6}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Assignment color="primary" fontSize="small" />
-                  <Typography variant="body2">Quality Assured</Typography>
-                </Box>
-              </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
+
 
 
 
@@ -434,63 +396,73 @@ const ModernProductDetail: React.FC = () => {
         )}
       </Container>
 
-      {/* Floating Action Buttons */}
+      {/* Amazon-Style Action Buttons */}
       <Box sx={{
-        position: 'fixed',
-        bottom: { xs: 8, md: 16 },
-        left: { xs: 8, md: 16 },
-        right: { xs: 8, md: 16 },
-        display: 'flex',
-        gap: { xs: 1, md: 2 },
-        zIndex: 10
+        position: { xs: 'fixed', md: 'static' },
+        bottom: { xs: 0, md: 'auto' },
+        left: { xs: 0, md: 'auto' },
+        right: { xs: 0, md: 'auto' },
+        bgcolor: 'white',
+        borderTop: { xs: '1px solid #ddd', md: 'none' },
+        p: { xs: 1, md: 0 },
+        mt: { xs: 0, md: 3 },
+        zIndex: 1000,
+        boxShadow: { xs: '0 -2px 10px rgba(0,0,0,0.1)', md: 'none' }
       }}>
-        <Button
-          variant="contained"
-          fullWidth
-          size={isMobile ? 'medium' : 'large'}
-          startIcon={<ShoppingCart />}
-          onClick={() => {
-            addToCart(product);
-            trackActivity(product._id, 'cart');
-          }}
-          disabled={!product.inStock}
-          sx={{
-            py: { xs: 1, md: 1.5 },
-            borderRadius: '8px',
-            fontWeight: 400,
-            fontSize: { xs: '0.875rem', md: '1rem' },
-            bgcolor: '#FF9900',
-            color: '#0F1111',
-            textTransform: 'none',
-            '&:hover': {
-              bgcolor: '#FA8900'
-            },
-            '&:disabled': {
-              bgcolor: '#cccccc',
-              color: '#666666'
-            }
-          }}
-        >
-          Add to Cart
-        </Button>
-        
-        <Button
-          variant="outlined"
-          onClick={handleWhatsAppOrder}
-          sx={{
-            minWidth: 56,
-            borderRadius: '8px',
-            borderColor: '#D5D9D9',
-            color: '#0F1111',
-            bgcolor: '#ffffff',
-            '&:hover': {
-              bgcolor: '#F7FAFA',
-              borderColor: '#D5D9D9'
-            }
-          }}
-        >
-          <WhatsApp sx={{ color: '#25D366' }} />
-        </Button>
+        <Container maxWidth="lg">
+          <Box sx={{ 
+            display: 'flex', 
+            gap: { xs: 1, md: 2 },
+            maxWidth: { xs: '100%', md: '400px' },
+            mx: 'auto'
+          }}>
+            <Button
+              variant="contained"
+              fullWidth
+              startIcon={<ShoppingCart />}
+              onClick={() => {
+                addToCart(product);
+                try {
+                  trackActivity(product._id, 'cart');
+                } catch (error) {
+                  console.warn('Activity tracking failed:', error);
+                }
+              }}
+              disabled={!product.inStock}
+              sx={{
+                py: { xs: 1.5, md: 2 },
+                borderRadius: '8px',
+                fontWeight: 600,
+                fontSize: { xs: '0.9rem', md: '1rem' },
+                bgcolor: '#FF9900',
+                color: '#0F1111',
+                textTransform: 'none',
+                '&:hover': { bgcolor: '#FA8900' },
+                '&:disabled': { bgcolor: '#cccccc', color: '#666666' }
+              }}
+            >
+              Add to Cart
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<WhatsApp />}
+              onClick={handleWhatsAppOrder}
+              sx={{
+                minWidth: { xs: 120, md: 140 },
+                py: { xs: 1.5, md: 2 },
+                borderRadius: '8px',
+                borderColor: '#D5D9D9',
+                color: '#0F1111',
+                fontWeight: 600,
+                fontSize: { xs: '0.8rem', md: '0.9rem' },
+                textTransform: 'none',
+                '&:hover': { bgcolor: '#F7FAFA', borderColor: '#D5D9D9' }
+              }}
+            >
+              WhatsApp
+            </Button>
+          </Box>
+        </Container>
       </Box>
     </Box>
   );

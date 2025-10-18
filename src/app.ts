@@ -115,11 +115,11 @@ app.use(compression());
 // Rate limiting with different limits per endpoint
 const createLimiter = (windowMs: number, max: number, message: string) => rateLimit({ windowMs, max, message });
 
-// Relaxed rate limits for production
-const generalLimiter = createLimiter(15 * 60 * 1000, 1000, 'Too many requests, try again later');
-const authLimiter = createLimiter(15 * 60 * 1000, 50, 'Too many login attempts, try again later');
-const uploadLimiter = createLimiter(60 * 1000, 100, 'Too many uploads, try again later');
-const reviewLimiter = createLimiter(60 * 60 * 1000, 100, 'Too many reviews, try again later');
+// Very relaxed rate limits for development
+const generalLimiter = createLimiter(15 * 60 * 1000, 10000, 'Too many requests, try again later');
+const authLimiter = createLimiter(15 * 60 * 1000, 500, 'Too many login attempts, try again later');
+const uploadLimiter = createLimiter(60 * 1000, 1000, 'Too many uploads, try again later');
+const reviewLimiter = createLimiter(60 * 60 * 1000, 1000, 'Too many reviews, try again later');
 
 // Apply different rate limits (after static files)
 app.use('/api/auth/login', authLimiter);

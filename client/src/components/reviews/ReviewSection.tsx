@@ -42,35 +42,34 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
 
   const submitReview = async () => {
     try {
-      if (!isAuthenticated || !token) {
+      if (!isAuthenticated) {
         alert('Please login to write a review');
         return;
       }
       
-      console.log('Submitting review with token:', token ? 'Present' : 'Missing');
-      
-      const response = await axios.post('/api/reviews', {
-        product: productId,
-        rating: newReview.rating,
-        comment: newReview.comment
-      }, {
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+      const response = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          product: productId,
+          rating: newReview.rating,
+          comment: newReview.comment
+        })
       });
       
-      console.log('Review submitted successfully:', response.data);
-      setShowForm(false);
-      setNewReview({ rating: 5, comment: '' });
-      fetchReviews();
+      if (response.ok) {
+        setShowForm(false);
+        setNewReview({ rating: 5, comment: '' });
+        fetchReviews();
+      } else {
+        const error = await response.json();
+        alert(error.message || 'Failed to submit review');
+      }
     } catch (error: any) {
-      // Sanitize error message to prevent log injection
-      const rawError = error.response?.data || error.message || 'Unknown error';
-      const isString = typeof rawError === 'string';
-      const cleanError = isString ? rawError.replace(/[\r\n\t]/g, ' ').substring(0, 200) : 'Error object';
-      console.error('[ReviewSection] Review submission failed for product:', productId, 'Error:', cleanError);
-      alert(error.response?.data?.message || 'Failed to submit review. Please try logging in again.');
+      alert('Failed to submit review. Please try again.');
     }
   };
 
