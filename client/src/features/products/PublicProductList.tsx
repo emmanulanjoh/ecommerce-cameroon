@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { CssBaseline, Typography, Box, useMediaQuery, useTheme as useMuiTheme } from '@mui/material';
+import { CssBaseline, Typography, Box } from '@mui/material';
 import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 

@@ -3,8 +3,7 @@ import {
   TextField, 
   Autocomplete, 
   Box, 
-  Typography, 
-  Chip,
+  Typography,
   InputAdornment,
   IconButton
 } from '@mui/material';

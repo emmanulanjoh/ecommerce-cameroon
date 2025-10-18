@@ -27,7 +27,7 @@ const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({
 
   useEffect(() => {
     fetchRecommendations();
-  }, [productId]);
+  }, [productId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchRecommendations = async () => {
     try {
