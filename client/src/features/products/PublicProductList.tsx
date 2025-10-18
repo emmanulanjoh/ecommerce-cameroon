@@ -60,14 +60,19 @@ const PublicProductList: React.FC = () => {
   const [priceRange, setPriceRange] = useState<[number, number]>([50, 50000000]);
   const [inStockOnly, setInStockOnly] = useState<boolean>(false);
 
-  const [categories, setCategories] = useState<string[]>([]);
+  // Fisher-Yates shuffle for randomizing arrays
+  const shuffleArray = (array: Product[]) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
   const [searchParams] = useSearchParams();
 
-  const muiTheme = useMuiTheme();
-  const isMobile = useMediaQuery(muiTheme.breakpoints.down('md'));
-
   useEffect(() => {
-    fetchProducts();
     const categoryParam = searchParams.get('category');
     const searchParam = searchParams.get('search');
     if (categoryParam) {
@@ -80,7 +85,8 @@ const PublicProductList: React.FC = () => {
     } else {
       setSearchTerm('');
     }
-  }, [searchParams]);
+    fetchProducts();
+  }, [searchParams]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filterProducts = useCallback(() => {
     let filtered = products;
@@ -122,13 +128,11 @@ const PublicProductList: React.FC = () => {
       const response = await axios.get('/api/products');
       const productsData = response.data.products || response.data || [];
       
-      const uniqueCategories = productsData.reduce((acc: string[], p: Product) => {
-        if (p.category && !acc.includes(p.category)) acc.push(p.category);
-        return acc;
-      }, []);
-      setCategories(uniqueCategories);
+
       
-      setProducts(productsData);
+      // Randomize products on each fetch
+      const randomizedProducts = shuffleArray(productsData);
+      setProducts(randomizedProducts);
     } catch (err: any) {
       // Sanitize error message to prevent log injection
       const sanitizedError = err.message || err.toString() || 'Unknown error';
@@ -142,12 +146,7 @@ const PublicProductList: React.FC = () => {
 
 
 
-  const handleClearFilters = () => {
-    setSearchTerm('');
-    setSelectedCategory('');
-    setPriceRange([50, 50000000]);
-    setInStockOnly(false);
-  };
+
 
   return (
     <ThemeProvider theme={theme}>

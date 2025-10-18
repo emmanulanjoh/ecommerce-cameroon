@@ -13,6 +13,16 @@ const ModernHome: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
 
+  // Fisher-Yates shuffle for randomizing arrays
+  const shuffleArray = (array: Product[]) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -29,9 +39,9 @@ const ModernHome: React.FC = () => {
           }
         });
         
-        // Limit products per category to 6
+        // Randomize and limit products per category to 4
         Object.keys(grouped).forEach(category => {
-          grouped[category] = grouped[category].slice(0, 6);
+          grouped[category] = shuffleArray(grouped[category]).slice(0, 4);
         });
         
         setProductsByCategory(grouped);
@@ -161,62 +171,50 @@ const ModernHome: React.FC = () => {
             </div>
           </div>
         ) : (
-          Object.entries(productsByCategory).map(([category, products], index) => {
-            const isHorizontal = index % 3 === 1;
-            
-            return (
-              <div key={category} style={{ 
-                marginBottom: '20px',
-                gridColumn: isHorizontal ? '1 / -1' : 'auto'
+          Object.entries(productsByCategory).map(([category, products]) => (
+            <div key={category} style={{ marginBottom: '20px' }}>
+              <div style={{
+                backgroundColor: 'white',
+                border: '1px solid #ddd',
+                borderRadius: '8px',
+                padding: '20px',
+                marginBottom: '20px'
               }}>
-                
-                {/* Amazon-Style Product Box */}
-                <div style={{
-                  backgroundColor: 'white',
-                  border: '1px solid #ddd',
-                  borderRadius: '8px',
-                  padding: '20px',
-                  marginBottom: '20px'
+                <h3 style={{
+                  fontSize: '1.2rem',
+                  fontWeight: 700,
+                  color: '#0F1111',
+                  marginBottom: '16px'
                 }}>
-                  <h3 style={{
-                    fontSize: '1.2rem',
-                    fontWeight: 700,
-                    color: '#0F1111',
-                    marginBottom: '16px'
-                  }}>
-                    {category}
-                  </h3>
-                  
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: isHorizontal 
-                      ? 'repeat(auto-fit, minmax(150px, 1fr))' 
-                      : 'repeat(2, 1fr)',
-                    gap: '12px',
-                    overflowX: isHorizontal ? 'auto' : 'visible'
-                  }}>
-                    {products.slice(0, isHorizontal ? 6 : 4).map((product) => (
-                      <SimpleProductCard key={product._id} product={product} />
-                    ))}
-                  </div>
-                  
-                  <Link
-                    to={`/products?category=${category}`}
-                    style={{
-                      display: 'inline-block',
-                      marginTop: '16px',
-                      color: '#007185',
-                      textDecoration: 'none',
-                      fontSize: '0.875rem',
-                      fontWeight: 500
-                    }}
-                  >
-                    See more
-                  </Link>
+                  {category}
+                </h3>
+                
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(2, 1fr)',
+                  gap: '12px'
+                }}>
+                  {products.slice(0, 4).map((product) => (
+                    <SimpleProductCard key={product._id} product={product} />
+                  ))}
                 </div>
+                
+                <Link
+                  to={`/products?category=${category}`}
+                  style={{
+                    display: 'inline-block',
+                    marginTop: '16px',
+                    color: '#007185',
+                    textDecoration: 'none',
+                    fontSize: '0.875rem',
+                    fontWeight: 500
+                  }}
+                >
+                  See more
+                </Link>
               </div>
-            );
-          })
+            </div>
+          ))
         )}
       </div>
     </div>

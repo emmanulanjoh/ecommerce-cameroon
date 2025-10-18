@@ -16,6 +16,16 @@ router.get('/test', (req: Request, res: Response) => {
   });
 });
 
+// Fisher-Yates shuffle algorithm for randomizing array
+const shuffleArray = (array: any[]) => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
 // Get all products
 router.get('/', async (req: Request, res: Response) => {
   try {
@@ -23,8 +33,11 @@ router.get('/', async (req: Request, res: Response) => {
       .select('nameEn nameFr price category thumbnailImage images inStock featured condition warrantyMonths')
       .lean();
     
-    res.set('Cache-Control', 'public, max-age=300');
-    res.json({ products });
+    // Randomize product order using Fisher-Yates shuffle
+    const randomizedProducts = shuffleArray(products);
+    
+    res.set('Cache-Control', 'no-cache');
+    res.json({ products: randomizedProducts });
   } catch (err) {
     console.error('API Error:', sanitizeForLog((err as Error).message));
     res.status(500).json({ message: sanitizeForHtml((err as Error).message) });

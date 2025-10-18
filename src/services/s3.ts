@@ -10,7 +10,7 @@ export class S3Service {
     try {
       let optimizedBody = body;
       
-      // Optimize images
+      // Optimize images only, leave videos as-is
       if (contentType.startsWith('image/')) {
         optimizedBody = await sharp(body)
           .resize(800, 600, { fit: 'inside', withoutEnlargement: true })
@@ -18,6 +18,7 @@ export class S3Service {
           .toBuffer();
         contentType = 'image/jpeg';
       }
+      // Videos are uploaded without modification
       
       const command = new PutObjectCommand({
         Bucket: AWS_CONFIG.S3_BUCKET,
@@ -26,11 +27,27 @@ export class S3Service {
         ContentType: contentType,
       });
       
-      console.log('📤 Uploading optimized to S3:', { bucket: AWS_CONFIG.S3_BUCKET, key });
+      console.log('📤 Uploading to S3:', { 
+        bucket: AWS_CONFIG.S3_BUCKET, 
+        key, 
+        contentType,
+        bodySize: optimizedBody.length,
+        isVideo: contentType.startsWith('video/')
+      });
+      
       await s3Client.send(command);
       
       const fileUrl = `${AWS_CONFIG.CLOUDFRONT_URL}/${key}`;
       console.log('✅ S3 upload complete, returning CloudFront URL:', fileUrl);
+      
+      // Verify AWS config
+      console.log('🔧 AWS Config:', {
+        region: process.env.AWS_REGION,
+        bucket: AWS_CONFIG.S3_BUCKET,
+        cloudfrontUrl: AWS_CONFIG.CLOUDFRONT_URL,
+        hasAccessKey: !!process.env.AWS_ACCESS_KEY_ID,
+        hasSecretKey: !!process.env.AWS_SECRET_ACCESS_KEY
+      });
       
       return fileUrl;
     } catch (error) {
@@ -87,7 +104,7 @@ export class S3Service {
     
     const timestamp = Date.now();
     const extension = safeFilename.split('.').pop()?.toLowerCase();
-    const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'webm', 'ogg'];
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'webm', 'ogg', 'avi', 'mov'];
     
     if (!extension || !allowedExtensions.includes(extension)) {
       throw new Error('Invalid file extension');

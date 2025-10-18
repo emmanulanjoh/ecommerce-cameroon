@@ -350,7 +350,7 @@ app.use('/api/categories', apiCategoryRoutes.router);
 app.use('/api/reviews', apiReviewRoutes.router);
 app.use('/api/upload', apiUploadRoutes.router);
 app.use('/api/users', apiUsersRoutes.router);
-app.use('/api/admin/videos', videosRouter);
+app.use('/api/videos', videosRouter);
 app.use('/api/search', searchRouter);
 app.use('/api/recommendations', recommendationsRouter);
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));

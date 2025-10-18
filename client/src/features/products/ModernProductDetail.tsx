@@ -53,6 +53,8 @@ const ModernProductDetail: React.FC = () => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [imageZoomOpen, setImageZoomOpen] = useState(false);
+  const [zoomImageSrc, setZoomImageSrc] = useState('');
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -178,7 +180,12 @@ const ModernProductDetail: React.FC = () => {
                 width: '100%',
                 height: isMobile ? '300px' : '400px',
                 objectFit: 'contain',
-                backgroundColor: '#f5f5f5'
+                backgroundColor: '#f5f5f5',
+                cursor: 'zoom-in'
+              }}
+              onClick={() => {
+                setZoomImageSrc(product.images?.[selectedImage] || '/images/placeholder.jpg');
+                setImageZoomOpen(true);
               }}
             />
             
@@ -239,7 +246,11 @@ const ModernProductDetail: React.FC = () => {
                   <img
                     src={img}
                     alt={`${product.nameEn} ${index + 1}`}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', cursor: 'pointer' }}
+                    onClick={() => {
+                      setZoomImageSrc(img);
+                      setImageZoomOpen(true);
+                    }}
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.src = '/images/placeholder.jpg';
@@ -463,6 +474,34 @@ const ModernProductDetail: React.FC = () => {
             </Button>
           </Box>
         </Container>
+      </Box>
+
+      {/* Image Zoom Modal */}
+      <Box
+        sx={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          backgroundColor: 'rgba(0,0,0,0.9)',
+          display: imageZoomOpen ? 'flex' : 'none',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          cursor: 'zoom-out'
+        }}
+        onClick={() => setImageZoomOpen(false)}
+      >
+        <img
+          src={zoomImageSrc}
+          alt={product.nameEn}
+          style={{
+            maxWidth: '95%',
+            maxHeight: '95%',
+            objectFit: 'contain'
+          }}
+        />
       </Box>
     </Box>
   );

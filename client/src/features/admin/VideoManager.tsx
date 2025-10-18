@@ -23,7 +23,7 @@ const VideoManager: React.FC = () => {
 
   const fetchVideos = async () => {
     try {
-      const response = await fetch('/api/admin/videos', {
+      const response = await fetch('/api/videos', {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       if (response.ok) {
@@ -56,20 +56,26 @@ const VideoManager: React.FC = () => {
         const formData = new FormData();
         formData.append('video', file);
         
-        const response = await fetch('/api/admin/videos/upload', {
+        console.log('Uploading video:', file.name, 'Size:', file.size);
+        
+        const response = await fetch('/api/videos/upload', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
           body: formData
         });
         
+        const result = await response.json();
+        
         if (response.ok) {
-          const videoData = await response.json();
-          setVideos(prev => [...prev, videoData]);
+          setVideos(prev => [...prev, result]);
           message.success('Video uploaded to S3 successfully!');
+          console.log('Video upload successful:', result);
         } else {
-          message.error('Upload failed!');
+          console.error('Upload failed:', result);
+          message.error(`Upload failed: ${result.message || 'Unknown error'}`);
         }
       } catch (error) {
+        console.error('Upload error:', error);
         message.error('Upload error!');
       } finally {
         setUploading(false);
@@ -81,7 +87,7 @@ const VideoManager: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(`/api/admin/videos/${id}`, {
+      const response = await fetch(`/api/videos/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
@@ -90,9 +96,11 @@ const VideoManager: React.FC = () => {
         setVideos(prev => prev.filter(video => video._id !== id));
         message.success('Video deleted from S3 successfully!');
       } else {
-        message.error('Delete failed!');
+        const result = await response.json();
+        message.error(`Delete failed: ${result.message || 'Unknown error'}`);
       }
     } catch (error) {
+      console.error('Delete error:', error);
       message.error('Delete error!');
     }
   };
