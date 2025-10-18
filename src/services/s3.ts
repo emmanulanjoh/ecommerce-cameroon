@@ -7,6 +7,10 @@ import path from 'path';
 export class S3Service {
   // Upload file to S3
   static async uploadFile(key: string, body: Buffer, contentType: string) {
+    if (!AWS_CONFIG.IS_CONFIGURED) {
+      throw new Error('AWS credentials not configured');
+    }
+    
     try {
       let optimizedBody = body;
       
@@ -58,6 +62,10 @@ export class S3Service {
 
   // Get signed URL for upload
   static async getUploadUrl(key: string, contentType: string) {
+    if (!AWS_CONFIG.IS_CONFIGURED) {
+      throw new Error('AWS credentials not configured');
+    }
+    
     const command = new PutObjectCommand({
       Bucket: AWS_CONFIG.S3_BUCKET,
       Key: key,
@@ -69,6 +77,10 @@ export class S3Service {
 
   // Delete file from S3
   static async deleteFile(key: string) {
+    if (!AWS_CONFIG.IS_CONFIGURED) {
+      throw new Error('AWS credentials not configured');
+    }
+    
     const command = new DeleteObjectCommand({
       Bucket: AWS_CONFIG.S3_BUCKET,
       Key: key,
