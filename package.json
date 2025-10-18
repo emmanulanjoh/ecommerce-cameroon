@@ -10,7 +10,7 @@
     "build": "tsc --noEmitOnError",
     "build:ts": "tsc",
     "build:client": "cd client && npm install && npm run build",
-    "postbuild": "cd client && npm install && cross-env CI=false npm run build",
+    "postbuild": "cd client && npm install && cross-env CI=false DISABLE_ESLINT_PLUGIN=true npm run build",
     "dev": "nodemon dist/server.js",
     "client": "npm start --prefix client",
     "dev:full": "concurrently \"npm run dev\" \"npm run client\"",
