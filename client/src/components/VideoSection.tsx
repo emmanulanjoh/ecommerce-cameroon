@@ -69,6 +69,10 @@ const VideoSection: React.FC = () => {
       backgroundColor: '#000'
     }}>
       <video
+        autoPlay
+        muted
+        loop
+        playsInline
         controls
         style={{
           width: '100%',
