@@ -8,7 +8,6 @@ import {
   Toolbar,
   Typography,
   Button,
-  IconButton,
   Box,
   Container,
   Menu,
@@ -19,26 +18,16 @@ import {
 } from '@mui/material';
 import {
   ShoppingCart,
-  Menu as MenuIcon,
 } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 
 const ModernHeader: React.FC = () => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [showCartModal, setShowCartModal] = useState(false);
   const { getTotalItems } = useCart();
 
   const { user, isAuthenticated, logout } = useUser();
   const navigate = useNavigate();
   const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
-
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
 
   return (
     <>
@@ -54,8 +43,8 @@ const ModernHeader: React.FC = () => {
           color: 'white',
         }}
       >
-        <Container maxWidth="xl">
-          <Toolbar sx={{ py: 0.5, minHeight: 48 }}>
+        <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2 } }}>
+          <Toolbar sx={{ py: { xs: 0.25, sm: 0.5 }, minHeight: { xs: 56, sm: 48 }, px: 0 }}>
             {/* Logo */}
             <Typography
               variant="h6"
@@ -65,28 +54,29 @@ const ModernHeader: React.FC = () => {
                 fontWeight: 700,
                 color: 'white',
                 textDecoration: 'none',
-                mr: 2,
-                fontSize: { xs: '0.9rem', md: '1rem' },
-                minWidth: 'fit-content'
+                mr: { xs: 0.5, sm: 2 },
+                fontSize: { xs: '0.85rem', sm: '0.9rem', md: '1rem' },
+                minWidth: 'fit-content',
+                flexShrink: 0
               }}
             >
-              <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
-                FindAll
-              </Box>
-              <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
-                FindAll
-              </Box>
+              FindAll
             </Typography>
 
             {/* Search Bar */}
-            <Box sx={{ flex: 1, mx: { xs: 1, md: 2 }, maxWidth: 600 }}>
+            <Box sx={{ 
+              flex: 1, 
+              mx: { xs: 0.5, sm: 1, md: 2 }, 
+              maxWidth: { xs: 'none', md: 600 },
+              minWidth: 0
+            }}>
               <SmartSearch 
                 onSearch={(query) => {
                   if (query.trim()) {
                     navigate(`/products?search=${encodeURIComponent(query)}`);
                   }
                 }}
-                placeholder="Search products..."
+                placeholder="Search..."
               />
             </Box>
 
@@ -95,7 +85,13 @@ const ModernHeader: React.FC = () => {
 
 
             {/* User Menu & Cart - Amazon Style */}
-            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', ml: 'auto' }}>
+            <Box sx={{ 
+              display: 'flex', 
+              gap: { xs: 0.5, sm: 1 }, 
+              alignItems: 'center', 
+              ml: 'auto',
+              flexShrink: 0
+            }}>
               {/* User Menu */}
               {isAuthenticated ? (
                 <>
@@ -104,7 +100,7 @@ const ModernHeader: React.FC = () => {
                     sx={{
                       color: 'white',
                       fontWeight: 500,
-                      px: 1,
+                      px: { xs: 0.5, sm: 1 },
                       py: 0.5,
                       textTransform: 'none',
                       '&:hover': {
@@ -112,20 +108,20 @@ const ModernHeader: React.FC = () => {
                         color: '#0F1111',
                       },
                       borderRadius: 1,
-                      fontSize: '0.75rem',
+                      fontSize: { xs: '0.7rem', sm: '0.75rem' },
                       minWidth: 'auto',
                     }}
                   >
                     <Avatar sx={{ 
-                      width: 20, 
-                      height: 20, 
-                      mr: 0.5, 
-                      fontSize: '0.65rem'
+                      width: { xs: 18, sm: 20 }, 
+                      height: { xs: 18, sm: 20 }, 
+                      mr: { xs: 0, sm: 0.5 }, 
+                      fontSize: { xs: '0.6rem', sm: '0.65rem' }
                     }}>
                       {user?.name?.charAt(0)}
                     </Avatar>
-                    <Box sx={{ display: { xs: 'none', sm: 'inline' } }}>
-                      {user?.name}
+                    <Box sx={{ display: { xs: 'none', md: 'inline' } }}>
+                      {user?.name?.split(' ')[0]}
                     </Box>
                   </Button>
                   <Menu
@@ -149,18 +145,19 @@ const ModernHeader: React.FC = () => {
                   sx={{
                     color: 'white',
                     fontWeight: 500,
-                    px: 1.5,
+                    px: { xs: 1, sm: 1.5 },
                     py: 0.5,
                     '&:hover': {
                       backgroundColor: '#FF9900',
                       color: '#0F1111',
                     },
                     borderRadius: 1,
-                    fontSize: '0.75rem',
+                    fontSize: { xs: '0.7rem', sm: '0.75rem' },
                     minWidth: 'auto',
                   }}
                 >
-                  Sign In
+                  <Box sx={{ display: { xs: 'none', sm: 'inline' } }}>Sign In</Box>
+                  <Box sx={{ display: { xs: 'inline', sm: 'none' } }}>Sign</Box>
                 </Button>
               )}
               
@@ -170,8 +167,8 @@ const ModernHeader: React.FC = () => {
                 sx={{
                   color: 'white',
                   fontWeight: 600,
-                  px: 2,
-                  py: 1,
+                  px: { xs: 1, sm: 2 },
+                  py: { xs: 0.75, sm: 1 },
                   textTransform: 'none',
                   background: 'linear-gradient(135deg, #FF9900 0%, #FF6B35 100%)',
                   '&:hover': {
@@ -179,8 +176,8 @@ const ModernHeader: React.FC = () => {
                     transform: 'scale(1.05)',
                     boxShadow: '0 4px 12px rgba(255, 153, 0, 0.3)'
                   },
-                  borderRadius: 2,
-                  fontSize: '0.9rem',
+                  borderRadius: { xs: 1.5, sm: 2 },
+                  fontSize: { xs: '0.75rem', sm: '0.9rem' },
                   minWidth: 'auto',
                   display: 'flex',
                   flexDirection: 'column',
@@ -191,15 +188,15 @@ const ModernHeader: React.FC = () => {
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
                 }}
               >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.5, sm: 1 } }}>
                   <Badge 
                     badgeContent={getTotalItems()} 
                     color="error" 
                     sx={{ 
                       '& .MuiBadge-badge': { 
-                        fontSize: '0.75rem', 
-                        minWidth: 20, 
-                        height: 20,
+                        fontSize: { xs: '0.65rem', sm: '0.75rem' }, 
+                        minWidth: { xs: 16, sm: 20 }, 
+                        height: { xs: 16, sm: 20 },
                         backgroundColor: '#DC2626',
                         color: 'white',
                         fontWeight: 700,
@@ -207,71 +204,16 @@ const ModernHeader: React.FC = () => {
                       } 
                     }}
                   >
-                    <ShoppingCart sx={{ fontSize: 24 }} />
+                    <ShoppingCart sx={{ fontSize: { xs: 20, sm: 24 } }} />
                   </Badge>
-                  <Box sx={{ display: { xs: 'none', sm: 'block' }, fontWeight: 700 }}>Cart</Box>
+                  <Box sx={{ display: { xs: 'none', md: 'block' }, fontWeight: 700 }}>Cart</Box>
                 </Box>
               </Button>
-              
-              {/* Mobile Menu Button */}
-              <IconButton
-                sx={{ 
-                  display: { xs: 'block', md: 'none' },
-                  p: 1,
-                  color: 'white'
-                }}
-                onClick={handleMenuOpen}
-              >
-                <MenuIcon sx={{ fontSize: 20 }} />
-              </IconButton>
             </Box>
           </Toolbar>
         </Container>
       </AppBar>
-      
-      {/* Mobile Menu */}
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
-        sx={{
-          display: { xs: 'block', md: 'none' },
-          '& .MuiPaper-root': {
-            borderRadius: 2,
-            mt: 1,
-            minWidth: 200,
-          },
-        }}
-      >
 
-        <MenuItem onClick={handleMenuClose} component={Link} to="/products">
-          Products
-        </MenuItem>
-        <MenuItem onClick={handleMenuClose} component={Link} to="/about">
-          About
-        </MenuItem>
-        <MenuItem onClick={handleMenuClose} component={Link} to="/contact">
-          Contact
-        </MenuItem>
-        <MenuItem onClick={handleMenuClose} component={Link} to="/faq">
-          FAQ
-        </MenuItem>
-        <Divider />
-        {isAuthenticated ? (
-          <>
-            <MenuItem onClick={() => { handleMenuClose(); navigate('/dashboard'); }}>
-              Dashboard
-            </MenuItem>
-            <MenuItem onClick={() => { handleMenuClose(); logout(); navigate('/'); }}>
-              Logout
-            </MenuItem>
-          </>
-        ) : (
-          <MenuItem onClick={handleMenuClose} component={Link} to="/login">
-            Login
-          </MenuItem>
-        )}
-      </Menu>
 
       <ModernCartModal 
         open={showCartModal} 
