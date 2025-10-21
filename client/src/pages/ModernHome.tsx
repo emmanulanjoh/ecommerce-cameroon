@@ -13,6 +13,42 @@ const ModernHome: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
 
+  // Color palette for category boxes - soft and subtle
+  const getCategoryColor = (category: string) => {
+    const colors = {
+      'Electronics': 'linear-gradient(135deg, #e8f0fe 0%, #f3e8ff 100%)',
+      'Fashion': 'linear-gradient(135deg, #fef7ff 0%, #fff0f3 100%)',
+      'Home & Garden': 'linear-gradient(135deg, #f0f9ff 0%, #ecfeff 100%)',
+      'Sports': 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',
+      'Beauty': 'linear-gradient(135deg, #fef7ff 0%, #fffbeb 100%)',
+      'Books': 'linear-gradient(135deg, #f0fdfa 0%, #fef7ff 100%)',
+      'Toys': 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)',
+      'Automotive': 'linear-gradient(135deg, #faf5ff 0%, #fffbeb 100%)',
+      'Health': 'linear-gradient(135deg, #f0f9ff 0%, #eff6ff 100%)',
+      'Food': 'linear-gradient(135deg, #fffbeb 0%, #f0fdfa 100%)'
+    };
+    
+    if (colors[category as keyof typeof colors]) {
+      return colors[category as keyof typeof colors];
+    }
+    
+    const hash = category.split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+    
+    const gradients = [
+      'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+      'linear-gradient(135deg, #fef7ff 0%, #f3e8ff 100%)',
+      'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)',
+      'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
+      'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)',
+      'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)'
+    ];
+    
+    return gradients[Math.abs(hash) % gradients.length];
+  };
+
   // Fisher-Yates shuffle for randomizing arrays
   const shuffleArray = (array: Product[]) => {
     const shuffled = [...array];
@@ -61,103 +97,18 @@ const ModernHome: React.FC = () => {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
-      {/* Simple Hero Banner */}
-      <div style={{
-        backgroundColor: '#232F3E',
-        color: 'white',
-        padding: '40px 0',
-        textAlign: 'center'
-      }}>
-        <Container>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 400, marginBottom: '1rem' }}>
-            FindAll Sourcing
-          </h1>
-          <p style={{ fontSize: '1.2rem', marginBottom: '2rem', opacity: 0.9 }}>
-            Quality Products for Cameroon
-          </p>
-          
-          {/* Smart Search Bar */}
-          <div style={{
-            maxWidth: '600px',
-            margin: '0 auto 2rem auto'
-          }}>
-            <SmartSearch 
-              onSearch={(query) => {
-                if (query.trim()) {
-                  navigate(`/products?search=${encodeURIComponent(query)}`);
-                }
-              }}
-              placeholder="Search products..."
-            />
-          </div>
-          
-          <Link to="/products" style={{ textDecoration: 'none' }}>
-            <Button 
-              style={{
-                backgroundColor: '#FF9900',
-                border: 'none',
-                color: '#0F1111',
-                padding: '12px 24px',
-                fontSize: '1rem',
-                borderRadius: '8px'
-              }}
-            >
-              Browse All Products
-            </Button>
-          </Link>
-        </Container>
-      </div>
 
-      {/* New Products Video Section */}
-      <div style={{
-        backgroundColor: '#F7F8F8',
-        padding: '40px 0',
-        borderTop: '1px solid #ddd',
-        borderBottom: '1px solid #ddd'
-      }}>
+
+      {/* Video Section */}
+      <div style={{ padding: '20px' }}>
         <Container>
-          <Row>
-            <Col md={6}>
-              <h2 style={{
-                fontSize: '1.8rem',
-                fontWeight: 400,
-                color: '#0F1111',
-                marginBottom: '1rem'
-              }}>
-                New Arrivals
-              </h2>
-              <p style={{
-                color: '#565959',
-                fontSize: '1rem',
-                marginBottom: '1.5rem'
-              }}>
-                Discover our latest collection of premium products
-              </p>
-              <Link to="/products" style={{ textDecoration: 'none' }}>
-                <Button 
-                  style={{
-                    backgroundColor: '#FF9900',
-                    border: 'none',
-                    color: '#0F1111',
-                    padding: '10px 20px',
-                    fontSize: '0.9rem',
-                    borderRadius: '8px'
-                  }}
-                >
-                  Shop New Arrivals
-                </Button>
-              </Link>
-            </Col>
-            <Col md={6}>
-              <VideoSection />
-            </Col>
-          </Row>
+          <VideoSection />
         </Container>
       </div>
 
       {/* Product Categories */}
       <div style={{ 
-        padding: '40px 20px', 
+        padding: '20px', 
         maxWidth: '1200px', 
         margin: '0 auto',
         display: 'grid',
@@ -174,16 +125,17 @@ const ModernHome: React.FC = () => {
           Object.entries(productsByCategory).map(([category, products]) => (
             <div key={category} style={{ marginBottom: '20px' }}>
               <div style={{
-                backgroundColor: 'white',
+                background: getCategoryColor(category),
                 border: '1px solid #ddd',
                 borderRadius: '8px',
                 padding: '20px',
-                marginBottom: '20px'
+                marginBottom: '20px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
               }}>
                 <h3 style={{
                   fontSize: '1.2rem',
                   fontWeight: 700,
-                  color: '#0F1111',
+                  color: '#374151',
                   marginBottom: '16px'
                 }}>
                   {category}
@@ -204,10 +156,21 @@ const ModernHome: React.FC = () => {
                   style={{
                     display: 'inline-block',
                     marginTop: '16px',
-                    color: '#007185',
+                    color: '#4f46e5',
                     textDecoration: 'none',
                     fontSize: '0.875rem',
-                    fontWeight: 500
+                    fontWeight: 600,
+                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                    padding: '6px 12px',
+                    borderRadius: '4px',
+                    border: '1px solid rgba(79, 70, 229, 0.2)',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(79, 70, 229, 0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(79, 70, 229, 0.1)';
                   }}
                 >
                   See more

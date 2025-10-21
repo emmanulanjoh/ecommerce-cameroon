@@ -152,48 +152,11 @@ const PublicProductList: React.FC = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Box sx={{ minHeight: '100vh', backgroundColor: 'background.default' }}>
-        {/* Amazon-style Category Hero */}
-        <Box sx={{ 
-          backgroundColor: '#232F3E',
-          color: 'white',
-          p: { xs: 0.5, md: 1.5 },
-          mb: 1
-        }}>
-          {selectedCategory ? (
-            <Box>
-              <Typography variant="h6" fontWeight="400" sx={{ mb: 0.5, fontSize: { xs: '1rem', md: '1.25rem' } }}>
-                {selectedCategory}
-              </Typography>
-              <Typography variant="body2" sx={{ opacity: 0.9, fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
-                {filteredProducts.length} products
-              </Typography>
-            </Box>
-          ) : (
-            <Box>
-              <Typography variant="h6" fontWeight="400" sx={{ mb: 0.5, fontSize: { xs: '1rem', md: '1.25rem' } }}>
-                All Products
-              </Typography>
-              <Typography variant="body2" sx={{ opacity: 0.9, fontSize: { xs: '0.75rem', md: '0.875rem' } }}>
-                {products.length} products
-              </Typography>
-            </Box>
-          )}
-        </Box>
 
 
 
-        {/* Advanced Search */}
-        <Box sx={{ px: { xs: 1, md: 3 }, mb: 2 }}>
-          <AdvancedSearch 
-            onSearch={(filters) => {
-              setSearchTerm(filters.search);
-              setSelectedCategory(filters.category);
-              setPriceRange([filters.minPrice, filters.maxPrice]);
-              setInStockOnly(filters.inStock);
-            }}
-            loading={loading}
-          />
-        </Box>
+
+
 
         {/* Main Content Container */}
         <Box sx={{ px: { xs: 1, md: 3 }, pb: 4 }}>

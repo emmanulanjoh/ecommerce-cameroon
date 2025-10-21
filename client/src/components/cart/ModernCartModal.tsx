@@ -149,8 +149,12 @@ const ModernCartModal: React.FC<ModernCartModalProps> = ({ open, onClose }) => {
             exit={{ opacity: 0, x: 20 }}
             transition={{ duration: 0.3 }}
           >
-            <Card sx={{ mb: 2, borderRadius: { xs: 2, md: 3 } }}>
-              <CardContent sx={{ p: { xs: 1.5, md: 2 } }}>
+            <Box sx={{ 
+              mb: 2, 
+              pb: 2,
+              borderBottom: '1px solid #eee',
+              '&:last-child': { borderBottom: 'none' }
+            }}>
                 <Box sx={{ 
                   display: 'flex', 
                   alignItems: 'center', 
@@ -209,17 +213,25 @@ const ModernCartModal: React.FC<ModernCartModalProps> = ({ open, onClose }) => {
                     </IconButton>
                   </Box>
                 </Box>
-              </CardContent>
-            </Card>
+            </Box>
           </motion.div>
         ))}
       </AnimatePresence>
 
-      <Divider sx={{ my: 2 }} />
-      
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h6">Total:</Typography>
-        <Typography variant="h5" color="primary" fontWeight="700">
+      <Box sx={{ 
+        mt: 3,
+        pt: 3,
+        borderTop: '2px solid #FF9900',
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center',
+        background: 'linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%)',
+        p: 3,
+        borderRadius: 2,
+        boxShadow: '0 2px 8px rgba(255, 153, 0, 0.1)'
+      }}>
+        <Typography variant="h5" sx={{ color: '#0F1111', fontWeight: 600 }}>Subtotal:</Typography>
+        <Typography variant="h4" sx={{ color: '#B12704', fontWeight: 800 }}>
           {formatPrice(getTotalPrice())}
         </Typography>
       </Box>
@@ -328,22 +340,35 @@ const ModernCartModal: React.FC<ModernCartModalProps> = ({ open, onClose }) => {
 
   if (cartItems.length === 0) {
     return (
-      <Dialog open={open} onClose={onClose} TransitionComponent={Transition} maxWidth="sm" fullWidth aria-hidden={false}>
-        <DialogContent sx={{ textAlign: 'center', py: 6 }}>
+      <Dialog open={open} onClose={onClose} TransitionComponent={Transition} maxWidth="md" fullWidth aria-hidden={false}>
+        <DialogContent sx={{ textAlign: 'center', py: 8, background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)' }}>
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: 'spring', stiffness: 300 }}
           >
-            <ShoppingCart sx={{ fontSize: 80, color: 'grey.400', mb: 2 }} />
+            <ShoppingCart sx={{ fontSize: 120, color: '#FF9900', mb: 3 }} />
           </motion.div>
-          <Typography variant="h6" gutterBottom>
+          <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, color: '#0F1111' }}>
             Your cart is empty
           </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+          <Typography variant="h6" color="text.secondary" sx={{ mb: 4 }}>
             Add some products to get started
           </Typography>
-          <Button variant="contained" onClick={onClose}>
+          <Button 
+            variant="contained" 
+            onClick={onClose}
+            size="large"
+            sx={{
+              py: 2,
+              px: 6,
+              fontSize: '1.2rem',
+              fontWeight: 700,
+              background: 'linear-gradient(135deg, #FF9900 0%, #FF6B35 100%)',
+              borderRadius: 2,
+              boxShadow: '0 4px 12px rgba(255, 153, 0, 0.3)'
+            }}
+          >
             Continue Shopping
           </Button>
         </DialogContent>
@@ -370,23 +395,36 @@ const ModernCartModal: React.FC<ModernCartModalProps> = ({ open, onClose }) => {
     >
       <DialogTitle sx={{ 
         pb: 2,
-        px: { xs: 3, md: 4 },
-        pt: { xs: 3, md: 4 },
-        mt: { xs: 1, md: 0 }
+        px: 3,
+        pt: 3,
+        borderBottom: '2px solid #FF9900',
+        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)'
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <ShoppingCart color="primary" />
-            <Typography 
-              variant="h6" 
-              fontWeight="700"
-              sx={{ fontSize: { xs: '1.1rem', md: '1.25rem' } }}
-            >
-              Shopping Cart
-            </Typography>
-            <Badge badgeContent={cartItems.length} color="primary" />
-          </Box>
-          <IconButton onClick={onClose}>
+          <Typography 
+            variant="h5" 
+            fontWeight="700"
+            sx={{ 
+              fontSize: '1.5rem', 
+              color: '#0F1111',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1
+            }}
+          >
+            <ShoppingCart sx={{ color: '#FF9900', fontSize: 28 }} />
+            Shopping Cart 
+            <Chip 
+              label={`${cartItems.length} items`} 
+              sx={{ 
+                backgroundColor: '#FF9900', 
+                color: 'white', 
+                fontWeight: 600,
+                ml: 1
+              }} 
+            />
+          </Typography>
+          <IconButton onClick={onClose} size="small">
             <Close />
           </IconButton>
         </Box>
@@ -450,28 +488,33 @@ const ModernCartModal: React.FC<ModernCartModalProps> = ({ open, onClose }) => {
       </DialogContent>
 
       <DialogActions sx={{ 
-        px: { xs: 2, md: 3 }, 
-        pb: { xs: 2, md: 3 },
+        px: 3, 
+        pb: 3,
         pt: 2,
-        gap: 1,
-        flexDirection: { xs: 'column', sm: 'row' },
-        position: { xs: 'sticky', md: 'static' },
-        bottom: 0,
-        bgcolor: 'background.paper',
-        borderTop: { xs: 1, md: 0 },
-        borderColor: 'divider'
+        gap: 2,
+        borderTop: '2px solid #FF9900',
+        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)'
       }}>
         {activeStep === 0 && (
           <Button 
             variant="outlined" 
-            color="error" 
             onClick={clearCart}
-            size={isMobile ? 'large' : 'medium'}
+            size="large"
             fullWidth={isMobile}
             sx={{ 
-              py: { xs: 1.5, md: 1.2 },
-              px: { xs: 3, md: 2 },
-              my: { xs: 1, md: 0.5 }
+              py: 2,
+              px: 4,
+              fontSize: '1rem',
+              fontWeight: 600,
+              color: '#DC2626',
+              borderColor: '#DC2626',
+              borderWidth: 2,
+              '&:hover': {
+                backgroundColor: '#DC2626',
+                color: 'white',
+                transform: 'scale(1.02)'
+              },
+              borderRadius: 2
             }}
           >
             Clear Cart
@@ -481,12 +524,19 @@ const ModernCartModal: React.FC<ModernCartModalProps> = ({ open, onClose }) => {
         {activeStep > 0 && (
           <Button 
             onClick={handleBack}
-            size={isMobile ? 'large' : 'medium'}
+            size="large"
             fullWidth={isMobile}
             sx={{ 
-              py: { xs: 1.5, md: 1.2 },
-              px: { xs: 3, md: 2 },
-              my: { xs: 1, md: 0.5 }
+              py: 2,
+              px: 4,
+              fontSize: '1rem',
+              fontWeight: 600,
+              color: '#6B7280',
+              '&:hover': {
+                backgroundColor: '#F3F4F6',
+                transform: 'scale(1.02)'
+              },
+              borderRadius: 2
             }}
           >
             Back
@@ -503,28 +553,43 @@ const ModernCartModal: React.FC<ModernCartModalProps> = ({ open, onClose }) => {
               activeStep === 1 &&
               (!shippingInfo.name || !shippingInfo.phone || !shippingInfo.address || !shippingInfo.city)
             }
-            size={isMobile ? 'large' : 'medium'}
+            size="large"
             fullWidth={isMobile}
             sx={{ 
-              py: { xs: 1.5, md: 1.2 },
-              px: { xs: 3, md: 2 },
-              my: { xs: 1, md: 0.5 }
+              py: 2,
+              px: 4,
+              fontSize: '1.1rem',
+              fontWeight: 700,
+              background: 'linear-gradient(135deg, #FF9900 0%, #FF6B35 100%)',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #FF6B35 0%, #FF4500 100%)',
+                transform: 'scale(1.02)'
+              },
+              borderRadius: 2,
+              boxShadow: '0 4px 12px rgba(255, 153, 0, 0.3)'
             }}
           >
-            Next
+            Next Step
           </Button>
         ) : (
           <Button
             variant="contained"
-            color="success"
-            startIcon={<WhatsApp />}
+            startIcon={<WhatsApp sx={{ fontSize: 24 }} />}
             onClick={handleWhatsAppOrder}
             size="large"
             fullWidth={isMobile}
             sx={{ 
-              py: { xs: 1.5, md: 1.2 },
-              px: { xs: 3, md: 2 },
-              my: { xs: 1, md: 0.5 }
+              py: 2,
+              px: 4,
+              fontSize: '1.2rem',
+              fontWeight: 700,
+              background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #128C7E 0%, #075E54 100%)',
+                transform: 'scale(1.02)'
+              },
+              borderRadius: 2,
+              boxShadow: '0 4px 12px rgba(37, 211, 102, 0.3)'
             }}
           >
             Order via WhatsApp

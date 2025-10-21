@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useCart } from '../../context/CartContext';
-import { useLanguage } from '../../context/LanguageContext';
 import { useUser } from '../../features/auth';
 import ModernCartModal from '../cart/ModernCartModal';
+import SmartSearch from '../search/SmartSearch';
 import {
   AppBar,
   Toolbar,
@@ -22,13 +22,12 @@ import {
   Menu as MenuIcon,
 } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 
 const ModernHeader: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [showCartModal, setShowCartModal] = useState(false);
   const { getTotalItems } = useCart();
-  const { t } = useLanguage();
+
   const { user, isAuthenticated, logout } = useUser();
   const navigate = useNavigate();
   const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
@@ -49,118 +48,54 @@ const ModernHeader: React.FC = () => {
       {/* Main Header */}
       <AppBar
         position="sticky"
-        elevation={0}
+        elevation={1}
         sx={{
           background: '#232F3E',
           color: 'white',
         }}
       >
         <Container maxWidth="xl">
-          <Toolbar sx={{ py: { xs: 0.1, md: 0.5 }, minHeight: { xs: 40, md: 56 } }}>
+          <Toolbar sx={{ py: 0.5, minHeight: 48 }}>
             {/* Logo */}
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: 'spring', stiffness: 300 }}
+            <Typography
+              variant="h6"
+              component={Link}
+              to="/"
+              sx={{
+                fontWeight: 700,
+                color: 'white',
+                textDecoration: 'none',
+                mr: 2,
+                fontSize: { xs: '0.9rem', md: '1rem' },
+                minWidth: 'fit-content'
+              }}
             >
-              <Typography
-                variant="h6"
-                component={Link}
-                to="/"
-                sx={{
-                  fontWeight: 800,
-                  color: 'white',
-                  textDecoration: 'none',
-                  mr: { xs: 1, md: 4 },
-                  fontSize: { xs: '0.8rem', sm: '1rem', md: '1.1rem' },
-                }}
-              >
-                {/* Show short name on mobile */}
-                <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
-                  FindAll
-                </Box>
-                <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
-                  FindAll Sourcing
-                </Box>
-              </Typography>
-            </motion.div>
+              <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
+                FindAll
+              </Box>
+              <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                FindAll
+              </Box>
+            </Typography>
 
-
-
-            {/* Desktop Navigation */}
-            <Box sx={{ display: { xs: 'none', lg: 'flex' }, gap: 1, ml: 'auto' }}>
-
-              <Button
-                component={Link}
-                to="/products"
-                sx={{
-                  color: 'white',
-                  fontWeight: 600,
-                  px: 2,
-                  '&:hover': {
-                    backgroundColor: '#FF9900',
-                    color: '#0F1111',
-                  },
-                  borderRadius: 2,
-                  transition: 'all 0.3s ease',
+            {/* Search Bar */}
+            <Box sx={{ flex: 1, mx: { xs: 1, md: 2 }, maxWidth: 600 }}>
+              <SmartSearch 
+                onSearch={(query) => {
+                  if (query.trim()) {
+                    navigate(`/products?search=${encodeURIComponent(query)}`);
+                  }
                 }}
-              >
-                {t('header.products')}
-              </Button>
-              <Button
-                component={Link}
-                to="/about"
-                sx={{
-                  color: 'white',
-                  fontWeight: 600,
-                  px: 2,
-                  '&:hover': {
-                    backgroundColor: '#FF9900',
-                    color: '#0F1111',
-                  },
-                  borderRadius: 2,
-                  transition: 'all 0.3s ease',
-                }}
-              >
-                {t('header.about')}
-              </Button>
-              <Button
-                component={Link}
-                to="/contact"
-                sx={{
-                  color: 'white',
-                  fontWeight: 600,
-                  px: 2,
-                  '&:hover': {
-                    backgroundColor: '#FF9900',
-                    color: '#0F1111',
-                  },
-                  borderRadius: 2,
-                  transition: 'all 0.3s ease',
-                }}
-              >
-                {t('header.contact')}
-              </Button>
-              <Button
-                component={Link}
-                to="/faq"
-                sx={{
-                  color: 'white',
-                  fontWeight: 600,
-                  px: 2,
-                  '&:hover': {
-                    backgroundColor: '#FF9900',
-                    color: '#0F1111',
-                  },
-                  borderRadius: 2,
-                  transition: 'all 0.3s ease',
-                }}
-              >
-                FAQ
-              </Button>
+                placeholder="Search products..."
+              />
             </Box>
 
-            {/* User Menu, Language Switcher & Cart */}
-            <Box sx={{ display: 'flex', gap: { xs: 0.5, md: 1 }, ml: 'auto', alignItems: 'center' }}>
+
+
+
+
+            {/* User Menu & Cart - Amazon Style */}
+            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', ml: 'auto' }}>
               {/* User Menu */}
               {isAuthenticated ? (
                 <>
@@ -168,24 +103,24 @@ const ModernHeader: React.FC = () => {
                     onClick={(e) => setUserMenuAnchor(e.currentTarget)}
                     sx={{
                       color: 'white',
-                      fontWeight: 600,
-                      px: { xs: 1, md: 2 },
-                      py: { xs: 0.5, md: 1 },
+                      fontWeight: 500,
+                      px: 1,
+                      py: 0.5,
                       textTransform: 'none',
                       '&:hover': {
                         backgroundColor: '#FF9900',
                         color: '#0F1111',
                       },
-                      borderRadius: 2,
-                      fontSize: { xs: '0.75rem', md: '0.875rem' },
+                      borderRadius: 1,
+                      fontSize: '0.75rem',
                       minWidth: 'auto',
                     }}
                   >
                     <Avatar sx={{ 
-                      width: { xs: 20, md: 24 }, 
-                      height: { xs: 20, md: 24 }, 
-                      mr: { xs: 0.5, md: 1 }, 
-                      fontSize: { xs: '0.65rem', md: '0.75rem' }
+                      width: 20, 
+                      height: 20, 
+                      mr: 0.5, 
+                      fontSize: '0.65rem'
                     }}>
                       {user?.name?.charAt(0)}
                     </Avatar>
@@ -213,48 +148,81 @@ const ModernHeader: React.FC = () => {
                   to="/login"
                   sx={{
                     color: 'white',
-                    fontWeight: 600,
-                    px: { xs: 1.5, md: 2 },
-                    py: { xs: 0.5, md: 1 },
+                    fontWeight: 500,
+                    px: 1.5,
+                    py: 0.5,
                     '&:hover': {
                       backgroundColor: '#FF9900',
                       color: '#0F1111',
                     },
-                    borderRadius: 2,
-                    fontSize: { xs: '0.75rem', md: '0.875rem' },
+                    borderRadius: 1,
+                    fontSize: '0.75rem',
                     minWidth: 'auto',
                   }}
                 >
-                  Login
+                  Sign In
                 </Button>
               )}
               
-              {/* Cart Button */}
-              <IconButton
+              {/* Cart Button - Enhanced Amazon Style */}
+              <Button
                 onClick={() => setShowCartModal(true)}
                 sx={{
                   color: 'white',
-                  p: { xs: 1, md: 1.5 },
+                  fontWeight: 600,
+                  px: 2,
+                  py: 1,
+                  textTransform: 'none',
+                  background: 'linear-gradient(135deg, #FF9900 0%, #FF6B35 100%)',
                   '&:hover': {
-                    backgroundColor: '#FF9900',
-                    color: '#0F1111',
+                    background: 'linear-gradient(135deg, #FF6B35 0%, #FF4500 100%)',
+                    transform: 'scale(1.05)',
+                    boxShadow: '0 4px 12px rgba(255, 153, 0, 0.3)'
                   },
+                  borderRadius: 2,
+                  fontSize: '0.9rem',
+                  minWidth: 'auto',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  lineHeight: 1.2,
+                  transition: 'all 0.2s ease',
+                  border: '2px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
                 }}
               >
-                <Badge badgeContent={getTotalItems()} color="error">
-                  <ShoppingCart sx={{ fontSize: { xs: 20, md: 24 } }} />
-                </Badge>
-              </IconButton>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Badge 
+                    badgeContent={getTotalItems()} 
+                    color="error" 
+                    sx={{ 
+                      '& .MuiBadge-badge': { 
+                        fontSize: '0.75rem', 
+                        minWidth: 20, 
+                        height: 20,
+                        backgroundColor: '#DC2626',
+                        color: 'white',
+                        fontWeight: 700,
+                        border: '2px solid white'
+                      } 
+                    }}
+                  >
+                    <ShoppingCart sx={{ fontSize: 24 }} />
+                  </Badge>
+                  <Box sx={{ display: { xs: 'none', sm: 'block' }, fontWeight: 700 }}>Cart</Box>
+                </Box>
+              </Button>
               
               {/* Mobile Menu Button */}
               <IconButton
                 sx={{ 
-                  display: { xs: 'block', lg: 'none' },
-                  p: { xs: 1, md: 1.5 }
+                  display: { xs: 'block', md: 'none' },
+                  p: 1,
+                  color: 'white'
                 }}
                 onClick={handleMenuOpen}
               >
-                <MenuIcon sx={{ fontSize: { xs: 20, md: 24 } }} />
+                <MenuIcon sx={{ fontSize: 20 }} />
               </IconButton>
             </Box>
           </Toolbar>

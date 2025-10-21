@@ -488,20 +488,100 @@ const ModernProductDetail: React.FC = () => {
           display: imageZoomOpen ? 'flex' : 'none',
           alignItems: 'center',
           justifyContent: 'center',
-          zIndex: 9999,
-          cursor: 'zoom-out'
+          zIndex: 9999
         }}
-        onClick={() => setImageZoomOpen(false)}
       >
+        {/* Close button */}
+        <IconButton
+          onClick={() => setImageZoomOpen(false)}
+          sx={{
+            position: 'absolute',
+            top: 20,
+            right: 20,
+            color: 'white',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            '&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' }
+          }}
+        >
+          ×
+        </IconButton>
+
+        {/* Left arrow */}
+        {product.images && product.images.length > 1 && (
+          <IconButton
+            onClick={(e) => {
+              e.stopPropagation();
+              const currentIndex = product.images!.indexOf(zoomImageSrc);
+              const prevIndex = currentIndex > 0 ? currentIndex - 1 : product.images!.length - 1;
+              setZoomImageSrc(product.images![prevIndex]);
+              setSelectedImage(prevIndex);
+            }}
+            sx={{
+              position: 'absolute',
+              left: 20,
+              color: 'white',
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              '&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' },
+              fontSize: '2rem'
+            }}
+          >
+            ‹
+          </IconButton>
+        )}
+
+        {/* Right arrow */}
+        {product.images && product.images.length > 1 && (
+          <IconButton
+            onClick={(e) => {
+              e.stopPropagation();
+              const currentIndex = product.images!.indexOf(zoomImageSrc);
+              const nextIndex = currentIndex < product.images!.length - 1 ? currentIndex + 1 : 0;
+              setZoomImageSrc(product.images![nextIndex]);
+              setSelectedImage(nextIndex);
+            }}
+            sx={{
+              position: 'absolute',
+              right: 20,
+              color: 'white',
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              '&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' },
+              fontSize: '2rem'
+            }}
+          >
+            ›
+          </IconButton>
+        )}
+
+        {/* Main image */}
         <img
           src={zoomImageSrc}
           alt={product.nameEn}
           style={{
-            maxWidth: '95%',
-            maxHeight: '95%',
+            maxWidth: '90%',
+            maxHeight: '90%',
             objectFit: 'contain'
           }}
+          onClick={(e) => e.stopPropagation()}
         />
+
+        {/* Image counter */}
+        {product.images && product.images.length > 1 && (
+          <Box
+            sx={{
+              position: 'absolute',
+              bottom: 20,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              color: 'white',
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              padding: '8px 16px',
+              borderRadius: '20px',
+              fontSize: '0.9rem'
+            }}
+          >
+            {product.images.indexOf(zoomImageSrc) + 1} / {product.images.length}
+          </Box>
+        )}
       </Box>
     </Box>
   );
