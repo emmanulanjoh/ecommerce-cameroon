@@ -67,6 +67,9 @@ if (process.env.NODE_ENV === 'production') {
         res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
       } else if (filePath.endsWith('.css')) {
         res.setHeader('Content-Type', 'text/css; charset=utf-8');
+      } else if (filePath.endsWith('favicon.ico')) {
+        res.setHeader('Content-Type', 'image/x-icon');
+        res.setHeader('Cache-Control', 'public, max-age=86400');
       }
     }
   }));
@@ -279,6 +282,22 @@ let routeModules: any = {};
 loadRoutes().then(modules => routeModules = modules).catch(error => {
   console.error('❌ Error importing route modules:', error);
   process.exit(1);
+});
+
+// Favicon route with proper headers
+app.get('/favicon.ico', (req: Request, res: Response) => {
+  const faviconPath = process.env.NODE_ENV === 'production' 
+    ? path.join(__dirname, '../client/build/favicon.ico')
+    : path.join(__dirname, '../client/public/favicon.ico');
+  
+  res.setHeader('Content-Type', 'image/x-icon');
+  res.setHeader('Cache-Control', 'public, max-age=86400'); // 1 day
+  res.sendFile(faviconPath, (err) => {
+    if (err) {
+      console.error('Favicon not found:', err);
+      res.status(404).end();
+    }
+  });
 });
 
 // Health check endpoint
