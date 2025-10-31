@@ -3,6 +3,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CssBaseline, Typography, Box } from '@mui/material';
 import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
+import { useFooter } from '../../App';
 
 
 import ProductGrid from '../../components/products/ProductGrid';
@@ -59,6 +60,7 @@ const PublicProductList: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [priceRange, setPriceRange] = useState<[number, number]>([50, 50000000]);
   const [inStockOnly, setInStockOnly] = useState<boolean>(false);
+  const { setShowFooter } = useFooter();
 
   // Fisher-Yates shuffle for randomizing arrays
   const shuffleArray = (array: Product[]) => {
@@ -87,6 +89,13 @@ const PublicProductList: React.FC = () => {
     }
     fetchProducts();
   }, [searchParams]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Cleanup: Show footer when component unmounts
+  useEffect(() => {
+    return () => {
+      setShowFooter(true);
+    };
+  }, [setShowFooter]);
 
   const filterProducts = useCallback(() => {
     let filtered = products;
@@ -124,11 +133,10 @@ const PublicProductList: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
+      setShowFooter(false); // Hide footer while loading
       
       const response = await axios.get('/api/products');
       const productsData = response.data.products || response.data || [];
-      
-
       
       // Randomize products on each fetch
       const randomizedProducts = shuffleArray(productsData);
@@ -141,6 +149,7 @@ const PublicProductList: React.FC = () => {
       setError('Failed to load products. Please try again later.');
     } finally {
       setLoading(false);
+      setShowFooter(true); // Show footer after loading
     }
   };
 

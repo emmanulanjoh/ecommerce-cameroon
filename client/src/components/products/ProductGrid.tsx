@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { Refresh } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
-import AmazonStyleProductCard from './AmazonStyleProductCard';
+import SimpleProductCard from './SimpleProductCard';
 import { Product } from '../../types';
 
 interface ProductGridProps {
@@ -180,7 +180,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
             >
               {products.map((product) => (
                 <motion.div key={product._id} variants={itemVariants}>
-                  <AmazonStyleProductCard product={product} />
+                  <SimpleProductCard product={product} />
                 </motion.div>
               ))}
             </Box>

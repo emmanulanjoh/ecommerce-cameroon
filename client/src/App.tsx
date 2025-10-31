@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import { AnimatePresence } from 'framer-motion';
@@ -11,12 +11,9 @@ import { LanguageProvider } from './context/LanguageContext';
 import { UserProvider } from './features/auth';
 import { RecentlyViewedProvider } from './context/RecentlyViewedContext';
 import ProtectedRoute from './shared/components/common/ProtectedRoute';
-
-
 // Layout Components
 import ModernHeader from './components/layout/ModernHeader';
 import ModernFooter from './components/layout/ModernFooter';
-
 // Pages
 import ModernHome from './pages/ModernHome';
 import { PublicProductList } from './features/products';
@@ -32,12 +29,24 @@ import ModernRegister from './features/auth/ModernRegister';
 import AuthSuccess from './pages/AuthSuccess';
 import UserDashboard from './pages/UserDashboard';
 import AdminAccess from './pages/AdminAccess';
-
 // Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
 // Custom CSS
 import './App.css';
 import './styles/admin-responsive.css';
+
+// Footer visibility context
+interface FooterContextType {
+  showFooter: boolean;
+  setShowFooter: (show: boolean) => void;
+}
+
+const FooterContext = createContext<FooterContextType>({
+  showFooter: true,
+  setShowFooter: () => {}
+});
+
+export const useFooter = () => useContext(FooterContext);
 
 const theme = createTheme({
   palette: {
@@ -143,28 +152,33 @@ const AnimatedRoutes: React.FC = () => {
 };
 
 const App: React.FC = () => {
+  const [showFooter, setShowFooter] = useState(true);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <AuthProvider>
-        <UserProvider>
-          <CartProvider>
-            <RecentlyViewedProvider>
-              <LanguageProvider>
-                <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-                  <AppLayout />
-                </Router>
-              </LanguageProvider>
-            </RecentlyViewedProvider>
-          </CartProvider>
-        </UserProvider>
-      </AuthProvider>
+      <FooterContext.Provider value={{ showFooter, setShowFooter }}>
+        <AuthProvider>
+          <UserProvider>
+            <CartProvider>
+              <RecentlyViewedProvider>
+                <LanguageProvider>
+                  <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+                    <AppLayout />
+                  </Router>
+                </LanguageProvider>
+              </RecentlyViewedProvider>
+            </CartProvider>
+          </UserProvider>
+        </AuthProvider>
+      </FooterContext.Provider>
     </ThemeProvider>
   );
 };
 
 const AppLayout: React.FC = () => {
   const location = useLocation();
+  const { showFooter } = useFooter();
   const isAdminRoute = location.pathname.startsWith('/admin');
   
   if (isAdminRoute) {
@@ -183,7 +197,7 @@ const AppLayout: React.FC = () => {
       <main>
         <AnimatedRoutes />
       </main>
-      <ModernFooter />
+      {showFooter && <ModernFooter />}
     </>
   );
 };
