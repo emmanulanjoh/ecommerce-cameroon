@@ -12,6 +12,14 @@ const SimpleProductCard: React.FC<SimpleProductCardProps> = ({ product, isLarge 
     return product.nameEn || product.nameFr || 'Product';
   };
 
+  const formatPrice = (price: number): string => {
+    return new Intl.NumberFormat('fr-CM', {
+      style: 'currency',
+      currency: 'XAF',
+      minimumFractionDigits: 0
+    }).format(price);
+  };
+
   return (
     <Link 
       to={`/products/${product._id}`} 
@@ -20,26 +28,26 @@ const SimpleProductCard: React.FC<SimpleProductCardProps> = ({ product, isLarge 
     >
       <div style={{
         backgroundColor: 'white',
-        borderRadius: '8px',
+        borderRadius: '6px',
         overflow: 'hidden',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+        border: '1px solid #f0f0f0',
+        transition: 'all 0.2s ease',
         cursor: 'pointer'
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.transform = 'translateY(-2px)';
-        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+        e.currentTarget.style.transform = 'scale(1.02)';
+        e.currentTarget.style.borderColor = '#ddd';
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+        e.currentTarget.style.transform = 'scale(1)';
+        e.currentTarget.style.borderColor = '#f0f0f0';
       }}>
-        {/* Image */}
+        {/* Image - Dominant */}
         <div style={{ 
           width: '100%', 
-          aspectRatio: isLarge ? '16/9' : '1',
+          aspectRatio: '1',
           overflow: 'hidden',
-          backgroundColor: '#f8f9fa'
+          backgroundColor: '#fafafa'
         }}>
           <img
             src={product.thumbnailImage || (product.images && product.images[0]) || '/images/placeholder.svg'}
@@ -56,22 +64,33 @@ const SimpleProductCard: React.FC<SimpleProductCardProps> = ({ product, isLarge 
           />
         </div>
         
-        {/* Product Name */}
-        <div style={{ padding: isLarge ? '16px 12px' : '12px 8px' }}>
-          <h6 style={{
-            margin: 0,
-            fontSize: isLarge ? '1rem' : '0.875rem',
-            fontWeight: 500,
-            lineHeight: 1.3,
-            color: '#333',
+        {/* Minimal Text Info */}
+        <div style={{ padding: '6px 8px' }}>
+          {/* Product Name - Small */}
+          <div style={{
+            fontSize: '0.75rem',
+            fontWeight: 400,
+            lineHeight: 1.2,
+            color: '#666',
+            marginBottom: '2px',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             display: '-webkit-box',
-            WebkitLineClamp: isLarge ? 3 : 2,
+            WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical'
           }}>
             {getProductName()}
-          </h6>
+          </div>
+          
+          {/* Price - Prominent */}
+          <div style={{
+            fontSize: '0.8rem',
+            fontWeight: 600,
+            color: '#ff4757',
+            lineHeight: 1
+          }}>
+            {formatPrice(product.price)}
+          </div>
         </div>
       </div>
     </Link>
