@@ -101,7 +101,12 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
             ),
             sx: {
               backgroundColor: 'white',
-              borderRadius: '8px',
+              borderRadius: '6px',
+              height: { xs: 28, sm: 32 },
+              '& .MuiOutlinedInput-input': {
+                py: { xs: 0.5, sm: 0.75 },
+                fontSize: { xs: '0.8rem', sm: '0.9rem' }
+              },
               '& .MuiOutlinedInput-notchedOutline': {
                 borderColor: '#ddd',
               },

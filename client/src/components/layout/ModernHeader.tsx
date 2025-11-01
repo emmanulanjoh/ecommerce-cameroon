@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 import {
   ShoppingCart,
+  AccountCircle,
 } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -44,7 +45,7 @@ const ModernHeader: React.FC = () => {
         }}
       >
         <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2 } }}>
-          <Toolbar sx={{ py: { xs: 0.25, sm: 0.5 }, minHeight: { xs: 56, sm: 48 }, px: 0 }}>
+          <Toolbar sx={{ py: 0, minHeight: { xs: 32, sm: 28 }, px: 0 }}>
             {/* Logo */}
             <Typography
               variant="h6"
@@ -145,7 +146,7 @@ const ModernHeader: React.FC = () => {
                   sx={{
                     color: 'white',
                     fontWeight: 500,
-                    px: { xs: 1, sm: 1.5 },
+                    px: { xs: 0.5, sm: 1 },
                     py: 0.5,
                     '&:hover': {
                       backgroundColor: '#FF9900',
@@ -156,8 +157,8 @@ const ModernHeader: React.FC = () => {
                     minWidth: 'auto',
                   }}
                 >
+                  <AccountCircle sx={{ fontSize: { xs: 18, sm: 20 }, mr: { xs: 0, sm: 0.5 } }} />
                   <Box sx={{ display: { xs: 'none', sm: 'inline' } }}>Sign In</Box>
-                  <Box sx={{ display: { xs: 'inline', sm: 'none' } }}>Sign</Box>
                 </Button>
               )}
               
@@ -166,48 +167,36 @@ const ModernHeader: React.FC = () => {
                 onClick={() => setShowCartModal(true)}
                 sx={{
                   color: 'white',
-                  fontWeight: 600,
-                  px: { xs: 1, sm: 2 },
-                  py: { xs: 0.75, sm: 1 },
+                  fontWeight: 500,
+                  px: { xs: 0.5, sm: 1 },
+                  py: 0.5,
                   textTransform: 'none',
-                  background: 'linear-gradient(135deg, #FF9900 0%, #FF6B35 100%)',
                   '&:hover': {
-                    background: 'linear-gradient(135deg, #FF6B35 0%, #FF4500 100%)',
-                    transform: 'scale(1.05)',
-                    boxShadow: '0 4px 12px rgba(255, 153, 0, 0.3)'
+                    backgroundColor: '#FF9900',
+                    color: '#0F1111',
                   },
-                  borderRadius: { xs: 1.5, sm: 2 },
-                  fontSize: { xs: '0.75rem', sm: '0.9rem' },
+                  borderRadius: 1,
+                  fontSize: { xs: '0.7rem', sm: '0.75rem' },
                   minWidth: 'auto',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  lineHeight: 1.2,
-                  transition: 'all 0.2s ease',
-                  border: '2px solid rgba(255, 255, 255, 0.2)',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
                 }}
               >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.5, sm: 1 } }}>
-                  <Badge 
-                    badgeContent={getTotalItems()} 
-                    color="error" 
-                    sx={{ 
-                      '& .MuiBadge-badge': { 
-                        fontSize: { xs: '0.65rem', sm: '0.75rem' }, 
-                        minWidth: { xs: 16, sm: 20 }, 
-                        height: { xs: 16, sm: 20 },
-                        backgroundColor: '#DC2626',
-                        color: 'white',
-                        fontWeight: 700,
-                        border: '2px solid white'
-                      } 
-                    }}
-                  >
-                    <ShoppingCart sx={{ fontSize: { xs: 20, sm: 24 } }} />
-                  </Badge>
-                  <Box sx={{ display: { xs: 'none', md: 'block' }, fontWeight: 700 }}>Cart</Box>
-                </Box>
+                <Badge 
+                  badgeContent={getTotalItems()} 
+                  color="error" 
+                  sx={{ 
+                    '& .MuiBadge-badge': { 
+                      fontSize: { xs: '0.6rem', sm: '0.65rem' }, 
+                      minWidth: { xs: 14, sm: 16 }, 
+                      height: { xs: 14, sm: 16 },
+                      backgroundColor: '#DC2626',
+                      color: 'white',
+                      fontWeight: 700
+                    } 
+                  }}
+                >
+                  <ShoppingCart sx={{ fontSize: { xs: 16, sm: 18 }, mr: { xs: 0, sm: 0.5 } }} />
+                </Badge>
+                <Box sx={{ display: { xs: 'none', md: 'inline' } }}>Cart</Box>
               </Button>
             </Box>
           </Toolbar>
