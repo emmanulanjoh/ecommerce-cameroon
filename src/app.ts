@@ -38,7 +38,7 @@ import * as adminSecureRoutes from './routes/api/admin-secure';
 import * as apiUsersRoutes from './routes/api/users';
 import * as googleAuthRoutes from './routes/api/google-auth';
 import videosRouter from './routes/api/videos';
-import searchRouter from './routes/api/search';
+import { router as searchRouter } from './routes/api/search';
 import recommendationsRouter from './routes/api/recommendations';
 import * as searchSuggestionsRoutes from './routes/api/search';
 
