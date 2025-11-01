@@ -8,24 +8,15 @@ import {
   IconButton,
   Chip,
   Rating,
-  Card,
-  CardContent,
-
-
-  useMediaQuery,
-  useTheme,
   Skeleton,
   Alert,
 } from '@mui/material';
 import {
   ArrowBack,
   ShoppingCart,
-  WhatsApp,
   Favorite,
   FavoriteBorder,
   Share,
-  ExpandMore,
-  ExpandLess,
 } from '@mui/icons-material';
 
 import { useCart } from '../../context/CartContext';
@@ -34,13 +25,10 @@ import { useActivityTracker } from '../../hooks/useActivityTracker';
 import axios from 'axios';
 import { Product, Review } from '../../types';
 import ReviewSection from '../../components/reviews/ReviewSection';
-import ProductRecommendations from '../../components/recommendations/ProductRecommendations';
 
 const ModernProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { addToCart } = useCart();
   const { trackActivity } = useActivityTracker();
 
@@ -99,11 +87,7 @@ const ModernProductDetail: React.FC = () => {
     }).format(price);
   };
 
-  const handleWhatsAppOrder = () => {
-    const whatsappNumber = process.env.REACT_APP_BUSINESS_WHATSAPP_NUMBER || '237678830036';
-    const message = `Hi! I'm interested in ${product?.nameEn} - ${formatPrice(product?.price || 0)}`;
-    window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
-  };
+
 
   const handleShare = () => {
     if (navigator.share) {
@@ -116,7 +100,7 @@ const ModernProductDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="lg" sx={{ py: 2 }}>
+      <Container maxWidth="md" sx={{ py: 2 }}>
         <Skeleton variant="rectangular" height={400} sx={{ mb: 2 }} />
         <Skeleton variant="text" height={40} sx={{ mb: 1 }} />
         <Skeleton variant="text" height={30} sx={{ mb: 2 }} />
@@ -127,7 +111,7 @@ const ModernProductDetail: React.FC = () => {
 
   if (error || !product) {
     return (
-      <Container maxWidth="lg" sx={{ py: 2 }}>
+      <Container maxWidth="md" sx={{ py: 2 }}>
         <Alert severity="error">{error || 'Product not found'}</Alert>
       </Container>
     );
@@ -178,7 +162,17 @@ const ModernProductDetail: React.FC = () => {
         </Box>
       </Box>
 
-      <Box sx={{ px: 0, pb: { xs: 8, md: 2 } }}>
+      <Box sx={{ 
+        display: { xs: 'block', md: 'grid' },
+        gridTemplateColumns: { md: '1fr 350px' },
+        gap: { md: 2 },
+        maxWidth: { md: '1000px' },
+        mx: { md: 'auto' },
+        px: { xs: 0, md: 2 },
+        pb: { xs: 8, md: 2 }
+      }}>
+        {/* Main Content */}
+        <Box>
         {/* Temu-style Image Gallery */}
         <Box sx={{ bgcolor: 'white', mb: 1 }}>
           <Box sx={{ position: 'relative', aspectRatio: '1' }}>
@@ -287,15 +281,39 @@ const ModernProductDetail: React.FC = () => {
 
 
 
-            {/* Price */}
-            <Typography sx={{ 
-              fontSize: '1.8rem',
-              fontWeight: 700,
-              color: '#ff4757',
-              mb: 1
-            }}>
-              {formatPrice(product.price)}
-            </Typography>
+            {/* Price with Add to Cart */}
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+              <Typography sx={{ 
+                fontSize: '1.8rem',
+                fontWeight: 700,
+                color: '#333'
+              }}>
+                {formatPrice(product.price)}
+              </Typography>
+              <IconButton
+                onClick={() => {
+                  if (product) {
+                    addToCart(product);
+                    try {
+                      trackActivity(product._id, 'cart');
+                    } catch (error) {
+                      console.warn('Activity tracking failed:', error);
+                    }
+                  }
+                }}
+                disabled={!product?.inStock}
+                sx={{
+                  bgcolor: 'transparent',
+                  color: '#333',
+                  width: 32,
+                  height: 32,
+                  '&:hover': { bgcolor: 'rgba(0,0,0,0.04)' },
+                  '&:disabled': { color: '#ccc' }
+                }}
+              >
+                <ShoppingCart sx={{ fontSize: 18 }} />
+              </IconButton>
+            </Box>
 
             {/* Category */}
             <Typography sx={{ fontSize: '0.8rem', color: '#666', mb: 1 }}>
@@ -304,8 +322,8 @@ const ModernProductDetail: React.FC = () => {
 
         </Box>
         
-        {/* Description */}
-        <Box sx={{ bgcolor: 'white', p: 2, mb: 1 }}>
+        {/* Description - Mobile Only */}
+        <Box sx={{ bgcolor: 'white', p: 2, mb: 1, display: { xs: 'block', md: 'none' } }}>
           <Typography sx={{ fontSize: '0.9rem', fontWeight: 500, mb: 1 }}>Description</Typography>
           <Typography sx={{ 
             fontSize: '0.85rem',
@@ -330,7 +348,30 @@ const ModernProductDetail: React.FC = () => {
           )}
         </Box>
 
-        {/* Related Products - Same Category */}
+        </Box>
+        
+        {/* Sidebar - Description & Reviews */}
+        <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+          {/* Description */}
+          <Box sx={{ bgcolor: 'white', p: 2, mb: 2, position: 'sticky', top: '80px' }}>
+            <Typography sx={{ fontSize: '1rem', fontWeight: 600, mb: 2 }}>Description</Typography>
+            <Typography sx={{ 
+              fontSize: '0.9rem',
+              color: '#666',
+              lineHeight: 1.5
+            }}>
+              {product.descriptionEn || 'No description available.'}
+            </Typography>
+          </Box>
+          
+          {/* Reviews */}
+          <Box sx={{ bgcolor: 'white', p: 2 }}>
+            <ReviewSection productId={product._id} />
+          </Box>
+        </Box>
+        
+        {/* Related Products - Below main content */}
+        <Box sx={{ gridColumn: { md: '1 / -1' }, mt: 2 }}>
         {relatedProducts.length > 0 && (
           <Box sx={{ bgcolor: 'white', p: 2 }}>
             <Typography sx={{ fontSize: '1rem', fontWeight: 600, mb: 2, color: '#333' }}>
@@ -338,7 +379,7 @@ const ModernProductDetail: React.FC = () => {
             </Typography>
             <Box sx={{ 
               display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
+              gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(6, 1fr)' },
               gap: 1
             }}>
               {relatedProducts.map((relatedProduct) => (
@@ -360,7 +401,7 @@ const ModernProductDetail: React.FC = () => {
                     />
                     <Box sx={{ p: 1 }}>
                       <Typography sx={{ 
-                        fontSize: '0.8rem',
+                        fontSize: '0.7rem',
                         fontWeight: 500,
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
@@ -369,9 +410,28 @@ const ModernProductDetail: React.FC = () => {
                       }}>
                         {relatedProduct.nameEn}
                       </Typography>
-                      <Typography sx={{ fontSize: '0.9rem', color: '#ff4757', fontWeight: 600 }}>
-                        {formatPrice(relatedProduct.price)}
-                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Typography sx={{ fontSize: '0.75rem', color: '#333', fontWeight: 600 }}>
+                          {formatPrice(relatedProduct.price)}
+                        </Typography>
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            addToCart(relatedProduct);
+                          }}
+                          disabled={!relatedProduct.inStock}
+                          sx={{
+                            bgcolor: 'transparent',
+                            color: '#333',
+                            width: 20,
+                            height: 20,
+                            '&:hover': { bgcolor: 'rgba(0,0,0,0.04)' },
+                            '&:disabled': { color: '#ccc' }
+                          }}
+                        >
+                          <ShoppingCart sx={{ fontSize: 12 }} />
+                        </IconButton>
+                      </Box>
                     </Box>
                   </Box>
                 </Box>
@@ -379,67 +439,10 @@ const ModernProductDetail: React.FC = () => {
             </Box>
           </Box>
         )}
-      </Box>
-
-      {/* Temu-Style Fixed Bottom Actions */}
-      <Box sx={{
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        bgcolor: 'white',
-        borderTop: '1px solid #e0e0e0',
-        p: 1,
-        zIndex: 1000,
-        boxShadow: '0 -2px 10px rgba(0,0,0,0.1)'
-      }}>
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button
-            variant="outlined"
-            startIcon={<WhatsApp sx={{ fontSize: 18 }} />}
-            onClick={handleWhatsAppOrder}
-            sx={{
-              flex: 1,
-              py: 1.2,
-              borderColor: '#25d366',
-              color: '#25d366',
-              fontWeight: 600,
-              fontSize: '0.9rem',
-              '&:hover': { bgcolor: '#f0f8f0', borderColor: '#25d366' }
-            }}
-          >
-            WhatsApp
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<ShoppingCart sx={{ fontSize: 18 }} />}
-            onClick={() => {
-              if (product) {
-                addToCart(product);
-                try {
-                  trackActivity(product._id, 'cart');
-                } catch (error) {
-                  console.warn('Activity tracking failed:', error);
-                }
-              }
-            }}
-            disabled={!product?.inStock}
-            sx={{
-              flex: 2,
-              py: 1.2,
-              bgcolor: 'white',
-              color: 'black',
-              borderColor: '#ddd',
-              fontWeight: 600,
-              fontSize: '0.9rem',
-              '&:hover': { bgcolor: '#f5f5f5', borderColor: '#bbb' },
-              '&:disabled': { bgcolor: '#f5f5f5', color: '#999' }
-            }}
-          >
-            Add to Cart
-          </Button>
         </Box>
       </Box>
+
+
 
       {/* Image Zoom Modal */}
       <Box

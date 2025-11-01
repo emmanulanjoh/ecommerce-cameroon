@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { Product } from '../../types';
 import QuickViewModal from './QuickViewModal';
 import ImageCarousel from './ImageCarousel';
+import { useCart } from '../../context/CartContext';
+import { ShoppingCart } from '@mui/icons-material';
 
 interface SimpleProductCardProps {
   product: Product;
@@ -12,6 +14,7 @@ interface SimpleProductCardProps {
 
 const SimpleProductCard: React.FC<SimpleProductCardProps> = ({ product, isLarge = false, heightType = 'normal' }) => {
   const [showQuickView, setShowQuickView] = useState(false);
+  const { addToCart } = useCart();
   
   const getProductName = (): string => {
     return product.nameEn || product.nameFr || 'Product';
@@ -112,14 +115,43 @@ const SimpleProductCard: React.FC<SimpleProductCardProps> = ({ product, isLarge 
             {getProductName()}
           </div>
           
-          {/* Price - Prominent */}
+          {/* Price and Add to Cart */}
           <div style={{
-            fontSize: '0.8rem',
-            fontWeight: 600,
-            color: '#ff4757',
-            lineHeight: 1
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
           }}>
-            {formatPrice(product.price)}
+            <div style={{
+              fontSize: '0.8rem',
+              fontWeight: 600,
+              color: '#333',
+              lineHeight: 1
+            }}>
+              {formatPrice(product.price)}
+            </div>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                addToCart(product);
+              }}
+              disabled={!product.inStock}
+              style={{
+                background: 'transparent',
+                color: '#333',
+                border: 'none',
+                borderRadius: '50%',
+                width: '24px',
+                height: '24px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                opacity: product.inStock ? 1 : 0.5
+              }}
+            >
+              <ShoppingCart style={{ fontSize: '12px' }} />
+            </button>
           </div>
         </div>
       </div>

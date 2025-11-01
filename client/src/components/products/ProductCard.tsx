@@ -123,29 +123,33 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, language = 'en' }) =
           </Link>
         </Card.Title>
         
-        <div className="mb-3">
-          <span className="h5 mb-0 text-primary d-block">{formatPrice(product.price)}</span>
-          {product.warrantyMonths && (
-            <small className="text-muted d-block">
-              🛡️ {(() => { 
-                const months = Math.max(0, parseInt(String(product.warrantyMonths || 0).replace(/[^0-9]/g, ''), 10)) || 0;
-                if (product.warrantyMonths && months === 0) console.warn('[ProductCard] Invalid warranty months:', product.warrantyMonths);
-                return months;
-              })()} month{(() => { const months = Math.max(0, parseInt(String(product.warrantyMonths || 0).replace(/[^0-9]/g, ''), 10)) || 0; return months > 1 ? 's' : ''; })()} warranty
-            </small>
-          )}
-        </div>
-        
-        <div className="d-flex gap-2 align-items-center mb-3">
-          <Link to={`/products/${product._id}`} className="btn btn-outline-primary btn-sm">
-            <FontAwesomeIcon icon={faEye} className="me-1" /> View
-          </Link>
-          
+        <div className="mb-3 d-flex align-items-center justify-content-between">
+          <div>
+            <span className="h5 mb-0" style={{ color: '#333' }}>{formatPrice(product.price)}</span>
+            {product.warrantyMonths && (
+              <small className="text-muted d-block">
+                🛡️ {(() => { 
+                  const months = Math.max(0, parseInt(String(product.warrantyMonths || 0).replace(/[^0-9]/g, ''), 10)) || 0;
+                  if (product.warrantyMonths && months === 0) console.warn('[ProductCard] Invalid warranty months:', product.warrantyMonths);
+                  return months;
+                })()} month{(() => { const months = Math.max(0, parseInt(String(product.warrantyMonths || 0).replace(/[^0-9]/g, ''), 10)) || 0; return months > 1 ? 's' : ''; })()} warranty
+              </small>
+            )}
+          </div>
           <button 
-            className="btn btn-primary btn-sm flex-grow-1"
+            className="btn p-0 border-0"
+            style={{
+              background: 'transparent',
+              color: '#333',
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
             onClick={() => {
               try {
-                // Sanitize product name to prevent log injection
                 const sanitizedName = product.nameEn?.replace(/[\r\n\t]/g, ' ').substring(0, 100) || 'Unknown Product';
                 console.log('[ProductCard] Adding to cart:', sanitizedName, 'ID:', product._id);
                 addToCart(product);
@@ -154,9 +158,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, language = 'en' }) =
                 console.error('[ProductCard] Failed to add to cart:', error);
               }
             }}
+            disabled={!product.inStock}
           >
-            <FontAwesomeIcon icon={faShoppingCart} className="me-1" /> Add to Cart
+            <FontAwesomeIcon icon={faShoppingCart} style={{ fontSize: '16px' }} />
           </button>
+        </div>
+        
+        <div className="d-flex gap-2 align-items-center mb-3">
+          <Link to={`/products/${product._id}`} className="btn btn-outline-primary btn-sm">
+            <FontAwesomeIcon icon={faEye} className="me-1" /> View
+          </Link>
           
           <a 
             href={`https://wa.me/${whatsappNumber}?text=I'm interested in ${encodeURIComponent(getProductName())}`} 

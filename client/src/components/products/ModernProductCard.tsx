@@ -241,33 +241,32 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({
             {getProductName()}
           </Typography>
           
-          <Typography
-            variant="h6"
-            color="primary.main"
-            fontWeight="700"
-            sx={{ 
-              mb: { xs: 1, sm: 1 },
-              fontSize: { xs: '0.9rem', sm: '1.25rem' }
-            }}
-          >
-            {formatPrice(product.price)}
-          </Typography>
-          
-          <Button
-            variant="contained"
-            fullWidth
-            onClick={() => addToCart(product)}
-            sx={{ 
-              borderRadius: 1,
-              py: { xs: 0.5, sm: 1.5 }, 
-              px: { xs: 1, sm: 2 },
-              fontSize: { xs: '0.65rem', sm: '0.8rem' },
-              minHeight: { xs: 32, sm: 40 }
-            }}
-          >
-            <ShoppingCart sx={{ mr: { xs: 0.5, sm: 1 }, fontSize: { xs: 12, sm: 16 } }} /> 
-            Add to Cart
-          </Button>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: { xs: 1, sm: 1 } }}>
+            <Typography
+              variant="h6"
+              color="#333"
+              fontWeight="700"
+              sx={{ 
+                fontSize: { xs: '0.9rem', sm: '1.25rem' }
+              }}
+            >
+              {formatPrice(product.price)}
+            </Typography>
+            <IconButton
+              onClick={() => addToCart(product)}
+              disabled={!product.inStock}
+              sx={{
+                bgcolor: 'transparent',
+                color: '#333',
+                width: { xs: 24, sm: 32 },
+                height: { xs: 24, sm: 32 },
+                '&:hover': { bgcolor: 'rgba(0,0,0,0.04)' },
+                '&:disabled': { color: '#ccc' }
+              }}
+            >
+              <ShoppingCart sx={{ fontSize: { xs: 14, sm: 18 } }} />
+            </IconButton>
+          </Box>
         </CardContent>
       </Card>
       
