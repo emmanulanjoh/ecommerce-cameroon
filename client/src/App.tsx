@@ -180,6 +180,7 @@ const AppLayout: React.FC = () => {
   const location = useLocation();
   const { showFooter } = useFooter();
   const isAdminRoute = location.pathname.startsWith('/admin');
+  const isProductDetailPage = location.pathname.startsWith('/products/') && location.pathname.split('/').length === 3;
   
   if (isAdminRoute) {
     // Admin routes without header/footer
@@ -197,7 +198,7 @@ const AppLayout: React.FC = () => {
       <main>
         <AnimatedRoutes />
       </main>
-      {showFooter && <ModernFooter />}
+      {showFooter && !isProductDetailPage && <ModernFooter />}
     </>
   );
 };

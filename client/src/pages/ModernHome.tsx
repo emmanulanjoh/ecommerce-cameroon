@@ -7,10 +7,12 @@ import { Product } from '../types';
 import SimpleProductCard from '../components/products/SimpleProductCard';
 import VideoSection from '../components/VideoSection';
 import SmartSearch from '../components/search/SmartSearch';
+import CategoryBar from '../components/categories/CategoryBar';
 
 const ModernHome: React.FC = () => {
   const [productsByCategory, setProductsByCategory] = useState<{[key: string]: Product[]}>({});
   const [loading, setLoading] = useState<boolean>(true);
+  const [categories, setCategories] = useState<string[]>([]);
   const navigate = useNavigate();
 
   // Color palette for category boxes - soft and subtle
@@ -81,6 +83,7 @@ const ModernHome: React.FC = () => {
         });
         
         setProductsByCategory(grouped);
+        setCategories(Object.keys(grouped));
       } catch (err) {
         console.error('Error fetching data:', err);
       } finally {
@@ -97,6 +100,8 @@ const ModernHome: React.FC = () => {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
+      {/* Category Bar */}
+      <CategoryBar categories={categories} />
 
 
       {/* Video Section */}

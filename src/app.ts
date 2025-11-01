@@ -40,6 +40,7 @@ import * as googleAuthRoutes from './routes/api/google-auth';
 import videosRouter from './routes/api/videos';
 import searchRouter from './routes/api/search';
 import recommendationsRouter from './routes/api/recommendations';
+import * as searchSuggestionsRoutes from './routes/api/search';
 
 // Import middleware
 import { setLanguage } from './middleware/language';
@@ -371,6 +372,7 @@ app.use('/api/upload', apiUploadRoutes.router);
 app.use('/api/users', apiUsersRoutes.router);
 app.use('/api/videos', videosRouter);
 app.use('/api/search', searchRouter);
+app.use('/api/search', searchSuggestionsRoutes.router);
 app.use('/api/recommendations', recommendationsRouter);
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 

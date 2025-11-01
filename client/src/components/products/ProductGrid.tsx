@@ -10,6 +10,7 @@ import {
 import { Refresh } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 import SimpleProductCard from './SimpleProductCard';
+import ProductSkeleton from '../ui/ProductSkeleton';
 import { Product } from '../../types';
 
 interface ProductGridProps {
@@ -27,6 +28,18 @@ const ProductGrid: React.FC<ProductGridProps> = ({
   selectedCategory,
   onRefresh,
 }) => {
+  // Generate varied card heights like Temu
+  const getCardHeight = (index: number): 'normal' | 'tall' | 'short' => {
+    const patterns: ('normal' | 'tall' | 'short')[] = [
+      'normal',  // Standard height
+      'normal',  // Standard height
+      'tall',    // Taller card
+      'normal',  // Standard height
+      'normal',  // Standard height
+      'short',   // Shorter card
+    ];
+    return patterns[index % patterns.length];
+  };
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -50,19 +63,30 @@ const ProductGrid: React.FC<ProductGridProps> = ({
 
   if (loading) {
     return (
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          py: 8,
-        }}
-      >
-        <CircularProgress size={60} thickness={4} />
-        <Typography variant="h6" sx={{ mt: 2, color: 'text.secondary' }}>
-          Loading products...
-        </Typography>
+      <Box>
+        <Box
+          sx={{
+            columns: {
+              xs: 2,
+              sm: 3,
+              md: 4,
+              lg: 5
+            },
+            columnGap: { xs: '8px', sm: '12px', md: '16px' },
+            columnFill: 'balance'
+          }}
+        >
+          {Array.from({ length: 12 }).map((_, index) => (
+            <div key={index} style={{
+              breakInside: 'avoid',
+              marginBottom: '8px',
+              display: 'inline-block',
+              width: '100%'
+            }}>
+              <ProductSkeleton />
+            </div>
+          ))}
+        </Box>
       </Box>
     );
   }
@@ -169,20 +193,43 @@ const ProductGrid: React.FC<ProductGridProps> = ({
           >
             <Box
               sx={{
-                display: 'grid',
-                gridTemplateColumns: {
-                  xs: 'repeat(2, 1fr)', // Exactly 2 columns on mobile
-                  sm: 'repeat(auto-fill, minmax(250px, 1fr))', // Auto-fill on larger screens
-                  md: 'repeat(auto-fill, minmax(280px, 1fr))'
+                columns: {
+                  xs: 2, // 2 columns on mobile
+                  sm: 3, // 3 columns on tablet
+                  md: 4, // 4 columns on desktop
+                  lg: 5  // 5 columns on large screens
                 },
-                gap: { xs: 1.5, sm: 2, md: 3 }, // Smaller gaps on mobile
+                columnGap: { xs: '8px', sm: '12px', md: '16px' },
+                columnFill: 'balance'
               }}
             >
-              {products.map((product) => (
-                <motion.div key={product._id} variants={itemVariants}>
-                  <SimpleProductCard product={product} />
-                </motion.div>
-              ))}
+              {products.map((product, index) => {
+                const heightType = getCardHeight(index);
+                return (
+                  <motion.div 
+                    key={product._id} 
+                    variants={itemVariants}
+                    style={{
+                      breakInside: 'avoid',
+                      marginBottom: '8px',
+                      display: 'inline-block',
+                      width: '100%'
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        height: {
+                          normal: 'auto',
+                          tall: { xs: 'auto', sm: '320px', md: '350px' },
+                          short: { xs: 'auto', sm: '200px', md: '220px' }
+                        }[heightType] || 'auto'
+                      }}
+                    >
+                      <SimpleProductCard product={product} heightType={heightType} />
+                    </Box>
+                  </motion.div>
+                );
+              })}
             </Box>
           </motion.div>
         </AnimatePresence>

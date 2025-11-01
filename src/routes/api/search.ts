@@ -1,140 +1,49 @@
 import express from 'express';
-import ProductModel from '../../models/Product';
-import { SearchIndex } from '../../models/SearchIndex';
-import { UserActivity } from '../../models/UserActivity';
+import Product from '../../models/Product';
 
 const router = express.Router();
 
-// Advanced search with filters
-router.get('/products', async (req, res) => {
-  try {
-    const {
-      q = '',
-      category = '',
-      minPrice = 0,
-      maxPrice = 999999999,
-      inStock = '',
-      sortBy = 'relevance',
-      page = 1,
-      limit = 20
-    } = req.query;
-
-    const pageNum = parseInt(page as string);
-    const limitNum = parseInt(limit as string);
-    const skip = (pageNum - 1) * limitNum;
-
-    let query: any = {};
-    let sort: any = {};
-
-    // Text search
-    if (q) {
-      query.$text = { $search: q as string };
-      sort.score = { $meta: 'textScore' };
-    }
-
-    // Category filter
-    if (category) {
-      query.category = category;
-    }
-
-    // Price range
-    query.price = {
-      $gte: parseInt(minPrice as string),
-      $lte: parseInt(maxPrice as string)
-    };
-
-    // Stock filter
-    if (inStock === 'true') {
-      query.inStock = true;
-    }
-
-    // Sorting
-    switch (sortBy) {
-      case 'price_low':
-        sort.price = 1;
-        break;
-      case 'price_high':
-        sort.price = -1;
-        break;
-      case 'newest':
-        sort.createdAt = -1;
-        break;
-      case 'popularity':
-        sort.popularity = -1;
-        break;
-      default:
-        if (!q) sort.createdAt = -1;
-    }
-
-    const products = await ProductModel.find(query)
-      .sort(sort)
-      .skip(skip)
-      .limit(limitNum)
-      .lean();
-
-    const total = await ProductModel.countDocuments(query);
-
-    res.json({
-      products,
-      pagination: {
-        page: pageNum,
-        limit: limitNum,
-        total,
-        pages: Math.ceil(total / limitNum)
-      }
-    });
-  } catch (error) {
-    console.error('Search error:', error);
-    res.status(500).json({ message: 'Search failed' });
-  }
-});
-
-// Get search suggestions
+// Search suggestions endpoint
 router.get('/suggestions', async (req, res) => {
   try {
-    const { q } = req.query;
+    const query = req.query.q as string;
     
-    if (!q || (q as string).length < 2) {
+    if (!query || query.length < 2) {
       return res.json({ suggestions: [] });
     }
 
-    const suggestions = await SearchIndex.find({
-      searchText: { $regex: q as string, $options: 'i' }
-    })
-    .sort({ popularity: -1 })
-    .limit(10)
-    .select('searchText category')
-    .lean();
+    // Get product names that match the query
+    const products = await Product.find({
+      $or: [
+        { nameEn: { $regex: query, $options: 'i' } },
+        { nameFr: { $regex: query, $options: 'i' } },
+        { category: { $regex: query, $options: 'i' } }
+      ]
+    }).select('nameEn nameFr category').limit(10);
 
-    const uniqueSuggestions = Array.from(
-      new Set(suggestions.map(s => s.searchText))
-    ).slice(0, 5);
-
-    res.json({ suggestions: uniqueSuggestions });
-  } catch (error) {
-    console.error('Suggestions error:', error);
-    res.status(500).json({ message: 'Failed to get suggestions' });
-  }
-});
-
-// Track user activity
-router.post('/track', async (req, res) => {
-  try {
-    const { productId, action, sessionId } = req.body;
+    // Extract unique suggestions
+    const suggestions = new Set<string>();
     
-    const activity = new UserActivity({
-      userId: (req as any).user?.id,
-      sessionId,
-      productId,
-      action
+    products.forEach(product => {
+      if (product.nameEn && product.nameEn.toLowerCase().includes(query.toLowerCase())) {
+        suggestions.add(product.nameEn);
+      }
+      if (product.nameFr && product.nameFr.toLowerCase().includes(query.toLowerCase())) {
+        suggestions.add(product.nameFr);
+      }
+      if (product.category && product.category.toLowerCase().includes(query.toLowerCase())) {
+        suggestions.add(product.category);
+      }
     });
 
-    await activity.save();
-    res.json({ success: true });
+    // Convert to array and limit to 6 suggestions
+    const suggestionArray = Array.from(suggestions).slice(0, 6);
+    
+    res.json({ suggestions: suggestionArray });
   } catch (error) {
-    console.error('Activity tracking error:', error);
-    res.status(500).json({ message: 'Failed to track activity' });
+    console.error('Search suggestions error:', error);
+    res.status(500).json({ error: 'Failed to fetch suggestions' });
   }
 });
 
-export default router;
+export { router };
