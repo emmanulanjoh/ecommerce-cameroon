@@ -45,7 +45,7 @@ const ModernHeader: React.FC = () => {
         }}
       >
         <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2 } }}>
-          <Toolbar sx={{ py: 0, minHeight: { xs: 32, sm: 28 }, px: 0 }}>
+          <Toolbar sx={{ py: 1, minHeight: { xs: 48, sm: 56 }, px: 0 }}>
             {/* Logo */}
             <Typography
               variant="h6"
@@ -56,7 +56,7 @@ const ModernHeader: React.FC = () => {
                 color: 'white',
                 textDecoration: 'none',
                 mr: { xs: 0.5, sm: 2 },
-                fontSize: { xs: '0.85rem', sm: '0.9rem', md: '1rem' },
+                fontSize: { xs: '1rem', sm: '1.1rem', md: '1.25rem' },
                 minWidth: 'fit-content',
                 flexShrink: 0
               }}
@@ -69,7 +69,11 @@ const ModernHeader: React.FC = () => {
               flex: 1, 
               mx: { xs: 0.5, sm: 1, md: 2 }, 
               maxWidth: { xs: 'none', md: 600 },
-              minWidth: 0
+              minWidth: 0,
+              '& .MuiInputBase-root': {
+                height: { xs: '36px', sm: '40px' },
+                fontSize: { xs: '0.9rem', sm: '1rem' }
+              }
             }}>
               <SmartSearch 
                 onSearch={(query) => {

@@ -99,13 +99,13 @@ const ModernHome: React.FC = () => {
 
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#ffffff', paddingTop: '8px' }}>
       {/* Category Bar */}
       <CategoryBar categories={categories} />
 
 
       {/* Video Section */}
-      <div style={{ padding: '20px' }}>
+      <div style={{ padding: '20px', marginTop: '8px' }}>
         <Container>
           <VideoSection />
         </Container>
@@ -115,7 +115,7 @@ const ModernHome: React.FC = () => {
       <div style={{ 
         padding: '20px', 
         maxWidth: '1200px', 
-        margin: '0 auto',
+        margin: '8px auto 0',
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
         gap: '20px'

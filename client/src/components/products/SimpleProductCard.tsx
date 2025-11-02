@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Product } from '../../types';
-import QuickViewModal from './QuickViewModal';
-import ImageCarousel from './ImageCarousel';
 import { useCart } from '../../context/CartContext';
 import { ShoppingCart } from '@mui/icons-material';
 
@@ -13,18 +11,13 @@ interface SimpleProductCardProps {
 }
 
 const SimpleProductCard: React.FC<SimpleProductCardProps> = ({ product, isLarge = false, heightType = 'normal' }) => {
-  const [showQuickView, setShowQuickView] = useState(false);
   const { addToCart } = useCart();
   
   const getProductName = (): string => {
     return product.nameEn || product.nameFr || 'Product';
   };
   
-  const handleQuickView = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setShowQuickView(true);
-  };
+
 
   const formatPrice = (price: number): string => {
     return new Intl.NumberFormat('fr-CM', {
@@ -53,14 +46,10 @@ const SimpleProductCard: React.FC<SimpleProductCardProps> = ({ product, isLarge 
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'scale(1.02)';
         e.currentTarget.style.borderColor = '#ddd';
-        const quickViewBtn = e.currentTarget.querySelector('button');
-        if (quickViewBtn) quickViewBtn.style.opacity = '1';
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'scale(1)';
         e.currentTarget.style.borderColor = '#f0f0f0';
-        const quickViewBtn = e.currentTarget.querySelector('button');
-        if (quickViewBtn) quickViewBtn.style.opacity = '0';
       }}>
         {/* Image - Dominant */}
         <div style={{ 
@@ -70,30 +59,18 @@ const SimpleProductCard: React.FC<SimpleProductCardProps> = ({ product, isLarge 
           backgroundColor: '#fafafa',
           position: 'relative'
         }}>
-          {/* Quick View Button */}
-          <button
-            onClick={handleQuickView}
+          <img
+            src={product.images?.[0] || product.thumbnailImage || '/images/placeholder.svg'}
+            alt={getProductName()}
             style={{
-              position: 'absolute',
-              top: '8px',
-              right: '8px',
-              background: 'rgba(0,0,0,0.7)',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              padding: '4px 8px',
-              fontSize: '0.7rem',
-              cursor: 'pointer',
-              opacity: 0,
-              transition: 'opacity 0.2s ease'
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover'
             }}
-            onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
-          >
-            Quick View
-          </button>
-          <ImageCarousel 
-            images={product.images || [product.thumbnailImage].filter(Boolean) || ['/images/placeholder.svg']}
-            productName={getProductName()}
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = '/images/placeholder.svg';
+            }}
           />
         </div>
         
@@ -156,11 +133,7 @@ const SimpleProductCard: React.FC<SimpleProductCardProps> = ({ product, isLarge 
         </div>
       </div>
     </Link>
-    <QuickViewModal 
-      product={product}
-      isOpen={showQuickView}
-      onClose={() => setShowQuickView(false)}
-    />
+
     </>
   );
 };
