@@ -229,8 +229,8 @@ const ssrfProtection = (req: Request, res: Response, next: NextFunction) => {
     'accounts.google.com',
     'api.whatsapp.com', 
     'googleapis.com',
-    'd35ew0puu9c5cz.cloudfront.net',
-    'cloudfront.net'
+    'findallsourcing.s3.us-east-1.amazonaws.com',
+    's3.amazonaws.com'
   ];
   const blockedIPs = ['127.0.0.1', '0.0.0.0', '::1', 'localhost'];
   
