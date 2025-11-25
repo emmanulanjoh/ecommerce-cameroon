@@ -131,7 +131,7 @@ router.post('/presigned-url', authMiddleware, async (req: Request, res: Response
 
     const key = S3Service.generateKey(folder, filename);
     const uploadUrl = await S3Service.getUploadUrl(key, contentType);
-    const fileUrl = `${process.env.CLOUDFRONT_URL}/${key}`;
+    const fileUrl = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION || 'us-east-1'}.amazonaws.com/${key}`;
 
     res.json({
       success: true,

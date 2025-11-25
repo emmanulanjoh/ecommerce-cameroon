@@ -34,17 +34,17 @@ run:
       value: "303871422282-an28g8uthos88jir2blpdd9gti62msn8.apps.googleusercontent.com"
     - name: GOOGLE_CLIENT_SECRET
       value: "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"
-    # App Runner URLs - Update these after deployment
-    # - name: GOOGLE_REDIRECT_URI
-    #   value: "https://YOUR-NEW-APPRUNNER-URL/api/auth/google/callback"
-    # - name: CLIENT_URL
-    #   value: "https://YOUR-NEW-APPRUNNER-URL"
-    # - name: APP_URL
-    #   value: "https://YOUR-NEW-APPRUNNER-URL"
+    - name: GOOGLE_REDIRECT_URI
+      value: "https://sne3uaggki.us-east-1.awsapprunner.com/api/auth/google/callback"
+    - name: CLIENT_URL
+      value: "https://sne3uaggki.us-east-1.awsapprunner.com"
+    - name: APP_URL
+      value: "https://sne3uaggki.us-east-1.awsapprunner.com"
     - name: MAX_FILE_SIZE
       value: "5242880"
-    - name: UPLOAD_PATH
-      value: "./dist/public/uploads"
+    # UPLOAD_PATH not needed - using S3 for all uploads
+    # - name: UPLOAD_PATH
+    #   value: "./dist/public/uploads"
     - name: DEFAULT_LANGUAGE
       value: "en"
     - name: SUPPORTED_LANGUAGES
