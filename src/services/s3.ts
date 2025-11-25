@@ -48,7 +48,6 @@ export class S3Service {
       console.log('🔧 AWS Config:', {
         region: process.env.AWS_REGION,
         bucket: AWS_CONFIG.S3_BUCKET,
-        cloudfrontUrl: AWS_CONFIG.CLOUDFRONT_URL,
         hasAccessKey: !!process.env.AWS_ACCESS_KEY_ID,
         hasSecretKey: !!process.env.AWS_SECRET_ACCESS_KEY
       });
