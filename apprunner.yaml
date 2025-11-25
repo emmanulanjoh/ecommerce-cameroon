@@ -48,16 +48,13 @@ run:
       value: "en"
     - name: SUPPORTED_LANGUAGES
       value: "en,fr"
-    - name: AWS_ACCESS_KEY_ID
-      value: "AKIATHFDHDE4SKGJL652"
-    - name: AWS_SECRET_ACCESS_KEY
-      value: "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"
+    # AWS credentials will be set manually in App Runner console
+    # - name: AWS_ACCESS_KEY_ID
+    # - name: AWS_SECRET_ACCESS_KEY
     - name: AWS_REGION
       value: "us-east-1"
     - name: S3_BUCKET_NAME
-      value: "ecommerce-cameroon-assets"
-    - name: CLOUDFRONT_URL
-      value: "https://d35ew0puu9c5cz.cloudfront.net"
+      value: "findallsourcing"
     - name: MONGODB_URI
       value: "mongodb+srv://emma:Emma2018@cluster0.jff9i.mongodb.net/ecommerce_cameroon"
     - name: JWT_SECRET

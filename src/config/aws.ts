@@ -10,7 +10,6 @@ export const s3Client = new S3Client({
 });
 
 export const AWS_CONFIG = {
-  S3_BUCKET: process.env.S3_BUCKET_NAME || 'ecommerce-cameroon-assets',
-  CLOUDFRONT_URL: process.env.CLOUDFRONT_URL || 'https://d35ew0puu9c5cz.cloudfront.net',
+  S3_BUCKET: process.env.S3_BUCKET_NAME || 'findallsourcing',
   IS_CONFIGURED: !!(process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY),
 };

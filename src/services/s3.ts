@@ -41,8 +41,8 @@ export class S3Service {
       
       await s3Client.send(command);
       
-      const fileUrl = `${AWS_CONFIG.CLOUDFRONT_URL}/${key}`;
-      console.log('✅ S3 upload complete, returning CloudFront URL:', fileUrl);
+      const fileUrl = `https://${AWS_CONFIG.S3_BUCKET}.s3.${process.env.AWS_REGION || 'us-east-1'}.amazonaws.com/${key}`;
+      console.log('✅ S3 upload complete, returning S3 URL:', fileUrl);
       
       // Verify AWS config
       console.log('🔧 AWS Config:', {
