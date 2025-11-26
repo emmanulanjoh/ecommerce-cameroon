@@ -478,6 +478,22 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onProductSaved }) =>
               <Card className="mb-4">
                 <Card.Header>Product Media</Card.Header>
                 <Card.Body>
+                  {formData.images.length > 0 && (
+                    <Form.Group className="mb-3">
+                      <Form.Label>Current Images ({formData.images.length})</Form.Label>
+                      <div className="d-flex align-items-center">
+                        <span className="me-2">🖼️ {formData.images.length} image(s) uploaded</span>
+                        <Button 
+                          variant="outline-danger" 
+                          size="sm"
+                          onClick={() => setFormData(prev => ({ ...prev, images: [], thumbnailImage: '' }))}
+                        >
+                          Remove All Images
+                        </Button>
+                      </div>
+                    </Form.Group>
+                  )}
+                  
                   <Form.Group className="mb-3">
                     <Form.Label>Product Images</Form.Label>
                     <Form.Control
@@ -488,7 +504,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onProductSaved }) =>
                       accept="image/*"
                     />
                     <Form.Text className="text-muted">
-                      Select multiple images for the product gallery
+                      Select multiple images (will be added to existing images)
                     </Form.Text>
                   </Form.Group>
                   
@@ -503,6 +519,22 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onProductSaved }) =>
                     />
                   </Form.Group>
                   
+                  {formData.videoUrl && (
+                    <Form.Group className="mb-3">
+                      <Form.Label>Current Video</Form.Label>
+                      <div className="d-flex align-items-center">
+                        <span className="me-2">📹 Video uploaded</span>
+                        <Button 
+                          variant="outline-danger" 
+                          size="sm"
+                          onClick={() => setFormData(prev => ({ ...prev, videoUrl: '' }))}
+                        >
+                          Remove Video
+                        </Button>
+                      </div>
+                    </Form.Group>
+                  )}
+                  
                   <Form.Group className="mb-3">
                     <Form.Label>Product Video</Form.Label>
                     <Form.Control
@@ -512,12 +544,12 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onProductSaved }) =>
                       accept="video/*"
                     />
                     <Form.Text className="text-muted">
-                      Upload a product demonstration video
+                      Upload a product demonstration video (replaces current video)
                     </Form.Text>
                   </Form.Group>
                   
                   <Form.Group className="mb-3">
-                    <Form.Label>Video URL</Form.Label>
+                    <Form.Label>Video URL (Optional)</Form.Label>
                     <Form.Control
                       type="url"
                       name="videoUrl"
@@ -525,6 +557,9 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onProductSaved }) =>
                       onChange={handleChange}
                       placeholder="Enter video URL (YouTube, Vimeo, etc.)"
                     />
+                    <Form.Text className="text-muted">
+                      Or paste a video URL instead of uploading
+                    </Form.Text>
                   </Form.Group>
                 </Card.Body>
               </Card>

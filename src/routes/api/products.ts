@@ -155,9 +155,26 @@ router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'Invalid product ID' });
     }
     
+    // Prepare update data
+    const updateData = {
+      ...req.body,
+      updatedAt: new Date()
+    };
+    
+    // Handle empty video URL (remove it)
+    if (updateData.videoUrl === '') {
+      updateData.$unset = { videoUrl: 1 };
+      delete updateData.videoUrl;
+    }
+    
+    // Ensure thumbnail is set if images exist
+    if (updateData.images && updateData.images.length > 0 && !updateData.thumbnailImage) {
+      updateData.thumbnailImage = updateData.images[0];
+    }
+    
     const product = await Product.findByIdAndUpdate(
       req.params.id, 
-      req.body, 
+      updateData, 
       { new: true, runValidators: true }
     );
     
