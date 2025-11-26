@@ -17,7 +17,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onProductSaved }) =>
     descriptionEn: product?.descriptionEn || '',
     descriptionFr: product?.descriptionFr || '',
     price: product?.price?.toString() || '',
-    category: product?.category || 'Electronics',
+    category: product?.category || 'Electronics & Technology',
     images: product?.images || [],
     thumbnailImage: product?.thumbnailImage || '',
     videoUrl: product?.videoUrl || '',
@@ -181,7 +181,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onProductSaved }) =>
           descriptionEn: '',
           descriptionFr: '',
           price: '',
-          category: 'Electronics',
+          category: 'Electronics & Technology',
           images: [],
           thumbnailImage: '',
           videoUrl: '',
@@ -330,16 +330,36 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onProductSaved }) =>
                           onChange={handleChange}
                           required
                         >
-                          <option value="Electronics">Electronics</option>
-                          <option value="Clothing">Clothing</option>
-                          <option value="Home & Kitchen">Home & Kitchen</option>
-                          <option value="Beauty & Personal Care">Beauty & Personal Care</option>
+                          <option value="Electronics & Technology">Electronics & Technology</option>
+                          <option value="Fashion & Clothing">Fashion & Clothing</option>
+                          <option value="Home & Garden">Home & Garden</option>
+                          <option value="Industrial Machinery">Industrial Machinery</option>
+                          <option value="Automotive & Motorcycles">Automotive & Motorcycles</option>
+                          <option value="Health & Beauty">Health & Beauty</option>
                           <option value="Sports & Outdoors">Sports & Outdoors</option>
-                          <option value="Automotive">Automotive</option>
-                          <option value="Books & Media">Books & Media</option>
+                          <option value="Books & Education">Books & Education</option>
                           <option value="Toys & Games">Toys & Games</option>
-                          <option value="Health & Wellness">Health & Wellness</option>
-                          <option value="Groceries & Food">Groceries & Food</option>
+                          <option value="Food & Beverages">Food & Beverages</option>
+                          <option value="Construction & Tools">Construction & Tools</option>
+                          <option value="Agriculture & Farming">Agriculture & Farming</option>
+                          <option value="Office & Business">Office & Business</option>
+                          <option value="Baby & Kids">Baby & Kids</option>
+                          <option value="Jewelry & Accessories">Jewelry & Accessories</option>
+                          <option value="Musical Instruments">Musical Instruments</option>
+                          <option value="Art & Crafts">Art & Crafts</option>
+                          <option value="Pet Supplies">Pet Supplies</option>
+                          <option value="Travel & Luggage">Travel & Luggage</option>
+                          <option value="Furniture & Decor">Furniture & Decor</option>
+                          <option value="Kitchen & Appliances">Kitchen & Appliances</option>
+                          <option value="Mobile Phones & Tablets">Mobile Phones & Tablets</option>
+                          <option value="Computer & Laptops">Computer & Laptops</option>
+                          <option value="Cameras & Photography">Cameras & Photography</option>
+                          <option value="Gaming & Entertainment">Gaming & Entertainment</option>
+                          <option value="Watches & Timepieces">Watches & Timepieces</option>
+                          <option value="Bags & Backpacks">Bags & Backpacks</option>
+                          <option value="Shoes & Footwear">Shoes & Footwear</option>
+                          <option value="Medical Equipment">Medical Equipment</option>
+                          <option value="Security & Safety">Security & Safety</option>
                         </Form.Select>
                       </Form.Group>
                     </Col>
