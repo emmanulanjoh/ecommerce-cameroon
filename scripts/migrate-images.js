@@ -4,14 +4,29 @@ const path = require('path');
 const https = require('https');
 const http = require('http');
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://emma:Emma2018@cluster0.jff9i.mongodb.net/ecommerce_cameroon');
+// Connect to MongoDB with proper options
+mongoose.connect('mongodb+srv://emma:Emma2018@cluster0.jff9i.mongodb.net/ecommerce_cameroon', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 30000,
+  socketTimeoutMS: 45000
+});
+
+// Wait for connection
+mongoose.connection.on('connected', () => {
+  console.log('✅ Connected to MongoDB');
+  migrateImages();
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('❌ MongoDB connection error:', err);
+  process.exit(1);
+});
 
 // Product schema
 const productSchema = new mongoose.Schema({
   images: [String],
   nameEn: String,
-  // ... other fields
 }, { collection: 'products' });
 
 const Product = mongoose.model('Product', productSchema);
@@ -47,11 +62,11 @@ const downloadImage = (url, filename) => {
 async function migrateImages() {
   try {
     console.log('🔍 Finding all products with images...');
-    const products = await Product.find({ images: { $exists: true, $ne: [] } });
+    const products = await Product.find({ images: { $exists: true, $ne: [] } }).lean();
     console.log(`📦 Found ${products.length} products with images`);
 
     let imageCount = 0;
-    const imageMap = {}; // Old URL -> New filename mapping
+    const imageMap = {};
 
     for (const product of products) {
       console.log(`\n📋 Processing: ${product.nameEn}`);
@@ -73,7 +88,7 @@ async function migrateImages() {
       }
     }
 
-    // Save mapping for later use
+    // Save mapping
     fs.writeFileSync(
       path.join(__dirname, '../image-mapping.json'), 
       JSON.stringify(imageMap, null, 2)
@@ -90,6 +105,3 @@ async function migrateImages() {
     mongoose.connection.close();
   }
 }
-
-// Run migration
-migrateImages();
