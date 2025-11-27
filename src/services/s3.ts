@@ -107,7 +107,7 @@ export class S3Service {
       .replace(/_{2,}/g, '_');       // Replace multiple underscores with single
     
     // Validate folder name
-    const allowedFolders = ['products', 'users', 'categories', 'temp'];
+    const allowedFolders = ['products', 'users', 'categories', 'temp', 'videos'];
     const safeFolder = folder.replace(/[^a-zA-Z0-9-]/g, '_');
     if (!allowedFolders.includes(safeFolder)) {
       throw new Error('Invalid folder name');
