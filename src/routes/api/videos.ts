@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
-import { v4 as uuidv4 } from 'uuid';
-import { adminAuth } from '../../middleware/auth';
+// Remove uuid import since we don't need it
+import { authMiddleware } from './auth';
 import { Video } from '../../models/Video';
 import { S3Service } from '../../services/s3';
 import { sanitizeForLog } from '../../utils/sanitize';
@@ -22,7 +22,7 @@ const upload = multer({
 });
 
 // Upload video to S3
-router.post('/upload', adminAuth, upload.single('video'), async (req, res) => {
+router.post('/upload', authMiddleware, upload.single('video'), async (req, res) => {
   try {
     console.log('📹 Video upload request received');
     
@@ -36,8 +36,7 @@ router.post('/upload', adminAuth, upload.single('video'), async (req, res) => {
       mimetype: req.file.mimetype
     });
 
-    const videoId = uuidv4();
-    const s3Key = `videos/${videoId}-${req.file.originalname}`;
+    const s3Key = S3Service.generateKey('videos', req.file.originalname);
     
     console.log('📤 Uploading video to S3:', sanitizeForLog(s3Key));
     
@@ -72,7 +71,7 @@ router.post('/upload', adminAuth, upload.single('video'), async (req, res) => {
 });
 
 // Get all videos (admin)
-router.get('/', adminAuth, async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
   try {
     const videos = await Video.find().sort({ uploadDate: -1 });
     res.json(videos);
@@ -92,7 +91,7 @@ router.get('/active', async (req, res) => {
 });
 
 // Delete video
-router.delete('/:id', adminAuth, async (req, res) => {
+router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const video = await Video.findById(req.params.id);
     if (!video) {
